@@ -96,8 +96,7 @@ Tests: `npm test` runs the engine unit tests (vitest).
 ### Documented assumptions
 
 Numbers the wiki does not give are set in `packages/shared/src/constants.ts` and marked as assumptions:
-Super Excite's spin chance, the chance a confused vivosaur skips its action, Auto Counter's fraction,
-Solo Power's bonus, Resurrect's LP, the team-skill power penalty per KO, and the rank-based stat curve
+Super Excite's spin chance, the chance a confused vivosaur skips its action, Resurrect's LP, the team-skill power penalty per KO, and the rank-based stat curve
 (the wiki lists max-rank stats only). Transformations restore the new form's full LP.
 
 ## Data

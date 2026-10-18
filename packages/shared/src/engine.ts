@@ -497,7 +497,7 @@ function resolveAttack(
   }
   dealDamage(state, rng, ds, defender, damage, 'skill', { crit, elementMult, rangeMult });
 
-  if (!defender.ko && hasAbility(defender, 'autoCounter')) {
+  if (!defender.ko && skill.counterable && hasAbility(defender, 'autoCounter')) {
     dealDamage(state, rng, as, attacker, Math.floor(damage * AUTO_COUNTER_FRACTION), 'autoCounter');
   }
   if (hasAbility(defender, 'fpAbsorb') && !opts.link) gainFp(state, ds, skill.fp * FP_ABSORB_FRACTION, 'FP Absorb');

@@ -60,8 +60,8 @@ export const CONFUSE_SKIP_CHANCE = 20;
 /** Abilities. Values not documented on the wiki are marked as assumptions. */
 export const AUTO_LP_RECOVERY_FRACTION = 1 / 20;
 export const FP_ABSORB_FRACTION = 3 / 10;
-export const AUTO_COUNTER_FRACTION = 0.3; // assumption: "returns some damage"
-export const SOLO_POWER_ATTACK_MULT = 1.5; // assumption
+export const AUTO_COUNTER_FRACTION = 3 / 10; // Champions: returns 3/10 of damage taken from physical (counterable) skills
+export const SOLO_POWER_ATTACK_MULT = 2; // Champions: doubles Attack when it is the last vivosaur standing
 export const LINK_DEFAULT_CHANCE = 70;
 export const RESURRECT_TURNS = 3;
 export const BERSERKER_LP_FRACTION = 0.5;
