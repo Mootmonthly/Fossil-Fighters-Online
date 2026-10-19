@@ -303,7 +303,7 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
         <Hex x={x} y={y} className={`hex ${isAz ? 'az' : 'sz'} ${mine ? 'mine' : 'theirs'} ${targetable ? 'targetable' : ''} ${isSel ? 'selected' : ''} ${v.ko ? 'ko' : ''}`} onClick={() => clickVivo(side, v)} />
         <g pointerEvents="none">
           {!v.ko ? (
-            <image href={spriteSrc(species.id)} x={x - spriteSize / 2} y={y - spriteSize + 24} width={spriteSize} height={spriteSize} className="vivo-sprite" transform={mine ? `translate(${x * 2},0) scale(-1,1)` : undefined} preserveAspectRatio="xMidYMax meet" />
+            <image href={spriteSrc(species.id)} x={x - spriteSize / 2} y={y - spriteSize + 24} width={spriteSize} height={spriteSize} className="vivo-sprite" transform={!mine ? `translate(${x * 2},0) scale(-1,1)` : undefined} preserveAspectRatio="xMidYMax meet" />
           ) : (
             <text x={x} y={y - 10} textAnchor="middle" fontSize={22} fill="#d8d8d8" fontWeight={900} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 5 }}>KO</text>
           )}
