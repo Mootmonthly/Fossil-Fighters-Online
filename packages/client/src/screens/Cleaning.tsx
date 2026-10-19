@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CLEANING_TIME_SECONDS, findVivosaur, fossilImageInfo, MIN_CLEAN_SCORE, nextRandom } from '@ffo/shared';
 import { api, type CleanResult, type FossilView, type Snapshot } from '../api.js';
+import { music } from '../audio.js';
 import { Medal } from '../components/Vivo.js';
 import { drawFossil, type BoneStyle } from './fossilArt.js';
 
@@ -266,6 +267,10 @@ export function CleaningScreen({ snap, run, notify, initialFossil, onDone }: { s
   const rocks = snap.fossils.filter((f) => f.state === 'rock');
   const [active, setActive] = useState<FossilView | null>(() => rocks.find((f) => f.id === initialFossil) ?? null);
   const [result, setResult] = useState<CleanResult | null>(null);
+  // The cleaning theme plays while a rock is on the tray; the menu theme otherwise.
+  useEffect(() => {
+    music.play(active ? 'cleaning' : 'menu');
+  }, [active]);
 
   if (active) {
     return (
@@ -277,6 +282,7 @@ export function CleaningScreen({ snap, run, notify, initialFossil, onDone }: { s
           onDone();
           if (out) {
             setResult(out.result);
+            music.jingle(out.result.success ? 'cleanSuccess' : 'cleanFail');
             notify(out.result.message, !out.result.success);
           }
         }}

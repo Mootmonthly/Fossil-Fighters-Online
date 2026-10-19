@@ -15,6 +15,9 @@ in this repository; point the scripts at your own dump.
 - `build_fossil_images.py` – from `rom_data.json`'s rock table and the exported fossil PNGs, writes the cropped
   normal / red-boned / damaged picture of every set an obtainable vivosaur uses into
   `packages/client/public/img/fossils/` and the species+part → set mapping `data/fossilImages.json`.
+- `render_music.py <snd_data.sdat> <out dir> <SEQ name> ...` – renders sequenced music (SSEQ + SBNK + SWAR) to
+  WAV / OGG / M4A with loop points in `tracks.json`: PCM and ADPCM samples, PSG, the driver's envelope curves,
+  vibrato and portamento. The game's `etc/snd_data.sdat` is extracted with `nds.py`.
 
 The arena and menu backgrounds in `packages/client/public/img/{arena,bg}` were rendered the same way
 (`export_images.py ... b00_ b10_ ...` and the named UI screens); see the main README.

@@ -1,0 +1,74 @@
+{
+ "JINGLE_SEQ_BTL_WIN": {
+  "files": {
+   "ogg": "jingle_seq_btl_win.ogg",
+   "m4a": "jingle_seq_btl_win.m4a"
+  },
+  "duration": 5.628605475433879,
+  "notes": 178
+ },
+ "BGM_SEQ_FLD03_KASEKIGUILD": {
+  "files": {
+   "ogg": "bgm_seq_fld03_kasekiguild.ogg",
+   "m4a": "bgm_seq_fld03_kasekiguild.m4a"
+  },
+  "duration": 86.21428134930335,
+  "notes": 3136,
+  "loopStart": 44.571428571428136,
+  "loopEnd": 85.71428571428481
+ },
+ "BGM_SEQ_CLEANING": {
+  "files": {
+   "ogg": "bgm_seq_cleaning.ogg",
+   "m4a": "bgm_seq_cleaning.m4a"
+  },
+  "duration": 163.4090686873625,
+  "notes": 6468,
+  "loopStart": 81.45454545453133,
+  "loopEnd": 162.90909090906266
+ },
+ "BGM_SEQ_BTL_NORMAL": {
+  "files": {
+   "ogg": "bgm_seq_btl_normal.ogg",
+   "m4a": "bgm_seq_btl_normal.m4a"
+  },
+  "duration": 139.69998166707407,
+  "notes": 4991,
+  "loopStart": 73.60000000000464,
+  "loopEnd": 139.20000000000908
+ },
+ "BGM_SEQ_BTL_PREPARE": {
+  "files": {
+   "ogg": "bgm_seq_btl_prepare.ogg",
+   "m4a": "bgm_seq_btl_prepare.m4a"
+  },
+  "duration": 159.9285626986067,
+  "notes": 2142,
+  "loopStart": 79.7142857142773,
+  "loopEnd": 159.4285714285546
+ },
+ "JINGLE_SEQ_BTLLOSE": {
+  "files": {
+   "ogg": "jingle_seq_btllose.ogg",
+   "m4a": "jingle_seq_btllose.m4a"
+  },
+  "duration": 7.181954289904668,
+  "notes": 79
+ },
+ "JINGLE_SEQ_KEZURI_SUCCESS1": {
+  "files": {
+   "ogg": "jingle_seq_kezuri_success1.ogg",
+   "m4a": "jingle_seq_kezuri_success1.m4a"
+  },
+  "duration": 3.7173062820826206,
+  "notes": 116
+ },
+ "JINGLE_SEQ_KEZURI_FAILURE": {
+  "files": {
+   "ogg": "jingle_seq_kezuri_failure.ogg",
+   "m4a": "jingle_seq_kezuri_failure.m4a"
+  },
+  "duration": 7.098142263505255,
+  "notes": 115
+ }
+}

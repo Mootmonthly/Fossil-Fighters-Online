@@ -7,6 +7,7 @@ import {
 import type { Snapshot } from '../api.js';
 import { Medal, spriteSrc } from '../components/Vivo.js';
 import { PickScreen, type PickPayload } from './Pick.js';
+import { music } from '../audio.js';
 
 type SideIndex = 0 | 1;
 
@@ -131,6 +132,19 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
   }, [socket, notify, refresh, pushFloats]);
 
   const act = useCallback((action: BattleAction) => socket?.emit('battle:action', action), [socket]);
+
+  // Music: the battle-prepare theme while picking, the battle theme while fighting, a jingle at the end.
+  useEffect(() => {
+    if (end) return;
+    if (pick && !battle) music.play('prepare');
+    else if (battle && state) music.play('battle');
+    else music.play('menu');
+  }, [pick, battle, state, end]);
+  useEffect(() => {
+    if (!end || !battle) return;
+    music.jingle(end.winner === battle.side ? 'win' : 'lose');
+    music.play('menu');
+  }, [end, battle]);
 
   if (!socket) return <div className="panel">Connecting…</div>;
 

@@ -9,6 +9,8 @@ import { BattleScreen } from './screens/Battle.js';
 import { FossilaryScreen } from './screens/Fossilary.js';
 import { AdminScreen } from './screens/Admin.js';
 import { useSocket } from './socket.js';
+import { music } from './audio.js';
+import { SoundControl } from './components/SoundControl.js';
 
 export type Screen = 'home' | 'shop' | 'collection' | 'cleaning' | 'battle' | 'fossilary' | 'admin';
 
@@ -24,6 +26,10 @@ export function App() {
   const [toast, setToast] = useState<Toast | null>(null);
   const [cleaningFossil, setCleaningFossil] = useState<number | null>(null);
   const socket = useSocket(snap ? getToken() : null);
+  // Menu music everywhere; the cleaning and battle screens switch tracks themselves while a dig or battle runs.
+  useEffect(() => {
+    if (snap) music.play('menu');
+  }, [screen, snap]);
 
   const notify = useCallback((text: string, error = false) => {
     setToast({ text, error });
@@ -112,6 +118,7 @@ export function App() {
         <div className="row">
           <span className="muted">{snap.user.username}</span>
           <span className="gold">{snap.user.gold.toLocaleString()} G</span>
+          <SoundControl />
           <button onClick={logout}>Log out</button>
         </div>
       </header>

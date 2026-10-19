@@ -242,3 +242,8 @@ table th { color: var(--muted); font-weight: 800; }
 .admin-table tbody tr.active { background: #ffe9a8; }
 .admin-table .medal { width: 30px; height: 30px; }
 .card.dim { opacity: .7; }
+
+/* ---- sound control ---- */
+.sound { display: flex; align-items: center; gap: 4px; }
+.sound button { padding: 3px 8px 4px; font-size: 15px; line-height: 1; }
+.sound input[type=range] { width: 80px; accent-color: #e8901a; }

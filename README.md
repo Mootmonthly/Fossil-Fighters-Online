@@ -154,6 +154,10 @@ The backgrounds are the game's own 2D screens, rendered from the owner's ROM wit
 `img/arena/` holds the 26 lower-screen battle arenas (the hex flowers the vivosaurs stand on are part of the art, and
 the client places sprites on them using geometry measured from the pixels), `img/bg/` the cleaning tray, the FP
 gauge, the menu pattern and the window plates used behind the panels. A battle picks its arena from the match seed.
+`audio/` holds the music, rendered from the game's sound archive with `tools/rom/render_music.py` (a small SSEQ
+sequencer and synthesizer): the Fossil Guild theme behind the menus, the cleaning theme, the battle-preparation theme
+during the pick phase, the battle theme, and the win / lose and cleaning jingles. Songs loop at their real loop points
+through Web Audio; the speaker button in the top bar sets the volume, and browsers start the music on the first click.
 `img/fossils/` holds the fossil pictures from the cleaning room (`tools/rom/export_images.py` and
 `build_fossil_images.py`), and `data/fossilImages.json` maps each species and part to its picture set the way the
 game's rock table does. Fish and other whole-body fossils use one picture for every part, as in the game.
