@@ -15,7 +15,7 @@ import {
 } from './constants.js';
 import { findVivosaur, getVivosaur, isTeamCompatible } from './data/index.js';
 import { FORMATION_ZONES, isAttackZone, isSupportZone, rotateZone, tileDistance, type Formation } from './field.js';
-import { statsAtRank, unlockedSkillCount } from './progression.js';
+import { allSkillsUnlocked, statsAtRank, unlockedSkillCount } from './progression.js';
 import { Rng } from './rng.js';
 import type {
   AbilityType, BattleAction, BattleEvent, BattleOptions, BattleSide, BattleState, BattleVivosaur, SkillData, StatKey,
@@ -141,13 +141,12 @@ function other(s: SideIndex): SideIndex {
   return s === 0 ? 1 : 0;
 }
 
-/** Number of regular skills available at this vivosaur's rank (team skill excluded). */
+/** Skills available at this vivosaur's rank: the first four unlock at ranks 1/5/10/15, the rest (team skill included) at rank 20. */
 export function availableSkills(v: BattleVivosaur): SkillData[] {
   const species = speciesOf(v);
+  if (allSkillsUnlocked(v.rank)) return species.skills;
   const regular = species.skills.filter((s) => s.kind !== 'team');
-  const team = species.skills.filter((s) => s.kind === 'team');
-  const n = unlockedSkillCount(v.rank);
-  return [...regular.slice(0, n), ...team];
+  return regular.slice(0, unlockedSkillCount(v.rank));
 }
 
 function skillIndex(v: BattleVivosaur, skill: SkillData): number {

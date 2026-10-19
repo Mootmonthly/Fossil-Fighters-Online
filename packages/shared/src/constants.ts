@@ -9,8 +9,9 @@ export const HERO_LEVELS: { gain: number; max: number; start: number }[] = FP_LE
 
 export const MAX_RANK = 20;
 export const POINTS_PER_RANK = 50;
-/** Skills unlock at ranks 1, 3, 5 and 7 in Champions; the team skill is always available. */
-export const SKILL_UNLOCK_RANKS = [1, 3, 5, 7];
+/** The first four skills unlock at these ranks; everything else (the team skill and any further skills) at FULL_SKILLS_RANK. */
+export const SKILL_UNLOCK_RANKS = [1, 5, 10, 15];
+export const FULL_SKILLS_RANK = 20;
 
 export const ROTATION_FP_PER_STEP = 5;
 export const ROTATION_FP_MAX = 15;

@@ -1,4 +1,4 @@
-import { MAX_RANK, POINTS_PER_RANK, SKILL_UNLOCK_RANKS } from './constants.js';
+import { FULL_SKILLS_RANK, MAX_RANK, POINTS_PER_RANK, SKILL_UNLOCK_RANKS } from './constants.js';
 import { getVivosaur } from './data/index.js';
 import { GROWTH_PATTERNS } from './data/growth.js';
 import type { FossilPart, OwnedVivosaur, StatKey, Stats, TeamMember, VivosaurData } from './types.js';
@@ -85,6 +85,11 @@ export function computeStats(owned: OwnedVivosaur): Stats {
 /** Number of regular skills unlocked at a rank (the team skill is always available). */
 export function unlockedSkillCount(rank: number): number {
   return SKILL_UNLOCK_RANKS.filter((r) => rank >= r).length;
+}
+
+/** True once every skill, including the team skill, is available. */
+export function allSkillsUnlocked(rank: number): boolean {
+  return rank >= FULL_SKILLS_RANK;
 }
 
 export function toTeamMember(owned: OwnedVivosaur): TeamMember {

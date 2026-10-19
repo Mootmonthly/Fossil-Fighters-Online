@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { findVivosaur, MAX_RANK, pointsToNextRank, TEAM_SIZE, unlockedSkillCount } from '@ffo/shared';
+import { findVivosaur, FULL_SKILLS_RANK, MAX_RANK, pointsToNextRank, SKILL_UNLOCK_RANKS, TEAM_SIZE, unlockedSkillCount } from '@ffo/shared';
 import { api, type Snapshot, type VivosaurView } from '../api.js';
 import { ElementBadge, Medal, StatBars, VivoCard, spriteSrc } from '../components/Vivo.js';
 import { SkillTable, SupportLine } from './Fossilary.js';
@@ -105,7 +105,7 @@ export function CollectionScreen({ snap, run, notify }: { snap: Snapshot; run: R
               <div className="small">
                 <div><ElementBadge element={species.element} /> <span className="badge">{species.range}-range</span> <span className="badge">Crit {species.crit}%</span></div>
                 <div style={{ marginTop: 6 }}>Rank <b>{sel.rank}</b>{sel.rank < MAX_RANK ? <span className="muted"> · {pointsToNextRank(sel.rankPoints)} pts to next</span> : <span className="muted"> · MAX</span>}</div>
-                <div className="muted">Skills unlocked: {unlockedSkillCount(sel.rank)}/4 + team skill</div>
+                <div className="muted">Skills unlocked: {unlockedSkillCount(sel.rank)}/4{sel.rank >= FULL_SKILLS_RANK ? ' + team skill' : ` · next at rank ${SKILL_UNLOCK_RANKS.find((r) => r > sel.rank) ?? FULL_SKILLS_RANK}, team skill at rank ${FULL_SKILLS_RANK}`}</div>
                 <div className="muted">Parts: {(['head', 'body', 'arms', 'legs'] as const).map((p) => `${p} ${sel.parts[p] || '—'}`).join(' · ')}</div>
                 {species.id !== base.id && <div className="muted">Super-evolved from {base.name}</div>}
               </div>

@@ -75,7 +75,8 @@ Tests: `npm test` runs the engine unit tests (vitest).
    damaged variants). Only Tonzilla has no picture in the game and falls back to procedural bones. Uncovered bone fills
    the meter, damaged bone drains it. 50 points are needed to integrate the fossil.
 3. **Revival and ranks** – a head fossil revives the vivosaur; body, arms and legs add their cleaning score as
-   rank points (50 points per rank, max rank 20, skills unlock at ranks 1/3/5/7). Battles also grant rank points.
+   rank points (50 points per rank, max rank 20). Skills unlock one at a time at ranks 1, 5, 10 and 15; the team skill
+   and anything left come at rank 20. Battles also grant rank points.
 4. **Super revival** – silver fossils add LP and one or two stats and change the vivosaur's colours; gold
    fossils boost everything and super-evolve the 30 eligible vivosaurs.
 5. **Battle** – solo matches against a bot, ranked matchmaking, or private rooms with a code. Teams hold up to
