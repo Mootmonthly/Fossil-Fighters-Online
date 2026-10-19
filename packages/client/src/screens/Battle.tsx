@@ -212,7 +212,7 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
       <div className="panel">
         <h3>Battle rules (Champions)</h3>
         <ul className="muted small" style={{ lineHeight: 1.6, paddingLeft: 18 }}>
-          <li>The team with the higher total Speed moves first. FP recharges every turn (hero level {BATTLE_HERO_LEVEL}: {HERO_LEVELS[BATTLE_HERO_LEVEL - 1].start} to start, +{HERO_LEVELS[BATTLE_HERO_LEVEL - 1].gain} per turn, max {HERO_LEVELS[BATTLE_HERO_LEVEL - 1].max}).</li>
+          <li>The team with the higher total Speed moves first. Both sides start at 0 FP and recharge every turn (hero level {BATTLE_HERO_LEVEL}: +{HERO_LEVELS[BATTLE_HERO_LEVEL - 1].gain} per turn, max {HERO_LEVELS[BATTLE_HERO_LEVEL - 1].max}).</li>
           <li>Each vivosaur may use one skill per turn. Rotating the formation costs 5 FP per step, up to 15, until a skill is used.</li>
           <li>Front tiles are the Attack Zone (AZ); rear tiles are the Support Zone (SZ). SZ vivosaurs apply their support effects to AZ vivosaurs, halved when two share the AZ.</li>
           <li>Range matters: Close-Range hits hardest at 1 tile, Mid-Range at 3, Long-Range at 7. Water beats Fire beats Earth beats Air beats Water for 1.5× damage.</li>

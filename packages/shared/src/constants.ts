@@ -78,4 +78,6 @@ export const JURASSIC_SUPPORT_FACTOR = 0.5;
  * is the story's end-game maximum and lets a team fire every skill every turn.
  */
 export const BATTLE_HERO_LEVEL = 8;
+/** FP each side holds when the battle begins; the first turn's recharge is the first FP anyone gets. */
+export const BATTLE_START_FP = 0;
 export const DEFAULT_BATTLE_OPTIONS = { heroLevel: BATTLE_HERO_LEVEL, maxTurns: 120 };

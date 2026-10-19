@@ -11,7 +11,7 @@ import {
   ENRAGE_ATTACK, FP_ABSORB_FRACTION, HARDEN_DEFENSE, HERO_LEVELS, INFECTION_TURNS, JURASSIC_SUPPORT_FACTOR, LINK_DEFAULT_CHANCE,
   PARTING_BLOW_LP_FRACTION, POISON_PERCENT, QUICKEN_SPEED_PERCENT, RANDOM_MULT_MAX, RANDOM_MULT_MIN, RANGE_MULTIPLIERS,
   RESURRECT_TURNS, ROTATION_FP_MAX, ROTATION_FP_PER_STEP, SCARE_SEALED, SLEEP_HITS, SOLO_POWER_ATTACK_MULT, STATUS_DURATION,
-  SUPER_EXCITE_ROTATE_CHANCE, TEAM_SKILL_KO_PENALTY,
+  SUPER_EXCITE_ROTATE_CHANCE, TEAM_SKILL_KO_PENALTY, BATTLE_START_FP,
 } from './constants.js';
 import { findVivosaur, getVivosaur, isTeamCompatible } from './data/index.js';
 import { FORMATION_ZONES, isAttackZone, isSupportZone, rotateZone, tileDistance, type Formation } from './field.js';
@@ -66,7 +66,7 @@ export function createBattle(teams: [TeamSetup, TeamSetup], seed: number, option
       id: t.id,
       name: t.name,
       vivosaurs: t.members.map((m, i) => makeVivosaur(m, i, t.formation ?? 'cambrian')),
-      fp: lv.start,
+      fp: BATTLE_START_FP,
       fpGain: lv.gain,
       fpMax: lv.max,
       rotationSpent: 0,
