@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 tools/rom/*)",
+      "Bash(python3 -I tools/rom/*)",
+      "Bash(python3 -I /home/user/fossil-fighters-online/tools/rom/*)",
+      "Bash(python3 /home/user/fossil-fighters-online/tools/rom/*)"
+    ]
+  }
+}
