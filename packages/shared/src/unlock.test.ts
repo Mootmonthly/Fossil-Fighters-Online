@@ -8,14 +8,14 @@ function skillsAt(rank: number) {
 }
 
 describe('skill unlocks', () => {
-  it('unlocks one skill at ranks 1, 5, 10 and 15 and everything at 20', () => {
+  it('unlocks one skill at ranks 1, 4, 8 and 12 and everything at 16', () => {
     expect(skillsAt(1).length).toBe(1);
-    expect(skillsAt(4).length).toBe(1);
-    expect(skillsAt(5).length).toBe(2);
-    expect(skillsAt(10).length).toBe(3);
-    expect(skillsAt(15).length).toBe(4);
-    expect(skillsAt(19).some((s) => s.kind === 'team')).toBe(false);
-    const all = skillsAt(20);
+    expect(skillsAt(3).length).toBe(1);
+    expect(skillsAt(4).length).toBe(2);
+    expect(skillsAt(8).length).toBe(3);
+    expect(skillsAt(12).length).toBe(4);
+    expect(skillsAt(15).some((s) => s.kind === 'team')).toBe(false);
+    const all = skillsAt(16);
     expect(all.some((s) => s.kind === 'team')).toBe(true);
     expect(all.length).toBe(5);
   });

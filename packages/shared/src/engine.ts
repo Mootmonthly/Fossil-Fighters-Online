@@ -141,7 +141,7 @@ function other(s: SideIndex): SideIndex {
   return s === 0 ? 1 : 0;
 }
 
-/** Skills available at this vivosaur's rank: the first four unlock at ranks 1/5/10/15, the rest (team skill included) at rank 20. */
+/** Skills available at this vivosaur's rank: the first four unlock at ranks 1/4/8/12, the rest (team skill included) at rank 16. */
 export function availableSkills(v: BattleVivosaur): SkillData[] {
   const species = speciesOf(v);
   if (allSkillsUnlocked(v.rank)) return species.skills;

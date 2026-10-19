@@ -10,8 +10,8 @@ export const HERO_LEVELS: { gain: number; max: number; start: number }[] = FP_LE
 export const MAX_RANK = 20;
 export const POINTS_PER_RANK = 50;
 /** The first four skills unlock at these ranks; everything else (the team skill and any further skills) at FULL_SKILLS_RANK. */
-export const SKILL_UNLOCK_RANKS = [1, 5, 10, 15];
-export const FULL_SKILLS_RANK = 20;
+export const SKILL_UNLOCK_RANKS = [1, 4, 8, 12];
+export const FULL_SKILLS_RANK = 16;
 
 export const ROTATION_FP_PER_STEP = 5;
 export const ROTATION_FP_MAX = 15;
