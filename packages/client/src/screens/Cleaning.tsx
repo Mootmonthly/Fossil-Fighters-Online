@@ -29,7 +29,9 @@ interface Dig {
   midCanvas: HTMLCanvasElement; // second layer (same texture, darker)
   lowCanvas: HTMLCanvasElement; // last layer before the fossil (darker still)
   boneCanvas: HTMLCanvasElement; // the game's fossil picture (or procedural bones when the game has none)
-  damagedCanvas: HTMLCanvasElement | null; // the game's damaged-fossil picture, drawn under damaged cells
+  damagedCanvas: HTMLCanvasElement; // the game's damaged-fossil picture (or the fossil tinted purple)
+  damageMask: HTMLCanvasElement; // irregular blobs stamped where hits damaged the fossil (full canvas resolution)
+  damageLayer: HTMLCanvasElement; // damagedCanvas masked by damageMask, drawn over exposed fossil
   tray: HTMLImageElement | null; // the game's cleaning tray backdrop
 }
 
@@ -212,6 +214,23 @@ async function generateDig(fossil: FossilView): Promise<Dig> {
   } else {
     drawFossil(bctx, part, style, fossil.rockSeed, box);
   }
+  if (!damagedCanvas) {
+    // no damaged picture for this fossil: tint the bone purple, the game's colour for broken bone
+    damagedCanvas = document.createElement('canvas');
+    damagedCanvas.width = W;
+    damagedCanvas.height = H;
+    const dctx = damagedCanvas.getContext('2d')!;
+    dctx.drawImage(boneCanvas, 0, 0);
+    dctx.globalCompositeOperation = 'source-atop';
+    dctx.fillStyle = 'rgba(128,48,170,.8)';
+    dctx.fillRect(0, 0, W, H);
+  }
+  const damageMask = document.createElement('canvas');
+  damageMask.width = W;
+  damageMask.height = H;
+  const damageLayer = document.createElement('canvas');
+  damageLayer.width = W;
+  damageLayer.height = H;
   const bonePixels = bctx.getImageData(0, 0, W, H).data;
   let fossilCells = 0;
   for (let y = 0; y < ROWS; y++) {
@@ -228,7 +247,7 @@ async function generateDig(fossil: FossilView): Promise<Dig> {
     }
   }
   const delicate = fossil.kind === 'wondrous' || fossil.kind === 'miraculous';
-  return { cells, fossilCells: Math.max(1, fossilCells), delicate, dark: fossil.kind === 'dark', hardness: rnd() < 0.3 ? 2 : 1, rockCanvas, midCanvas, lowCanvas, boneCanvas, damagedCanvas, tray };
+  return { cells, fossilCells: Math.max(1, fossilCells), delicate, dark: fossil.kind === 'dark', hardness: rnd() < 0.3 ? 2 : 1, rockCanvas, midCanvas, lowCanvas, boneCanvas, damagedCanvas, damageMask, damageLayer, tray };
 }
 
 function scoreOf(dig: Dig): { exposed: number; damage: number; score: number } {
@@ -404,15 +423,9 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
           } else if (c.rock === 1) {
             ctx.drawImage(dig.lowCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
           } else if (c.fossil) {
-            if (c.damaged && dig.damagedCanvas) {
-              ctx.drawImage(dig.damagedCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
-            } else {
-              ctx.drawImage(dig.boneCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
-              if (c.damaged) {
-                ctx.fillStyle = 'rgba(128, 48, 170, .78)';
-                ctx.fillRect(px, py, CELL, CELL);
-              }
-            }
+            ctx.drawImage(dig.boneCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
+            // damage shows through the blob mask, so its edges follow the hits rather than the cell grid
+            ctx.drawImage(dig.damageLayer, px, py, CELL, CELL, px, py, CELL, CELL);
           } else {
             ctx.fillStyle = n < 0.5 ? '#4e3d2d' : n < 0.85 ? '#45362a' : '#3b2e24';
             ctx.fillRect(px, py, CELL, CELL);
@@ -440,6 +453,8 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
     const radius = t === 'hammer' ? 11 : 4.8;
     const power = t === 'hammer' ? dig.hardness : 1;
     let changed = false;
+    let hurt = false; // a hammer blow broke bone
+    const chips: number[] = []; // cell centres chipped by the drill
     for (let cy = Math.floor(y - radius); cy <= Math.ceil(y + radius); cy++) {
       for (let cx = Math.floor(x - radius); cx <= Math.ceil(x + radius); cx++) {
         if (cx < 0 || cy < 0 || cx >= COLS || cy >= ROWS) continue;
@@ -451,17 +466,51 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
           if (t === 'drill' && dig.dark && c.rock === 3) continue; // the dark shell resists the drill
           c.rock = Math.max(0, c.rock - power);
           changed = true;
-          if (c.rock === 0 && c.fossil && t === 'hammer' && dig.delicate && d < radius * 0.6) c.damaged = true;
+          if (c.rock === 0 && c.fossil && t === 'hammer' && dig.delicate && d < radius * 0.6) {
+            c.damaged = true;
+            hurt = true;
+          }
         } else if (c.fossil && !c.damaged) {
           if (t === 'hammer' && d < radius * 0.75) {
             c.damaged = true;
             changed = true;
+            hurt = true;
           } else if (t === 'drill' && d < 2.4 && Math.random() < (dig.delicate ? 0.3 : 0.1)) {
             c.damaged = true;
             changed = true;
+            chips.push(cx + 0.5, cy + 0.5); // the drill chips individual spots
           }
         }
       }
+    }
+    if (hurt || chips.length) {
+      // Stamp irregular blobs where the bone broke (one hammer-sized blob, or a small chip per drilled spot)
+      // and refresh the masked damage layer.
+      const W = COLS * CELL, H = ROWS * CELL;
+      const mctx = dig.damageMask.getContext('2d')!;
+      mctx.fillStyle = '#000';
+      const blob = (bx0: number, by0: number, r: number) => {
+        mctx.beginPath();
+        const n = 10 + Math.floor(Math.random() * 6);
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * Math.PI * 2;
+          const rr = r * (0.7 + Math.random() * 0.4);
+          const bx = bx0 * CELL + Math.cos(a) * rr, by = by0 * CELL + Math.sin(a) * rr;
+          if (i) mctx.lineTo(bx, by);
+          else mctx.moveTo(bx, by);
+        }
+        mctx.closePath();
+        mctx.fill();
+      };
+      if (hurt) blob(x, y, radius * 0.75 * CELL);
+      for (let i = 0; i < chips.length; i += 2) blob(chips[i], chips[i + 1], 1.1 * CELL);
+      const lctx = dig.damageLayer.getContext('2d')!;
+      lctx.globalCompositeOperation = 'source-over';
+      lctx.clearRect(0, 0, W, H);
+      lctx.drawImage(dig.damagedCanvas, 0, 0);
+      lctx.globalCompositeOperation = 'destination-in';
+      lctx.drawImage(dig.damageMask, 0, 0);
+      changed = true;
     }
     if (changed) {
       // Slivers left between hits crumble away: any isolated fragment of rock smaller than CRUMB cells is cleared.
