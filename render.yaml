@@ -1,0 +1,22 @@
+# Render Blueprint: deploys the game as one Node web service with a persistent disk for the SQLite database.
+# In the Render dashboard choose New -> Blueprint, pick this repository, and accept the defaults.
+services:
+  - type: web
+    name: fossil-fighters-online
+    runtime: node
+    # The disk below needs a paid instance (Starter). To try it for free, delete the `disk` block and the
+    # DB_FILE variable; the database then lives on the instance's own filesystem and resets on every deploy.
+    plan: starter
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22.22.0
+      - key: DB_FILE
+        value: /var/data/ffo.sqlite
+    disk:
+      name: ffo-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -51,6 +51,14 @@ Environment variables for the server:
 Deploying is a single Node process (Render, Fly.io, Railway, a VPS, etc.): run `npm install && npm run build`
 as the build step and `npm start` as the start command. Give `DB_FILE` a path on a persistent disk.
 
+### Render
+
+`render.yaml` is a Render Blueprint. In the Render dashboard choose **New → Blueprint**, connect this repository
+and click **Apply**: it creates one web service (Node 22, `npm ci && npm run build`, `npm start`) with a 1 GB disk
+mounted at `/var/data` for the database. The disk needs the Starter instance; to try it on the free instance,
+remove the `disk` block and the `DB_FILE` variable from `render.yaml` (accounts and vivosaurs are then lost on
+each deploy or restart, and the free instance sleeps after 15 minutes of inactivity).
+
 Tests: `npm test` runs the engine unit tests (vitest).
 
 ## Game loop
