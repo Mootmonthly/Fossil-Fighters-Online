@@ -57,7 +57,7 @@ export function HomeScreen({ snap, go }: { snap: Snapshot; go: (s: Screen) => vo
           </ol>
         </div>
       </div>
-      <div className="panel">
+      <div className="panel themed bg-plate">
         <h3>Leaderboard</h3>
         <table style={{ width: '100%', fontSize: 14 }}>
           <tbody>

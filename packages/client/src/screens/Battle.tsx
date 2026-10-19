@@ -138,7 +138,7 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
   const team = snap.user.team.map((id) => snap.vivosaurs.find((v) => v.id === id)).filter(Boolean);
   return (
     <div className="grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
-      <div className="panel">
+      <div className="panel themed bg-multiplayer">
         <h2>Fossil Battle</h2>
         <div className="row" style={{ marginBottom: 10 }}>
           <span className="muted small">Your team:</span>
@@ -192,34 +192,35 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
 // Arena
 // ---------------------------------------------------------------------------
 
-const W = 1000, H = 600, MIDX = 500, MIDY = 300;
-const HEX_RX = 60, HEX_RY = 40;
+// The game's own lower-screen battle backdrops (256x192) are drawn at 4x. Each team stands on a flower of
+// seven hexes; the six outer hexes are the zones (the centre hex is decorative in the game as well).
+export const ARENAS = ['b00_000', 'b00_100', 'b10_000', 'b10_100', 'b20_000', 'b20_100', 'b30_000', 'b31_000', 'b32_000', 'b34_000', 'b40_000', 'b40_100', 'b41_000', 'b41_100', 'b43_000', 'b50_000', 'b51_000', 'b52_000', 'b60_000', 'b60_100', 'b61_000', 'b62_000', 'b64_000', 'b64_100', 'b90_000', 'b99_000'];
+const S = 4;
+const W = 256 * S, H = 192 * S;
+// Measured from the backdrop pixels (b00_000): flower centres and the ring radius in 256x192 coordinates.
+const FLOWER = { left: { cx: 53.5, cy: 77 }, right: { cx: 202.5, cy: 77 } };
+const RING = 36;
+const FP_BAR_H = 190; // the game's FP gauge (256x87) stretched across the bottom of the arena
+/** Angle (degrees, y down) of each zone around the flower; the AZ+ points at the enemy. */
+const ANGLE_LEFT: Record<Zone, number> = { 0: 0, 1: -60, 2: -120, 3: 180, 4: 120, 5: 60 };
+const ANGLE_RIGHT: Record<Zone, number> = { 0: 180, 1: -120, 2: -60, 3: 0, 4: 60, 5: 120 };
+const HEX_RX = 20.5 * S, HEX_RY = 20 * S; // the painted hexes are 36 wide and 40 tall
 
-/** Horizontal field: the player's team stands on the left facing right, the enemy on the right facing left. */
 function zonePos(zone: Zone, mine: boolean): { x: number; y: number } {
-  const depth = ZONE_DEPTH[zone];
-  const lateral = zone === 1 || zone === 2 ? -1 : zone === 4 || zone === 5 ? 1 : 0;
-  const dx = 95 + depth * 118;
-  const x = mine ? MIDX - dx : MIDX + dx;
-  const y = MIDY + lateral * 128;
-  return { x, y };
+  const c = mine ? FLOWER.left : FLOWER.right;
+  const a = ((mine ? ANGLE_LEFT : ANGLE_RIGHT)[zone] * Math.PI) / 180;
+  return { x: (c.cx + RING * Math.cos(a)) * S, y: (c.cy + RING * Math.sin(a)) * S };
 }
 
 function hexPoints(x: number, y: number, rx: number, ry: number): string {
   return Array.from({ length: 6 }, (_, i) => {
-    const a = (Math.PI / 3) * i;
+    const a = (Math.PI / 3) * i - Math.PI / 2; // pointy-top, like the backdrop
     return `${x + rx * Math.cos(a)},${y + ry * Math.sin(a)}`;
   }).join(' ');
 }
 
 function Hex({ x, y, className, onClick }: { x: number; y: number; className: string; onClick?: () => void }) {
-  return (
-    <g onClick={onClick}>
-      <polygon points={hexPoints(x, y + 8, HEX_RX, HEX_RY)} fill="rgba(0,0,0,.25)" />
-      <polygon points={hexPoints(x, y, HEX_RX, HEX_RY)} className={className} />
-      <polygon points={hexPoints(x, y, HEX_RX - 8, HEX_RY - 6)} fill="none" stroke="rgba(255,255,255,.18)" strokeWidth={2} pointerEvents="none" />
-    </g>
-  );
+  return <polygon points={hexPoints(x, y, HEX_RX, HEX_RY)} className={className} onClick={onClick} />;
 }
 
 const STATUS_SHORT: Record<string, string> = { poison: 'PSN', sleep: 'SLP', scare: 'SCR', excite: 'EXC', confuse: 'CNF', enrage: 'ENR', infection: 'INF', enflame: 'ATK↑', harden: 'DEF↑', quicken: 'SPD↑', counter: 'CTR', charge: 'CHG' };
@@ -294,41 +295,43 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
     const dist = selected && !mine ? tileDistance(selected.zone, v.zone) : null;
     const prev = selected && selSkill !== null && !mine && skillData?.power !== null && skillData?.power !== undefined ? previewDamage(state, me, selected.slot, selSkill, { side, slot: v.slot }) : null;
     const arrows = supportArrows(side, v);
-    const spriteSize = 112;
+    const spriteSize = 136;
+    // Everything below the sprite stays within ~115px of the tile centre so it never reaches the next row's name plate.
+    const below = y + 44;
     return (
       <g key={key} className={shake === key ? 'shake' : ''} style={{ cursor: targetable || (mine && !v.ko) ? 'pointer' : 'default' }}>
         <Hex x={x} y={y} className={`hex ${isAz ? 'az' : 'sz'} ${mine ? 'mine' : 'theirs'} ${targetable ? 'targetable' : ''} ${isSel ? 'selected' : ''} ${v.ko ? 'ko' : ''}`} onClick={() => clickVivo(side, v)} />
         <g pointerEvents="none">
-          <text x={x} y={y + HEX_RY - 6} textAnchor="middle" fontSize={10} fill="rgba(255,255,255,.75)" fontWeight={700}>{ZONE_NAMES[v.zone]}{dist !== null ? ` · ${dist} tiles` : ''}</text>
           {!v.ko ? (
-            <image href={spriteSrc(species.id)} x={x - spriteSize / 2} y={y - spriteSize + 14} width={spriteSize} height={spriteSize} className="vivo-sprite" transform={mine ? `translate(${x * 2},0) scale(-1,1)` : undefined} preserveAspectRatio="xMidYMax meet" />
+            <image href={spriteSrc(species.id)} x={x - spriteSize / 2} y={y - spriteSize + 24} width={spriteSize} height={spriteSize} className="vivo-sprite" transform={mine ? `translate(${x * 2},0) scale(-1,1)` : undefined} preserveAspectRatio="xMidYMax meet" />
           ) : (
-            <text x={x} y={y - 8} textAnchor="middle" fontSize={16} fill="#d8d8d8" fontWeight={900} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 4 }}>KO</text>
+            <text x={x} y={y - 10} textAnchor="middle" fontSize={22} fill="#d8d8d8" fontWeight={900} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 5 }}>KO</text>
           )}
           {/* name plate above the sprite */}
-          <rect x={x - 64} y={y - spriteSize - 4} width={128} height={18} rx={9} fill="rgba(0,0,0,.55)" />
-          <text x={x} y={y - spriteSize + 9} textAnchor="middle" fontSize={12} fontWeight={900} fill="#fff">{v.name}{v.rank < 20 ? ` · R${v.rank}` : ''}</text>
-          {/* LP bar beneath the tile */}
-          <rect x={x - 52} y={y + HEX_RY + 8} width={104} height={12} rx={6} fill="rgba(0,0,0,.6)" />
-          <rect x={x - 50} y={y + HEX_RY + 10} width={100 * hp} height={8} rx={4} className={`hpbar-fill ${hp < 0.25 ? 'low' : hp < 0.5 ? 'mid' : ''}`} />
-          <text x={x} y={y + HEX_RY + 32} textAnchor="middle" fontSize={11} fontWeight={800} fill="#fff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 3 }}>{v.lp} / {v.maxLp}</text>
+          <rect x={x - 62} y={y - spriteSize + 2} width={124} height={20} rx={10} fill="rgba(0,0,0,.6)" />
+          <text x={x} y={y - spriteSize + 16} textAnchor="middle" fontSize={12.5} fontWeight={900} fill="#fff">{v.name}{v.rank < 20 ? ` · R${v.rank}` : ''}</text>
+          {/* LP bar on the lower half of the tile, under the sprite's feet */}
+          <rect x={x - 52} y={below} width={104} height={12} rx={6} fill="rgba(0,0,0,.65)" />
+          <rect x={x - 50} y={below + 2} width={100 * hp} height={8} rx={4} className={`hpbar-fill ${hp < 0.25 ? 'low' : hp < 0.5 ? 'mid' : ''}`} />
+          <text x={x} y={below + 25} textAnchor="middle" fontSize={12} fontWeight={800} fill="#fff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 3 }}>{v.lp} / {v.maxLp}</text>
+          <text x={x} y={below + 39} textAnchor="middle" fontSize={10.5} fill="#ffe9c4" fontWeight={800} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>{ZONE_NAMES[v.zone]}{dist !== null ? ` · ${dist} tiles` : ''}</text>
           {arrows.length > 0 && (
-            <text x={x} y={y + HEX_RY + 45} textAnchor="middle" fontSize={9.5} fontWeight={800} fill="#ffe08a" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>
+            <text x={x} y={below + 52} textAnchor="middle" fontSize={10.5} fontWeight={800} fill="#ffe08a" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>
               {arrows.map((a) => `${a.label}${a.value > 0 ? '↑' : '↓'}${Math.abs(a.value)}%`).join('  ')}
             </text>
           )}
           {v.statuses.length > 0 && (
-            <text x={x} y={y + HEX_RY + (arrows.length ? 57 : 45)} textAnchor="middle" fontSize={9.5} fontWeight={800} fill="#9ad7ff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>
+            <text x={x} y={below + (arrows.length ? 65 : 52)} textAnchor="middle" fontSize={10.5} fontWeight={800} fill="#9ad7ff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>
               {v.statuses.map((st) => `${STATUS_SHORT[st.kind] ?? st.kind}${st.tier >= 2 ? '+' : ''}`).join(' ')}
             </text>
           )}
           {prev && (
-            <text x={x} y={y - spriteSize - 12} textAnchor="middle" fontSize={12} fill="#ffd56b" fontWeight={900} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 3 }}>
+            <text x={x} y={y - spriteSize - 6} textAnchor="middle" fontSize={13} fill="#ffd56b" fontWeight={900} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 3 }}>
               {prev.min}–{prev.max} dmg · range ×{prev.rangeMult}{prev.elementMult !== 1 ? ` · element ×${prev.elementMult}` : ''}
             </text>
           )}
           {floats.filter((f) => f.side === side && f.slot === v.slot).map((f) => (
-            <text key={f.id} x={x} y={y - 30} textAnchor="middle" className={`float-dmg ${f.kind === 'heal' ? 'heal' : f.kind === 'crit' ? 'crit' : f.kind === 'miss' ? 'miss' : ''}`}>{f.text}{f.kind === 'crit' ? '!' : ''}</text>
+            <text key={f.id} x={x} y={y - 50} textAnchor="middle" className={`float-dmg ${f.kind === 'heal' ? 'heal' : f.kind === 'crit' ? 'crit' : f.kind === 'miss' ? 'miss' : ''}`}>{f.text}{f.kind === 'crit' ? '!' : ''}</text>
           ))}
         </g>
       </g>
@@ -343,62 +346,34 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
       <div className="arena" style={{ position: 'relative' }}>
         <div className="turn-banner">{state.phase === 'finished' ? 'Battle over' : myTurn ? `Your turn · ${secondsLeft}s` : `${battle.players[them]}'s turn · ${secondsLeft}s`} · Turn {state.turn}</div>
         <svg viewBox={`0 0 ${W} ${H}`}>
-          <defs>
-            <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#f0cf7a" />
-              <stop offset="0.55" stopColor="#dfb45a" />
-              <stop offset="1" stopColor="#c99a3e" />
-            </linearGradient>
-            <radialGradient id="spot" cx="0.5" cy="0.5" r="0.7">
-              <stop offset="0" stopColor="#fff2c2" stopOpacity="0.55" />
-              <stop offset="1" stopColor="#fff2c2" stopOpacity="0" />
-            </radialGradient>
-            <filter id="grain" x="0" y="0" width="100%" height="100%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" stitchTiles="stitch" />
-              <feColorMatrix type="matrix" values="0 0 0 0 0.35  0 0 0 0 0.25  0 0 0 0 0.1  0 0 0 0.35 0" />
-            </filter>
-            <pattern id="honey" width="104" height="60" patternUnits="userSpaceOnUse" patternTransform="translate(0,0)">
-              <polygon points={hexPoints(52, 30, 34, 20)} fill="none" stroke="#8a5a22" strokeOpacity="0.28" strokeWidth="2" />
-              <polygon points={hexPoints(0, 0, 34, 20)} fill="none" stroke="#8a5a22" strokeOpacity="0.28" strokeWidth="2" />
-              <polygon points={hexPoints(104, 0, 34, 20)} fill="none" stroke="#8a5a22" strokeOpacity="0.28" strokeWidth="2" />
-              <polygon points={hexPoints(0, 60, 34, 20)} fill="none" stroke="#8a5a22" strokeOpacity="0.28" strokeWidth="2" />
-              <polygon points={hexPoints(104, 60, 34, 20)} fill="none" stroke="#8a5a22" strokeOpacity="0.28" strokeWidth="2" />
-            </pattern>
-            <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#5a1f16" />
-              <stop offset="1" stopColor="#8b3a24" />
-            </linearGradient>
-          </defs>
-          {/* arena floor */}
-          <rect width={W} height={H} fill="url(#sand)" />
-          <rect width={W} height={H} filter="url(#grain)" opacity="0.5" />
-          <rect width={W} height={H} fill="url(#honey)" />
-          <ellipse cx={MIDX} cy={MIDY} rx={420} ry={240} fill="url(#spot)" />
-          {/* stadium wall at the top */}
-          <rect x={0} y={0} width={W} height={34} fill="url(#wall)" />
-          <rect x={0} y={34} width={W} height={6} fill="#f3d9a0" opacity="0.8" />
-          {Array.from({ length: 50 }, (_, i) => (
-            <circle key={i} cx={10 + i * 20} cy={12 + ((i * 7) % 3) * 5} r={3} fill={['#ffd1a1', '#ff9b6b', '#c9e7ff', '#ffe36b'][i % 4]} opacity="0.55" />
-          ))}
-          {/* centre divider */}
-          <rect x={MIDX - 16} y={40} width={32} height={H - 40} fill="#6b3f1d" />
-          <rect x={MIDX - 6} y={40} width={12} height={H - 40} fill="#a86f38" />
-          <rect x={MIDX - 16} y={40} width={32} height={H - 40} fill="none" stroke="#3e2410" strokeWidth={3} />
+          <image href={`/img/arena/${ARENAS[state.seed % ARENAS.length]}.png`} x={0} y={0} width={W} height={H} preserveAspectRatio="none" style={{ imageRendering: 'pixelated' }} />
           {/* side labels */}
-          <rect x={12} y={6} width={300} height={22} rx={11} fill="rgba(0,0,0,.45)" />
-          <text x={24} y={22} fontSize={13} fontWeight={900} fill="#ffe9c4">{battle.players[me]} (you) · {formation(me)} formation</text>
-          <rect x={W - 312} y={6} width={300} height={22} rx={11} fill="rgba(0,0,0,.45)" />
-          <text x={W - 24} y={22} fontSize={13} fontWeight={900} fill="#dbe9ff" textAnchor="end">{battle.players[them]} · {formation(them)} formation</text>
+          <rect x={8} y={8} width={300} height={24} rx={12} fill="rgba(0,0,0,.5)" />
+          <text x={20} y={25} fontSize={14} fontWeight={900} fill="#ffe9c4">{battle.players[me]} (you) · {formation(me)} formation</text>
+          <rect x={W - 308} y={8} width={300} height={24} rx={12} fill="rgba(0,0,0,.5)" />
+          <text x={W - 20} y={25} fontSize={14} fontWeight={900} fill="#dbe9ff" textAnchor="end">{battle.players[them]} · {formation(them)} formation</text>
           {drawOrder(them).map((v) => renderVivo(them, v))}
           {drawOrder(me).map((v) => renderVivo(me, v))}
-          {/* FP counters */}
+          {/* The game's FP gauge: red tube = you, blue tube = opponent. Spent FP darkens the tube from the outer end. */}
           <g>
-            <rect x={14} y={H - 58} width={150} height={44} rx={10} fill="#b4311f" stroke="#ffcf8a" strokeWidth={2} />
-            <text x={30} y={H - 30} fontSize={14} fontWeight={900} fill="#ffe9c4">FP</text>
-            <text x={152} y={H - 26} fontSize={24} fontWeight={900} fill="#fff" textAnchor="end">{mySide.fp}</text>
-            <rect x={W - 164} y={H - 58} width={150} height={44} rx={10} fill="#1f4fb4" stroke="#bcd7ff" strokeWidth={2} />
-            <text x={W - 148} y={H - 30} fontSize={14} fontWeight={900} fill="#dbe9ff">FP</text>
-            <text x={W - 26} y={H - 26} fontSize={24} fontWeight={900} fill="#fff" textAnchor="end">{state.sides[them].fp}</text>
+            <image href="/img/bg/battle_fp_bar.png" x={0} y={H - FP_BAR_H} width={W} height={FP_BAR_H} preserveAspectRatio="none" style={{ imageRendering: 'pixelated' }} />
+            {(() => {
+              const tubeY = H - FP_BAR_H + (36 / 87) * FP_BAR_H, tubeH = (13 / 87) * FP_BAR_H;
+              const tubeW = (86 / 256) * W;
+              const mineFrac = Math.min(1, mySide.fp / Math.max(1, mySide.fpMax));
+              const theirFrac = Math.min(1, state.sides[them].fp / Math.max(1, state.sides[them].fpMax));
+              return (
+                <>
+                  <rect x={0} y={tubeY} width={tubeW * (1 - mineFrac)} height={tubeH} fill="rgba(10,10,20,.72)" />
+                  <rect x={W - tubeW * (1 - theirFrac)} y={tubeY} width={tubeW * (1 - theirFrac)} height={tubeH} fill="rgba(10,10,20,.72)" />
+                </>
+              );
+            })()}
+            <text x={W / 2} y={H - FP_BAR_H + 52} fontSize={16} fontWeight={900} fill="#4a5261" textAnchor="middle" letterSpacing={2}>FP</text>
+            <text x={W / 2 - 14} y={H - 66} fontSize={34} fontWeight={900} fill="#ff6a52" textAnchor="end" style={{ paintOrder: 'stroke', stroke: '#2a1210', strokeWidth: 5 }}>{mySide.fp}</text>
+            <text x={W / 2 + 14} y={H - 66} fontSize={34} fontWeight={900} fill="#5fc5ff" textAnchor="start" style={{ paintOrder: 'stroke', stroke: '#0e1a2c', strokeWidth: 5 }}>{state.sides[them].fp}</text>
+            <text x={W / 2 - 14} y={H - 38} fontSize={13} fontWeight={800} fill="#3c4453" textAnchor="end">/ {mySide.fpMax}</text>
+            <text x={W / 2 + 14} y={H - 38} fontSize={13} fontWeight={800} fill="#3c4453" textAnchor="start">/ {state.sides[them].fpMax}</text>
           </g>
         </svg>
         {disconnected && !end && <div className="turn-banner" style={{ top: 'auto', bottom: 10 }}>{disconnected}</div>}

@@ -37,7 +37,7 @@ export function FossilaryScreen({ snap }: { snap: Snapshot }) {
   const list = useMemo(() => VIVOSAURS.filter((v) => v.name.toLowerCase().includes(q.toLowerCase())), [q]);
   return (
     <div className="grid" style={{ gridTemplateColumns: sel ? '1fr 1fr' : '1fr' }}>
-      <div className="panel">
+      <div className="panel themed bg-fossilary">
         <div className="row" style={{ justifyContent: 'space-between' }}>
           <h2>Fossilary</h2>
           <input placeholder="Search…" value={q} onChange={(e) => setQ(e.target.value)} />
@@ -58,7 +58,7 @@ export function FossilaryScreen({ snap }: { snap: Snapshot }) {
         </div>
       </div>
       {sel && (
-        <div className="panel">
+        <div className="panel themed bg-status">
           <div className="row">
             <img className="sprite" src={spriteSrc(sel.id)} alt="" style={{ width: 120, height: 120 }} onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')} />
             <div>

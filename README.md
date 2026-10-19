@@ -58,8 +58,8 @@ Tests: `npm test` runs the engine unit tests (vitest).
 1. **Shop** – buy fossil rocks. Tan rocks can hold any part of any of the 150 regular vivosaurs; coloured rocks
    fix the element; dark rocks are always red-boned heads (+25 points); wondrous and miraculous rocks hold
    silver and gold fossils.
-2. **Cleaning Room** – hammer and drill the rock away within 90 seconds. Rocks use the 18 official rock
-   shapes; the skull, ribcage, arm or leg bones inside are drawn procedurally per rock. Uncovered bone fills
+2. **Cleaning Room** – hammer and drill the rock away within 90 seconds on the game's cleaning tray. Rocks use the
+   18 official rock shapes; the skull, ribcage, arm or leg bones inside are drawn procedurally per rock. Uncovered bone fills
    the meter, damaged bone drains it. 50 points are needed to integrate the fossil.
 3. **Revival and ranks** – a head fossil revives the vivosaur; body, arms and legs add their cleaning score as
    rank points (50 points per rank, max rank 20, skills unlock at ranks 1/3/5/7). Battles also grant rank points.
@@ -125,5 +125,11 @@ differ by a point. Transformations restore the new form's full LP.
 
 `packages/shared/src/data/vivosaurs.json` was generated from the Fossil Fighters wiki (fossilfighters.fandom.com)
 vivosaur pages and the competitive Fossil Fighters wiki's battle-calculation pages. Medal, battle sprite and rock-shape images
-in `packages/client/public/img` come from the same wiki. Fossil Fighters is © Nintendo / Red Entertainment; this is
-an unofficial fan project.
+in `packages/client/public/img` come from the same wiki.
+
+The backgrounds are the game's own 2D screens, rendered from the owner's ROM with `tools/rom/nds.py`:
+`img/arena/` holds the 26 lower-screen battle arenas (the hex flowers the vivosaurs stand on are part of the art, and
+the client places sprites on them using geometry measured from the pixels), `img/bg/` the cleaning tray, the FP
+gauge, the menu pattern and the window plates used behind the panels. A battle picks its arena from the match seed.
+
+Fossil Fighters is © Nintendo / Red Entertainment; this is an unofficial fan project.

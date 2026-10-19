@@ -21,7 +21,7 @@
 }
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
-body { background: radial-gradient(1200px 700px at 20% -10%, #27416a 0%, var(--bg) 60%); color: var(--text); font-size: 15px; }
+body { background: linear-gradient(rgba(8,16,28,.82), rgba(8,16,28,.92)), url('/img/bg/menu_pattern.png') center / 640px 512px repeat; image-rendering: auto; color: var(--text); font-size: 15px; }
 button { font: inherit; cursor: pointer; border: 0; border-radius: 10px; padding: 9px 14px; background: var(--panel-2); color: var(--text); transition: transform .08s, filter .15s; }
 button:hover:not(:disabled) { filter: brightness(1.15); }
 button:active:not(:disabled) { transform: translateY(1px); }
@@ -71,17 +71,15 @@ a { color: var(--accent); }
 /* Battle */
 .battle { display: grid; grid-template-columns: 1fr 330px; gap: 14px; align-items: start; }
 @media (max-width: 960px) { .battle { grid-template-columns: 1fr; } }
-.arena { position: relative; background: #c99a3e; border-radius: var(--radius); border: 3px solid #5a3a12; overflow: hidden; box-shadow: inset 0 0 60px rgba(0,0,0,.25); }
+.arena { position: relative; background: #0b1322; border-radius: var(--radius); border: 3px solid #5a3a12; overflow: hidden; }
 .arena svg { width: 100%; height: auto; display: block; }
-.hex { fill: #e3c27c; stroke: #6b4a18; stroke-width: 3; transition: fill .2s; }
-.hex.az { fill: #d9985a; }
-.hex.sz { fill: #8fb0c9; }
-.hex.mine { stroke: #c0392b; }
-.hex.theirs { stroke: #1f4fb4; }
-.hex.ko { fill: #9a9a9a; opacity: .7; }
-.hex.targetable { fill: #ffd54a; stroke: #fff; stroke-width: 4; cursor: pointer; }
-.hex.targetable:hover { fill: #ffe98a; }
-.hex.selected { stroke: #fff; stroke-width: 5; }
+.hex { fill: rgba(255,255,255,0); stroke: rgba(255,255,255,0); stroke-width: 4; transition: fill .2s, stroke .2s; }
+.hex.mine { stroke: rgba(255,120,90,.35); }
+.hex.theirs { stroke: rgba(120,170,255,.35); }
+.hex.ko { fill: rgba(0,0,0,.35); }
+.hex.targetable { fill: rgba(255,213,74,.45); stroke: #fff; stroke-width: 5; cursor: pointer; }
+.hex.targetable:hover { fill: rgba(255,233,138,.7); }
+.hex.selected { stroke: #fff; stroke-width: 6; fill: rgba(255,255,255,.18); }
 .vivo-sprite { image-rendering: pixelated; }
 .vivo-sprite.ko { opacity: .25; filter: grayscale(1); }
 .hpbar-fill { fill: #46d35f; transition: width .4s; }
@@ -127,3 +125,13 @@ a { color: var(--accent); }
 .timer.low { color: var(--bad); }
 .cleaning canvas.hammer { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><circle cx='16' cy='16' r='13' fill='none' stroke='white' stroke-width='2'/><circle cx='16' cy='16' r='13' fill='rgba(255,180,60,.25)'/></svg>") 16 16, crosshair; }
 .cleaning canvas.drill { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='8' cy='8' r='6' fill='none' stroke='white' stroke-width='2'/></svg>") 8 8, crosshair; }
+
+/* Game backgrounds behind panels */
+.panel.themed { background-size: cover; background-position: center; image-rendering: pixelated; position: relative; }
+.panel.themed > * { position: relative; }
+.panel.bg-multiplayer { background-image: linear-gradient(rgba(16,26,42,.86), rgba(16,26,42,.94)), url('/img/bg/multiplayer.png'); }
+.panel.bg-fossilary { background-image: linear-gradient(rgba(16,26,42,.86), rgba(16,26,42,.94)), url('/img/bg/fossilary.png'); }
+.panel.bg-status { background-image: linear-gradient(rgba(16,26,42,.84), rgba(16,26,42,.94)), url('/img/bg/status.png'); }
+/* plain grey plate with the Tricera silhouette (fighter select screen) for wide panels where a stretched layout would look odd */
+.panel.bg-plate { background-image: linear-gradient(rgba(16,26,42,.8), rgba(16,26,42,.92)), url('/img/bg/fighter_select.png'); }
+.panel.bg-book { background-image: linear-gradient(rgba(16,26,42,.86), rgba(16,26,42,.94)), url('/img/bg/book.png'); }

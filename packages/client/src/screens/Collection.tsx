@@ -97,7 +97,7 @@ export function CollectionScreen({ snap, run, notify }: { snap: Snapshot; run: R
         const species = findVivosaur(sel.displaySpeciesId)!;
         const base = findVivosaur(sel.speciesId)!;
         return (
-          <div className="panel" style={{ alignSelf: 'start', position: 'sticky', top: 70 }}>
+          <div className="panel themed bg-status" style={{ alignSelf: 'start', position: 'sticky', top: 70 }}>
             <div className="row" style={{ justifyContent: 'space-between' }}>
               <h3>{sel.nickname ?? species.name}</h3>
               <button onClick={() => setSel(null)}>✕</button>

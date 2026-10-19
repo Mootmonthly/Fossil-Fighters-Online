@@ -44,7 +44,7 @@ export function ShopScreen({ snap, run, notify, goClean }: { snap: Snapshot; run
           ))}
         </div>
       </div>
-      <div className="panel">
+      <div className="panel themed bg-plate">
         <h3>Your fossil case ({snap.fossils.filter((f) => f.state === 'rock').length} rocks)</h3>
         <div className="grid cards">
           {snap.fossils.filter((f) => f.state === 'rock').map((f) => (
