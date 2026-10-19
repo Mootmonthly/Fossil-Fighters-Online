@@ -7,9 +7,10 @@ import { drawFossil, type BoneStyle } from './fossilArt.js';
 type Run = <T extends Snapshot>(fn: () => Promise<T>) => Promise<T | null>;
 type Tool = 'hammer' | 'drill';
 
-const COLS = 128;
-const ROWS = 96;
-const CELL = 5;
+// 256x192 dig cells on a 1024x768 canvas (shown at half size, so each cell is about 2.5 screen pixels)
+const COLS = 256;
+const ROWS = 192;
+const CELL = 4;
 const ROCK_SHAPES = 18;
 
 interface Cell {
@@ -24,7 +25,9 @@ interface Dig {
   delicate: boolean;
   dark: boolean;
   hardness: number; // layers the hammer removes per hit (soft rock = 2)
-  rockCanvas: HTMLCanvasElement; // official rock icon scaled up: the surface layer
+  rockCanvas: HTMLCanvasElement; // the game's rock texture over the official rock silhouette: the surface layer
+  midCanvas: HTMLCanvasElement; // second layer (same texture, darker)
+  lowCanvas: HTMLCanvasElement; // last layer before the fossil (darker still)
   boneCanvas: HTMLCanvasElement; // the game's fossil picture (or procedural bones when the game has none)
   damagedCanvas: HTMLCanvasElement | null; // the game's damaged-fossil picture, drawn under damaged cells
   tray: HTMLImageElement | null; // the game's cleaning tray backdrop
@@ -62,15 +65,20 @@ async function generateDig(fossil: FossilView): Promise<Dig> {
     return r.value;
   };
   const W = COLS * CELL, H = ROWS * CELL;
-  const [img, tray] = await Promise.all([loadImage(rockIconSrc(fossil.rockSeed)), loadImage('/img/bg/cleaning_tray.png')]);
+  const [img, tray, rockTex] = await Promise.all([loadImage(rockIconSrc(fossil.rockSeed)), loadImage('/img/bg/cleaning_tray.png'), loadImage('/img/bg/cleaning_rock.png')]);
   // The tray art is the game's 256x192 cleaning screen, drawn to cover the canvas; the rock sits on its grid screen.
-  const AREA = { cx: Math.round(W * 0.5), cy: Math.round(H * 0.51), w: Math.round(W * 0.6), h: Math.round(H * 0.56) };
+  const AREA = { cx: Math.round(W * 0.5), cy: Math.round(H * 0.505), w: Math.round(W * 0.78), h: Math.round(H * 0.68) };
   const cells: Cell[] = Array.from({ length: COLS * ROWS }, () => ({ rock: -1, fossil: false, damaged: false }));
   const rockCanvas = document.createElement('canvas');
   rockCanvas.width = W;
   rockCanvas.height = H;
   const rctx = rockCanvas.getContext('2d')!;
-  rctx.imageSmoothingEnabled = false;
+  const midCanvas = document.createElement('canvas');
+  midCanvas.width = W;
+  midCanvas.height = H;
+  const lowCanvas = document.createElement('canvas');
+  lowCanvas.width = W;
+  lowCanvas.height = H;
   let minX = COLS, maxX = 0, minY = ROWS, maxY = 0;
   if (img) {
     // The wiki icon is a small rock drawn on a pale card. Read it at native size, flood-fill the bright
@@ -109,17 +117,38 @@ async function generateDig(fossil: FossilView): Promise<Dig> {
     const bw0 = Math.max(1, bx1 - bx0 + 1), bh0 = Math.max(1, by1 - by0 + 1);
     // Scale the rock to fill most of the tray. The icons are drawn flat, so stretch them vertically
     // towards a 3:2 silhouette to leave room for the fossil.
-    const sx = Math.max(2, Math.floor(AREA.w / bw0));
-    const sy = Math.max(sx, Math.min(sx * 3, Math.floor(AREA.h / bh0), Math.round((sx * bw0) / 1.5 / bh0)));
-    const dw = bw0 * sx, dh = bh0 * sy;
+    const sx = Math.max(2, AREA.w / bw0);
+    const sy = Math.max(sx, Math.min(sx * 3, AREA.h / bh0, (sx * bw0) / 1.5 / bh0));
+    const dw = Math.round(bw0 * sx), dh = Math.round(bh0 * sy);
     const ox = Math.floor(AREA.cx - dw / 2), oy = Math.floor(AREA.cy - dh / 2);
-    rctx.drawImage(img, bx0, by0, bw0, bh0, ox, oy, dw, dh);
+    // Surface: the game's own rock texture (from its cleaning tutorial picture) stretched over the silhouette's
+    // box; the two deeper layers reuse it darker. Cells decide the outline, so the texture only needs to cover the box.
+    const paintLayer = (c: CanvasRenderingContext2D, shade: string | null) => {
+      c.imageSmoothingEnabled = true;
+      c.imageSmoothingQuality = 'high';
+      c.fillStyle = '#c9ae78';
+      c.fillRect(ox, oy, dw, dh);
+      if (rockTex) c.drawImage(rockTex, ox - dw * 0.04, oy - dh * 0.04, dw * 1.08, dh * 1.08);
+      if (shade) {
+        c.fillStyle = shade;
+        c.fillRect(ox, oy, dw, dh);
+      }
+    };
+    paintLayer(rctx, null);
+    paintLayer(midCanvas.getContext('2d')!, 'rgba(70,45,20,.28)');
+    paintLayer(lowCanvas.getContext('2d')!, 'rgba(50,30,15,.5)');
+    // Cell outline: bilinear sample of the icon's rock mask, so diagonal edges are not stair-stepped at icon resolution.
+    const inside = (xx: number, yy: number) => (xx < 0 || yy < 0 || xx >= iw || yy >= ih || reached[yy * iw + xx] ? 0 : 1);
+    const maskAt = (fx: number, fy: number) => {
+      const x0 = Math.floor(fx - 0.5), y0 = Math.floor(fy - 0.5);
+      const tx = fx - 0.5 - x0, ty = fy - 0.5 - y0;
+      return (inside(x0, y0) * (1 - tx) + inside(x0 + 1, y0) * tx) * (1 - ty) + (inside(x0, y0 + 1) * (1 - tx) + inside(x0 + 1, y0 + 1) * tx) * ty;
+    };
     for (let y = 0; y < ROWS; y++) {
       for (let x = 0; x < COLS; x++) {
-        const px = x * CELL + 2 - ox, py = y * CELL + 2 - oy;
+        const px = x * CELL + CELL / 2 - ox, py = y * CELL + CELL / 2 - oy;
         if (px < 0 || py < 0 || px >= dw || py >= dh) continue;
-        const ix = bx0 + Math.floor(px / sx), iy = by0 + Math.floor(py / sy);
-        if (reached[iy * iw + ix]) continue;
+        if (maskAt(bx0 + px / sx, by0 + py / sy) < 0.5) continue;
         cells[y * COLS + x].rock = 3;
         if (x < minX) minX = x;
         if (x > maxX) maxX = x;
@@ -192,14 +221,14 @@ async function generateDig(fossil: FossilView): Promise<Dig> {
       // a cell counts as bone when most of its pixels are drawn
       let hit = 0;
       for (let sy = 0; sy < CELL; sy += 2) for (let sx = 0; sx < CELL; sx += 2) if (bonePixels[((y * CELL + sy) * W + x * CELL + sx) * 4 + 3] > 90) hit++;
-      if (hit >= 5) {
+      if (hit >= 2) {
         c.fossil = true;
         fossilCells++;
       }
     }
   }
   const delicate = fossil.kind === 'wondrous' || fossil.kind === 'miraculous';
-  return { cells, fossilCells: Math.max(1, fossilCells), delicate, dark: fossil.kind === 'dark', hardness: rnd() < 0.3 ? 2 : 1, rockCanvas, boneCanvas, damagedCanvas, tray };
+  return { cells, fossilCells: Math.max(1, fossilCells), delicate, dark: fossil.kind === 'dark', hardness: rnd() < 0.3 ? 2 : 1, rockCanvas, midCanvas, lowCanvas, boneCanvas, damagedCanvas, tray };
 }
 
 function scoreOf(dig: Dig): { exposed: number; damage: number; score: number } {
@@ -371,11 +400,9 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
               }
             }
           } else if (c.rock === 2) {
-            ctx.fillStyle = n < 0.5 ? '#b2935c' : n < 0.85 ? '#a58753' : '#8f7345';
-            ctx.fillRect(px, py, CELL, CELL);
+            ctx.drawImage(dig.midCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
           } else if (c.rock === 1) {
-            ctx.fillStyle = n < 0.5 ? '#d9c08c' : n < 0.85 ? '#cdb47f' : '#bfa470';
-            ctx.fillRect(px, py, CELL, CELL);
+            ctx.drawImage(dig.lowCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
           } else if (c.fossil) {
             if (c.damaged && dig.damagedCanvas) {
               ctx.drawImage(dig.damagedCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
@@ -410,7 +437,7 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
   const strike = useCallback((x: number, y: number, t: Tool) => {
     const dig = digRef.current;
     if (!dig) return;
-    const radius = t === 'hammer' ? 5.5 : 2.4;
+    const radius = t === 'hammer' ? 11 : 4.8;
     const power = t === 'hammer' ? dig.hardness : 1;
     let changed = false;
     for (let cy = Math.floor(y - radius); cy <= Math.ceil(y + radius); cy++) {
@@ -429,7 +456,7 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
           if (t === 'hammer' && d < radius * 0.75) {
             c.damaged = true;
             changed = true;
-          } else if (t === 'drill' && d < 1.2 && Math.random() < (dig.delicate ? 0.3 : 0.1)) {
+          } else if (t === 'drill' && d < 2.4 && Math.random() < (dig.delicate ? 0.3 : 0.1)) {
             c.damaged = true;
             changed = true;
           }
@@ -437,6 +464,33 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
       }
     }
     if (changed) {
+      // Slivers left between hits crumble away: any isolated fragment of rock smaller than CRUMB cells is cleared.
+      const CRUMB = 12;
+      const r2 = Math.ceil(radius + 2);
+      const seen = new Set<number>();
+      for (let cy = Math.floor(y - r2); cy <= Math.ceil(y + r2); cy++) {
+        for (let cx = Math.floor(x - r2); cx <= Math.ceil(x + r2); cx++) {
+          if (cx < 0 || cy < 0 || cx >= COLS || cy >= ROWS) continue;
+          const start = cy * COLS + cx;
+          if (dig.cells[start].rock <= 0 || seen.has(start)) continue;
+          // flood the fragment, giving up as soon as it is clearly part of the rock body
+          const comp = [start];
+          seen.add(start);
+          for (let i = 0; i < comp.length && comp.length < CRUMB; i++) {
+            const ix = comp[i] % COLS, iy = Math.floor(comp[i] / COLS);
+            for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+              const nx = ix + dx, ny = iy + dy;
+              if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) continue;
+              const ni = ny * COLS + nx;
+              if (dig.cells[ni].rock > 0 && !seen.has(ni)) {
+                seen.add(ni);
+                comp.push(ni);
+              }
+            }
+          }
+          if (comp.length < CRUMB) for (const i of comp) dig.cells[i].rock = 0;
+        }
+      }
       dirty.current = true;
       setStats(scoreOf(dig));
     }
