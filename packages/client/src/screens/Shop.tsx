@@ -1,5 +1,6 @@
 import { SHOP, type Element } from '@ffo/shared';
 import { api, type Snapshot } from '../api.js';
+import { rockIconSrc } from './Cleaning.js';
 
 const COLORS: Record<string, string> = { fire: '#c0392b', water: '#2a6fd6', earth: '#c9a227', air: '#3aa655', neutral: '#d8d8d8' };
 
@@ -49,7 +50,7 @@ export function ShopScreen({ snap, run, notify, goClean }: { snap: Snapshot; run
           {snap.fossils.filter((f) => f.state === 'rock').map((f) => (
             <div key={f.id} className="card">
               <div className="row">
-                <RockIcon kind={f.kind} element={f.element} />
+                <img src={rockIconSrc(f.rockSeed)} alt="" width={48} height={48} style={{ imageRendering: 'pixelated', filter: f.kind === 'dark' ? 'brightness(.35) saturate(.3)' : f.kind === 'wondrous' ? 'saturate(.2) brightness(1.2)' : f.kind === 'miraculous' ? 'hue-rotate(-10deg) saturate(1.8)' : undefined }} />
                 <div>
                   <b style={{ textTransform: 'capitalize' }}>{f.kind} rock</b>
                   <div className="small muted">{f.element ? `${f.element} type` : f.kind === 'wondrous' ? `silver ${f.part} fossil` : f.kind === 'miraculous' ? 'gold fossil' : 'unknown type'}</div>

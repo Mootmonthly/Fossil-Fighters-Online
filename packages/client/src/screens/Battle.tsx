@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Socket } from 'socket.io-client';
 import {
-  canRotate, findVivosaur, getVivosaur, previewDamage, rotationCost, skillAvailability, tileDistance, ZONE_DEPTH, ZONE_NAMES,
+  canRotate, findVivosaur, getVivosaur, previewDamage, rotationCost, skillAvailability, supportPercent, tileDistance, ZONE_DEPTH, ZONE_NAMES,
   type BattleAction, type BattleEvent, type BattleState, type BattleVivosaur, type Zone,
 } from '@ffo/shared';
 import type { Snapshot } from '../api.js';
@@ -192,21 +192,34 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
 // Arena
 // ---------------------------------------------------------------------------
 
-const W = 820, H = 640, MID = 320;
+const W = 1000, H = 600, MIDX = 500, MIDY = 300;
+const HEX_RX = 60, HEX_RY = 40;
+
+/** Horizontal field: the player's team stands on the left facing right, the enemy on the right facing left. */
 function zonePos(zone: Zone, mine: boolean): { x: number; y: number } {
   const depth = ZONE_DEPTH[zone];
-  const lateral = zone === 1 || zone === 2 ? 1 : zone === 4 || zone === 5 ? -1 : 0;
-  const x = W / 2 + lateral * 170 * (mine ? 1 : -1);
-  const y = mine ? MID + 64 + depth * 58 : MID - 64 - depth * 58;
+  const lateral = zone === 1 || zone === 2 ? -1 : zone === 4 || zone === 5 ? 1 : 0;
+  const dx = 95 + depth * 118;
+  const x = mine ? MIDX - dx : MIDX + dx;
+  const y = MIDY + lateral * 128;
   return { x, y };
 }
 
-function Hex({ x, y, r, className, onClick }: { x: number; y: number; r: number; className: string; onClick?: () => void }) {
-  const pts = Array.from({ length: 6 }, (_, i) => {
-    const a = (Math.PI / 3) * i + Math.PI / 6;
-    return `${x + r * Math.cos(a)},${y + r * 0.62 * Math.sin(a)}`;
+function hexPoints(x: number, y: number, rx: number, ry: number): string {
+  return Array.from({ length: 6 }, (_, i) => {
+    const a = (Math.PI / 3) * i;
+    return `${x + rx * Math.cos(a)},${y + ry * Math.sin(a)}`;
   }).join(' ');
-  return <polygon points={pts} className={className} onClick={onClick} />;
+}
+
+function Hex({ x, y, className, onClick }: { x: number; y: number; className: string; onClick?: () => void }) {
+  return (
+    <g onClick={onClick}>
+      <polygon points={hexPoints(x, y + 8, HEX_RX, HEX_RY)} fill="rgba(0,0,0,.25)" />
+      <polygon points={hexPoints(x, y, HEX_RX, HEX_RY)} className={className} />
+      <polygon points={hexPoints(x, y, HEX_RX - 8, HEX_RY - 6)} fill="none" stroke="rgba(255,255,255,.18)" strokeWidth={2} pointerEvents="none" />
+    </g>
+  );
 }
 
 const STATUS_SHORT: Record<string, string> = { poison: 'PSN', sleep: 'SLP', scare: 'SCR', excite: 'EXC', confuse: 'CNF', enrage: 'ENR', infection: 'INF', enflame: 'ATK↑', harden: 'DEF↑', quicken: 'SPD↑', counter: 'CTR', charge: 'CHG' };
@@ -224,9 +237,7 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
     return () => window.clearInterval(id);
   }, []);
   useEffect(() => {
-    if (!myTurn) {
-      setSelSkill(null);
-    }
+    if (!myTurn) setSelSkill(null);
   }, [myTurn, state.turn]);
 
   const selected = selSlot !== null ? mySide.vivosaurs[selSlot] : null;
@@ -259,6 +270,17 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
 
   const rot = canRotate(state, me);
   const secondsLeft = Math.max(0, Math.ceil((deadline - now) / 1000));
+  const formation = (side: SideIndex) => (state.sides[side].vivosaurs.some((v) => v.zone === 0) ? 'Cambrian' : 'Jurassic');
+
+  const supportArrows = (side: SideIndex, v: BattleVivosaur) => {
+    if (v.ko) return [];
+    const out: { label: string; value: number }[] = [];
+    for (const [k, label] of [['attack', 'ATK'], ['defense', 'DEF'], ['accuracy', 'ACC'], ['speed', 'SPD']] as const) {
+      const pct = supportPercent(state, side, v, k);
+      if (pct !== 0) out.push({ label, value: pct });
+    }
+    return out;
+  };
 
   const renderVivo = (side: SideIndex, v: BattleVivosaur) => {
     const mine = side === me;
@@ -271,53 +293,113 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
     const key = `${side}-${v.slot}`;
     const dist = selected && !mine ? tileDistance(selected.zone, v.zone) : null;
     const prev = selected && selSkill !== null && !mine && skillData?.power !== null && skillData?.power !== undefined ? previewDamage(state, me, selected.slot, selSkill, { side, slot: v.slot }) : null;
+    const arrows = supportArrows(side, v);
+    const spriteSize = 112;
     return (
-      <g key={key} className={shake === key ? 'shake' : ''} style={{ cursor: targetable || (mine && !v.ko) ? 'pointer' : 'default' }} onClick={() => clickVivo(side, v)}>
-        <Hex x={x} y={y} r={58} className={`hex ${isAz ? 'az' : 'sz'} ${mine ? 'mine' : ''} ${targetable ? 'targetable' : ''} ${isSel ? 'selected' : ''}`} />
+      <g key={key} className={shake === key ? 'shake' : ''} style={{ cursor: targetable || (mine && !v.ko) ? 'pointer' : 'default' }}>
+        <Hex x={x} y={y} className={`hex ${isAz ? 'az' : 'sz'} ${mine ? 'mine' : 'theirs'} ${targetable ? 'targetable' : ''} ${isSel ? 'selected' : ''} ${v.ko ? 'ko' : ''}`} onClick={() => clickVivo(side, v)} />
         <g pointerEvents="none">
-        <text x={x} y={y + 34} textAnchor="middle" fontSize={10} fill="#cfd8e6">{ZONE_NAMES[v.zone]}{dist !== null ? ` · ${dist} tiles` : ''}</text>
-        {!v.ko && (
-          <image href={spriteSrc(species.id)} x={x - 40} y={y - 66} width={80} height={80} className={`vivo-sprite ${mine ? '' : 'flip'}`} style={mine ? undefined : { transformOrigin: `${x}px ${y}px` }} preserveAspectRatio="xMidYMax meet" />
-        )}
-        {v.ko && <text x={x} y={y - 10} textAnchor="middle" fontSize={14} fill="#999" fontWeight={900}>KO</text>}
-        <text x={x} y={y - 70} textAnchor="middle" fontSize={13} fontWeight={900} fill="#fff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 3 }}>{v.name}{v.rank < 20 ? ` R${v.rank}` : ''}</text>
-        <rect x={x - 40} y={y + 40} width={80} height={7} rx={3} className="hpbar" />
-        <rect x={x - 40} y={y + 40} width={80 * hp} height={7} rx={3} className={`hpbar-fill ${hp < 0.25 ? 'low' : hp < 0.5 ? 'mid' : ''}`} />
-        <text x={x} y={y + 58} textAnchor="middle" fontSize={11} fill="#fff">{v.lp}/{v.maxLp}</text>
-        {v.statuses.length > 0 && (
-          <text x={x} y={y + 70} textAnchor="middle" fontSize={9} fill="#ffe08a">{v.statuses.map((s) => `${STATUS_SHORT[s.kind] ?? s.kind}${s.tier >= 2 ? '+' : ''}`).join(' ')}</text>
-        )}
-         {prev && <text x={x} y={y - 86} textAnchor="middle" fontSize={12} fill="#ffd56b" fontWeight={800} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 3 }}>{prev.min}–{prev.max} dmg ×{prev.rangeMult}{prev.elementMult !== 1 ? ` ×${prev.elementMult}` : ''}</text>}
-        {floats.filter((f) => f.side === side && f.slot === v.slot).map((f) => (
-          <text key={f.id} x={x} y={y - 20} textAnchor="middle" className={`float-dmg ${f.kind === 'heal' ? 'heal' : f.kind === 'crit' ? 'crit' : f.kind === 'miss' ? 'miss' : ''}`}>{f.text}{f.kind === 'crit' ? '!' : ''}</text>
-        ))}
+          <text x={x} y={y + HEX_RY - 6} textAnchor="middle" fontSize={10} fill="rgba(255,255,255,.75)" fontWeight={700}>{ZONE_NAMES[v.zone]}{dist !== null ? ` · ${dist} tiles` : ''}</text>
+          {!v.ko ? (
+            <image href={spriteSrc(species.id)} x={x - spriteSize / 2} y={y - spriteSize + 14} width={spriteSize} height={spriteSize} className="vivo-sprite" transform={mine ? `translate(${x * 2},0) scale(-1,1)` : undefined} preserveAspectRatio="xMidYMax meet" />
+          ) : (
+            <text x={x} y={y - 8} textAnchor="middle" fontSize={16} fill="#d8d8d8" fontWeight={900} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 4 }}>KO</text>
+          )}
+          {/* name plate above the sprite */}
+          <rect x={x - 64} y={y - spriteSize - 4} width={128} height={18} rx={9} fill="rgba(0,0,0,.55)" />
+          <text x={x} y={y - spriteSize + 9} textAnchor="middle" fontSize={12} fontWeight={900} fill="#fff">{v.name}{v.rank < 20 ? ` · R${v.rank}` : ''}</text>
+          {/* LP bar beneath the tile */}
+          <rect x={x - 52} y={y + HEX_RY + 8} width={104} height={12} rx={6} fill="rgba(0,0,0,.6)" />
+          <rect x={x - 50} y={y + HEX_RY + 10} width={100 * hp} height={8} rx={4} className={`hpbar-fill ${hp < 0.25 ? 'low' : hp < 0.5 ? 'mid' : ''}`} />
+          <text x={x} y={y + HEX_RY + 32} textAnchor="middle" fontSize={11} fontWeight={800} fill="#fff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 3 }}>{v.lp} / {v.maxLp}</text>
+          {arrows.length > 0 && (
+            <text x={x} y={y + HEX_RY + 45} textAnchor="middle" fontSize={9.5} fontWeight={800} fill="#ffe08a" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>
+              {arrows.map((a) => `${a.label}${a.value > 0 ? '↑' : '↓'}${Math.abs(a.value)}%`).join('  ')}
+            </text>
+          )}
+          {v.statuses.length > 0 && (
+            <text x={x} y={y + HEX_RY + (arrows.length ? 57 : 45)} textAnchor="middle" fontSize={9.5} fontWeight={800} fill="#9ad7ff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>
+              {v.statuses.map((st) => `${STATUS_SHORT[st.kind] ?? st.kind}${st.tier >= 2 ? '+' : ''}`).join(' ')}
+            </text>
+          )}
+          {prev && (
+            <text x={x} y={y - spriteSize - 12} textAnchor="middle" fontSize={12} fill="#ffd56b" fontWeight={900} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 3 }}>
+              {prev.min}–{prev.max} dmg · range ×{prev.rangeMult}{prev.elementMult !== 1 ? ` · element ×${prev.elementMult}` : ''}
+            </text>
+          )}
+          {floats.filter((f) => f.side === side && f.slot === v.slot).map((f) => (
+            <text key={f.id} x={x} y={y - 30} textAnchor="middle" className={`float-dmg ${f.kind === 'heal' ? 'heal' : f.kind === 'crit' ? 'crit' : f.kind === 'miss' ? 'miss' : ''}`}>{f.text}{f.kind === 'crit' ? '!' : ''}</text>
+          ))}
         </g>
       </g>
     );
   };
+
+  // Draw order: back-most first so front sprites overlap correctly.
+  const drawOrder = (side: SideIndex) => [...state.sides[side].vivosaurs].sort((a, b) => zonePos(a.zone, side === me).y - zonePos(b.zone, side === me).y);
 
   return (
     <div className="battle">
       <div className="arena" style={{ position: 'relative' }}>
         <div className="turn-banner">{state.phase === 'finished' ? 'Battle over' : myTurn ? `Your turn · ${secondsLeft}s` : `${battle.players[them]}'s turn · ${secondsLeft}s`} · Turn {state.turn}</div>
         <svg viewBox={`0 0 ${W} ${H}`}>
-          <line x1={0} y1={MID} x2={W} y2={MID} stroke="rgba(255,255,255,.25)" strokeDasharray="6 6" />
-          <text x={12} y={MID - 8} fontSize={12} fill="#cfd8e6">{battle.players[them]} · FP {state.sides[them].fp}/{state.sides[them].fpMax}</text>
-          <text x={12} y={MID + 18} fontSize={12} fill="#cfd8e6">{battle.players[me]} (you) · FP {mySide.fp}/{mySide.fpMax}</text>
-          {/* Empty tiles */}
-          {([0, 1, 2, 3, 4, 5] as Zone[]).map((z) => {
-            const out: React.ReactNode[] = [];
-            for (const side of [me, them] as SideIndex[]) {
-              const mine = side === me;
-              if (state.sides[side].vivosaurs.some((v) => v.zone === z)) continue;
-              const { x, y } = zonePos(z, mine);
-              out.push(<Hex key={`${side}-${z}`} x={x} y={y} r={58} className={`hex ${ZONE_DEPTH[z] <= 1 ? 'az' : 'sz'} ${mine ? 'mine' : ''}`} />);
-              out.push(<text key={`${side}-${z}-t`} x={x} y={y + 4} textAnchor="middle" fontSize={10} fill="#8fa0b8">{ZONE_NAMES[z]}</text>);
-            }
-            return out;
-          })}
-          {state.sides[them].vivosaurs.map((v) => renderVivo(them, v))}
-          {mySide.vivosaurs.map((v) => renderVivo(me, v))}
+          <defs>
+            <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#f0cf7a" />
+              <stop offset="0.55" stopColor="#dfb45a" />
+              <stop offset="1" stopColor="#c99a3e" />
+            </linearGradient>
+            <radialGradient id="spot" cx="0.5" cy="0.5" r="0.7">
+              <stop offset="0" stopColor="#fff2c2" stopOpacity="0.55" />
+              <stop offset="1" stopColor="#fff2c2" stopOpacity="0" />
+            </radialGradient>
+            <filter id="grain" x="0" y="0" width="100%" height="100%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" stitchTiles="stitch" />
+              <feColorMatrix type="matrix" values="0 0 0 0 0.35  0 0 0 0 0.25  0 0 0 0 0.1  0 0 0 0.35 0" />
+            </filter>
+            <pattern id="honey" width="104" height="60" patternUnits="userSpaceOnUse" patternTransform="translate(0,0)">
+              <polygon points={hexPoints(52, 30, 34, 20)} fill="none" stroke="#8a5a22" strokeOpacity="0.28" strokeWidth="2" />
+              <polygon points={hexPoints(0, 0, 34, 20)} fill="none" stroke="#8a5a22" strokeOpacity="0.28" strokeWidth="2" />
+              <polygon points={hexPoints(104, 0, 34, 20)} fill="none" stroke="#8a5a22" strokeOpacity="0.28" strokeWidth="2" />
+              <polygon points={hexPoints(0, 60, 34, 20)} fill="none" stroke="#8a5a22" strokeOpacity="0.28" strokeWidth="2" />
+              <polygon points={hexPoints(104, 60, 34, 20)} fill="none" stroke="#8a5a22" strokeOpacity="0.28" strokeWidth="2" />
+            </pattern>
+            <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#5a1f16" />
+              <stop offset="1" stopColor="#8b3a24" />
+            </linearGradient>
+          </defs>
+          {/* arena floor */}
+          <rect width={W} height={H} fill="url(#sand)" />
+          <rect width={W} height={H} filter="url(#grain)" opacity="0.5" />
+          <rect width={W} height={H} fill="url(#honey)" />
+          <ellipse cx={MIDX} cy={MIDY} rx={420} ry={240} fill="url(#spot)" />
+          {/* stadium wall at the top */}
+          <rect x={0} y={0} width={W} height={34} fill="url(#wall)" />
+          <rect x={0} y={34} width={W} height={6} fill="#f3d9a0" opacity="0.8" />
+          {Array.from({ length: 50 }, (_, i) => (
+            <circle key={i} cx={10 + i * 20} cy={12 + ((i * 7) % 3) * 5} r={3} fill={['#ffd1a1', '#ff9b6b', '#c9e7ff', '#ffe36b'][i % 4]} opacity="0.55" />
+          ))}
+          {/* centre divider */}
+          <rect x={MIDX - 16} y={40} width={32} height={H - 40} fill="#6b3f1d" />
+          <rect x={MIDX - 6} y={40} width={12} height={H - 40} fill="#a86f38" />
+          <rect x={MIDX - 16} y={40} width={32} height={H - 40} fill="none" stroke="#3e2410" strokeWidth={3} />
+          {/* side labels */}
+          <rect x={12} y={6} width={300} height={22} rx={11} fill="rgba(0,0,0,.45)" />
+          <text x={24} y={22} fontSize={13} fontWeight={900} fill="#ffe9c4">{battle.players[me]} (you) · {formation(me)} formation</text>
+          <rect x={W - 312} y={6} width={300} height={22} rx={11} fill="rgba(0,0,0,.45)" />
+          <text x={W - 24} y={22} fontSize={13} fontWeight={900} fill="#dbe9ff" textAnchor="end">{battle.players[them]} · {formation(them)} formation</text>
+          {drawOrder(them).map((v) => renderVivo(them, v))}
+          {drawOrder(me).map((v) => renderVivo(me, v))}
+          {/* FP counters */}
+          <g>
+            <rect x={14} y={H - 58} width={150} height={44} rx={10} fill="#b4311f" stroke="#ffcf8a" strokeWidth={2} />
+            <text x={30} y={H - 30} fontSize={14} fontWeight={900} fill="#ffe9c4">FP</text>
+            <text x={152} y={H - 26} fontSize={24} fontWeight={900} fill="#fff" textAnchor="end">{mySide.fp}</text>
+            <rect x={W - 164} y={H - 58} width={150} height={44} rx={10} fill="#1f4fb4" stroke="#bcd7ff" strokeWidth={2} />
+            <text x={W - 148} y={H - 30} fontSize={14} fontWeight={900} fill="#dbe9ff">FP</text>
+            <text x={W - 26} y={H - 26} fontSize={24} fontWeight={900} fill="#fff" textAnchor="end">{state.sides[them].fp}</text>
+          </g>
         </svg>
         {disconnected && !end && <div className="turn-banner" style={{ top: 'auto', bottom: 10 }}>{disconnected}</div>}
         {end && (
@@ -344,8 +426,8 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
           {mySide.teamCompatible ? <div className="small" style={{ color: 'var(--good)' }}>Team Skills available</div> : <div className="small muted">Team not compatible (no Team Skills)</div>}
         </div>
         <div className="row">
-          <button disabled={!myTurn || !rot.ok || mySide.fp < rotationCost(mySide, 1)} title={rot.reason} onClick={() => act({ type: 'rotate', steps: 1, direction: -1 })}>◀ Rotate ({rotationCost(mySide, 1)} FP)</button>
-          <button disabled={!myTurn || !rot.ok || mySide.fp < rotationCost(mySide, 1)} title={rot.reason} onClick={() => act({ type: 'rotate', steps: 1, direction: 1 })}>Rotate ▶</button>
+          <button disabled={!myTurn || !rot.ok || mySide.fp < rotationCost(mySide, 1)} title={rot.reason} onClick={() => act({ type: 'rotate', steps: 1, direction: -1 })}>↺ Rotate ({rotationCost(mySide, 1)} FP)</button>
+          <button disabled={!myTurn || !rot.ok || mySide.fp < rotationCost(mySide, 1)} title={rot.reason} onClick={() => act({ type: 'rotate', steps: 1, direction: 1 })}>Rotate ↻</button>
         </div>
         <div className="row">
           <button className="primary" disabled={!myTurn} onClick={() => act({ type: 'endTurn' })}>End turn</button>
@@ -355,7 +437,7 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
           <div className="row" style={{ marginBottom: 4 }}>
             {mySide.vivosaurs.map((v) => (
               <button key={v.slot} className={selSlot === v.slot ? 'primary' : ''} disabled={v.ko} onClick={() => { setSelSlot(v.slot); setSelSkill(null); }} style={{ padding: '4px 8px' }}>
-                <Medal speciesId={v.speciesId} /> 
+                <Medal speciesId={v.speciesId} />
               </button>
             ))}
           </div>

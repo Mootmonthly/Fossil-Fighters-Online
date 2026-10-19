@@ -2,17 +2,18 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { CLEANING_TIME_SECONDS, findVivosaur, MIN_CLEAN_SCORE, nextRandom } from '@ffo/shared';
 import { api, type CleanResult, type FossilView, type Snapshot } from '../api.js';
 import { Medal } from '../components/Vivo.js';
-import { RockIcon } from './Shop.js';
+import { drawFossil, type BoneStyle } from './fossilArt.js';
 
 type Run = <T extends Snapshot>(fn: () => Promise<T>) => Promise<T | null>;
 type Tool = 'hammer' | 'drill';
 
-const COLS = 64;
-const ROWS = 48;
-const CELL = 10;
+const COLS = 128;
+const ROWS = 96;
+const CELL = 5;
+const ROCK_SHAPES = 18;
 
 interface Cell {
-  rock: number; // 0..3 layers remaining
+  rock: number; // 0..3 layers remaining (-1 = outside the rock)
   fossil: boolean;
   damaged: boolean;
 }
@@ -22,62 +23,151 @@ interface Dig {
   fossilCells: number;
   delicate: boolean;
   dark: boolean;
-  hardness: number; // hammer removes this many layers per hit (soft rock = 2)
+  hardness: number; // layers the hammer removes per hit (soft rock = 2)
+  rockCanvas: HTMLCanvasElement; // official rock icon scaled up: the surface layer
+  boneCanvas: HTMLCanvasElement; // procedural fossil artwork
 }
 
-/** Deterministic rock layout from the server-provided seed. The species stays hidden; only the shape differs. */
-function generateDig(fossil: FossilView): Dig {
+export function rockShape(seed: number): number {
+  return (Math.abs(seed) % ROCK_SHAPES) + 1;
+}
+
+export function rockIconSrc(seed: number): string {
+  return `/img/rocks/${String(rockShape(seed)).padStart(2, '0')}.png`;
+}
+
+function loadImage(src: string): Promise<HTMLImageElement | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+function hash(x: number, y: number): number {
+  let h = (x * 73856093) ^ (y * 19349663);
+  h = (h ^ (h >>> 13)) * 1274126177;
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+}
+
+/** Builds the dig from the server-provided seed: official rock silhouette, procedural bones inside it. */
+async function generateDig(fossil: FossilView): Promise<Dig> {
   let st = fossil.rockSeed || 1;
   const rnd = () => {
     const r = nextRandom(st);
     st = r.state;
     return r.value;
   };
-  const cells: Cell[] = Array.from({ length: COLS * ROWS }, () => ({ rock: 3, fossil: false, damaged: false }));
-  // Rock outline: an irregular blob; outside the blob there is no rock at all.
-  const cx = COLS / 2, cy = ROWS / 2;
-  const wobble = Array.from({ length: 12 }, () => 0.75 + rnd() * 0.3);
-  for (let y = 0; y < ROWS; y++) {
-    for (let x = 0; x < COLS; x++) {
-      const dx = (x - cx) / (COLS * 0.46), dy = (y - cy) / (ROWS * 0.46);
-      const ang = Math.atan2(dy, dx);
-      const idx = Math.floor(((ang + Math.PI) / (2 * Math.PI)) * 12) % 12;
-      const r = Math.hypot(dx, dy);
-      if (r > wobble[idx]) cells[y * COLS + x].rock = 0;
+  const W = COLS * CELL, H = ROWS * CELL;
+  const img = await loadImage(rockIconSrc(fossil.rockSeed));
+  const cells: Cell[] = Array.from({ length: COLS * ROWS }, () => ({ rock: -1, fossil: false, damaged: false }));
+  const rockCanvas = document.createElement('canvas');
+  rockCanvas.width = W;
+  rockCanvas.height = H;
+  const rctx = rockCanvas.getContext('2d')!;
+  rctx.imageSmoothingEnabled = false;
+  let minX = COLS, maxX = 0, minY = ROWS, maxY = 0;
+  if (img) {
+    // The wiki icon is a small rock drawn on a pale card. Read it at native size, flood-fill the bright
+    // card/backdrop pixels from the border, and keep the unreached (darker or enclosed) pixels as rock.
+    const iw = img.width, ih = img.height;
+    const small = document.createElement('canvas');
+    small.width = iw;
+    small.height = ih;
+    const sctx = small.getContext('2d')!;
+    sctx.drawImage(img, 0, 0);
+    const d = sctx.getImageData(0, 0, iw, ih).data;
+    const bright = (i: number) => d[i * 4 + 3] < 40 || 0.3 * d[i * 4] + 0.59 * d[i * 4 + 1] + 0.11 * d[i * 4 + 2] > 212;
+    const reached = new Uint8Array(iw * ih);
+    const stack: number[] = [];
+    for (let x = 0; x < iw; x++) stack.push(x, (ih - 1) * iw + x);
+    for (let y = 0; y < ih; y++) stack.push(y * iw, y * iw + iw - 1);
+    while (stack.length) {
+      const i = stack.pop()!;
+      if (reached[i] || !bright(i)) continue;
+      reached[i] = 1;
+      const x = i % iw, y = Math.floor(i / iw);
+      if (x > 0) stack.push(i - 1);
+      if (x < iw - 1) stack.push(i + 1);
+      if (y > 0) stack.push(i - iw);
+      if (y < ih - 1) stack.push(i + iw);
+    }
+    let bx0 = iw, bx1 = 0, by0 = ih, by1 = 0;
+    for (let i = 0; i < iw * ih; i++) {
+      if (reached[i]) continue;
+      const x = i % iw, y = Math.floor(i / iw);
+      if (x < bx0) bx0 = x;
+      if (x > bx1) bx1 = x;
+      if (y < by0) by0 = y;
+      if (y > by1) by1 = y;
+    }
+    const bw0 = Math.max(1, bx1 - bx0 + 1), bh0 = Math.max(1, by1 - by0 + 1);
+    // Scale the rock to fill most of the tray. The icons are drawn flat, so stretch them vertically
+    // towards a 3:2 silhouette to leave room for the fossil.
+    const sx = Math.max(2, Math.floor((W * 0.84) / bw0));
+    const sy = Math.max(sx, Math.min(sx * 3, Math.floor((H * 0.84) / bh0), Math.round((sx * bw0) / 1.5 / bh0)));
+    const dw = bw0 * sx, dh = bh0 * sy;
+    const ox = Math.floor((W - dw) / 2), oy = Math.floor((H - dh) / 2);
+    rctx.drawImage(img, bx0, by0, bw0, bh0, ox, oy, dw, dh);
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        const px = x * CELL + 2 - ox, py = y * CELL + 2 - oy;
+        if (px < 0 || py < 0 || px >= dw || py >= dh) continue;
+        const ix = bx0 + Math.floor(px / sx), iy = by0 + Math.floor(py / sy);
+        if (reached[iy * iw + ix]) continue;
+        cells[y * COLS + x].rock = 3;
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  } else {
+    rctx.fillStyle = '#c8b070';
+    rctx.beginPath();
+    rctx.ellipse(W / 2, H / 2, W * 0.4, H * 0.42, 0, 0, Math.PI * 2);
+    rctx.fill();
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        const dx = (x + 0.5 - COLS / 2) / (COLS * 0.4), dy = (y + 0.5 - ROWS / 2) / (ROWS * 0.42);
+        if (dx * dx + dy * dy <= 1) {
+          cells[y * COLS + x].rock = 3;
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
     }
   }
-  // Fossil shape: several overlapping ellipses, biased by part type.
-  const part = fossil.part ?? 'head';
-  const blobs = part === 'head' ? 3 : part === 'body' ? 5 : part === 'arms' ? 4 : 4;
-  const shapes: { x: number; y: number; rx: number; ry: number; rot: number }[] = [];
-  for (let i = 0; i < blobs; i++) {
-    shapes.push({
-      x: cx + (rnd() - 0.5) * COLS * 0.35,
-      y: cy + (rnd() - 0.5) * ROWS * 0.35,
-      rx: part === 'body' ? 5 + rnd() * 9 : 4 + rnd() * 7,
-      ry: part === 'arms' || part === 'legs' ? 2.5 + rnd() * 4 : 3 + rnd() * 6,
-      rot: rnd() * Math.PI,
-    });
-  }
+  // Fossil inside the rock's bounding box, leaving a margin of stone around it.
+  const part = (fossil.part ?? 'head') as 'head' | 'body' | 'arms' | 'legs';
+  const style: BoneStyle = fossil.kind === 'wondrous' ? 'silver' : fossil.kind === 'miraculous' ? 'gold' : fossil.redBoned ? 'red' : 'normal';
+  const boneCanvas = document.createElement('canvas');
+  boneCanvas.width = W;
+  boneCanvas.height = H;
+  const bctx = boneCanvas.getContext('2d')!;
+  const bw = (maxX - minX + 1) * CELL, bh = (maxY - minY + 1) * CELL;
+  const box = { x: minX * CELL + bw * 0.14, y: minY * CELL + bh * 0.16, w: bw * 0.72, h: bh * 0.68 };
+  drawFossil(bctx, part, style, fossil.rockSeed, box);
+  const bonePixels = bctx.getImageData(0, 0, W, H).data;
   let fossilCells = 0;
   for (let y = 0; y < ROWS; y++) {
     for (let x = 0; x < COLS; x++) {
       const c = cells[y * COLS + x];
-      if (c.rock === 0) continue;
-      for (const s of shapes) {
-        const dx = x - s.x, dy = y - s.y;
-        const u = (dx * Math.cos(s.rot) + dy * Math.sin(s.rot)) / s.rx;
-        const v = (-dx * Math.sin(s.rot) + dy * Math.cos(s.rot)) / s.ry;
-        if (u * u + v * v <= 1) {
-          c.fossil = true;
-          break;
-        }
+      if (c.rock < 0) continue;
+      // a cell counts as bone when most of its pixels are drawn
+      let hit = 0;
+      for (let sy = 0; sy < CELL; sy += 2) for (let sx = 0; sx < CELL; sx += 2) if (bonePixels[((y * CELL + sy) * W + x * CELL + sx) * 4 + 3] > 90) hit++;
+      if (hit >= 5) {
+        c.fossil = true;
+        fossilCells++;
       }
-      if (c.fossil) fossilCells++;
     }
   }
   const delicate = fossil.kind === 'wondrous' || fossil.kind === 'miraculous';
-  return { cells, fossilCells, delicate, dark: fossil.kind === 'dark', hardness: rnd() < 0.3 ? 2 : 1 };
+  return { cells, fossilCells: Math.max(1, fossilCells), delicate, dark: fossil.kind === 'dark', hardness: rnd() < 0.3 ? 2 : 1, rockCanvas, boneCanvas };
 }
 
 function scoreOf(dig: Dig): { exposed: number; damage: number; score: number } {
@@ -141,7 +231,7 @@ export function CleaningScreen({ snap, run, notify, initialFossil, onDone }: { s
             {rocks.map((f) => (
               <div key={f.id} className="card">
                 <div className="row">
-                  <RockIcon kind={f.kind} element={f.element} />
+                  <img src={rockIconSrc(f.rockSeed)} alt="" width={48} height={48} style={{ imageRendering: 'pixelated', filter: f.kind === 'dark' ? 'brightness(.35) saturate(.3)' : f.kind === 'wondrous' ? 'saturate(.2) brightness(1.2)' : f.kind === 'miraculous' ? 'hue-rotate(-10deg) saturate(1.8)' : undefined }} />
                   <div>
                     <b style={{ textTransform: 'capitalize' }}>{f.kind} rock</b>
                     <div className="small muted">{f.element ? `${f.element} type` : f.kind === 'wondrous' ? `silver ${f.part}` : f.kind === 'miraculous' ? 'gold fossil' : 'unknown'}</div>
@@ -162,89 +252,129 @@ export function CleaningScreen({ snap, run, notify, initialFossil, onDone }: { s
 
 function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFinish: (score: number, durationMs: number) => void; onCancel: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const digRef = useRef<Dig>(generateDig(fossil));
+  const digRef = useRef<Dig | null>(null);
+  const dirty = useRef(true);
+  const [ready, setReady] = useState(false);
   const [tool, setTool] = useState<Tool>('hammer');
-  const [xray, setXray] = useState(0); // remaining uses
+  const [xray, setXray] = useState(2);
   const [xrayUntil, setXrayUntil] = useState(0);
   const [timeLeft, setTimeLeft] = useState(CLEANING_TIME_SECONDS);
-  const [stats, setStats] = useState(() => scoreOf(digRef.current));
+  const [stats, setStats] = useState({ exposed: 0, damage: 0, score: 0 });
   const [done, setDone] = useState(false);
-  const startRef = useRef(Date.now());
+  const startRef = useRef(0);
   const drilling = useRef(false);
   const lastDrill = useRef(0);
   const finishedRef = useRef(false);
 
+  // Build the dig (loads the rock icon) and start the clock when it is ready.
   useEffect(() => {
-    setXray(2);
-  }, []);
+    let cancelled = false;
+    generateDig(fossil).then((dig) => {
+      if (cancelled) return;
+      digRef.current = dig;
+      dirty.current = true;
+      startRef.current = Date.now();
+      setReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [fossil]);
 
   const finish = useCallback(() => {
-    if (finishedRef.current) return;
+    if (finishedRef.current || !digRef.current) return;
     finishedRef.current = true;
     setDone(true);
     const s = scoreOf(digRef.current);
     onFinish(s.score, Date.now() - startRef.current);
   }, [onFinish]);
 
-  // Timer
   useEffect(() => {
+    if (!ready) return;
     const id = window.setInterval(() => {
       const left = CLEANING_TIME_SECONDS - Math.floor((Date.now() - startRef.current) / 1000);
       setTimeLeft(Math.max(0, left));
       if (left <= 0) finish();
     }, 250);
     return () => window.clearInterval(id);
-  }, [finish]);
+  }, [ready, finish]);
 
-  // Render loop
+  // Render loop: redraws only when something changed (or the X-ray is active).
   useEffect(() => {
     let raf = 0;
+    let lastXray = false;
     const draw = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d')!;
-      const dig = digRef.current;
+      raf = requestAnimationFrame(draw);
+      const canvas = canvasRef.current, dig = digRef.current;
+      if (!canvas || !dig) return;
       const showX = Date.now() < xrayUntil;
-      ctx.fillStyle = '#2a2420';
+      if (!dirty.current && showX === lastXray) return;
+      dirty.current = false;
+      lastXray = showX;
+      const ctx = canvas.getContext('2d')!;
+      ctx.imageSmoothingEnabled = false;
+      // cleaning tray
+      const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      g.addColorStop(0, '#3a3f4b');
+      g.addColorStop(1, '#23262e');
+      ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(255,255,255,.04)';
+      for (let i = 0; i < canvas.height; i += 24) ctx.fillRect(0, i, canvas.width, 1);
       for (let y = 0; y < ROWS; y++) {
         for (let x = 0; x < COLS; x++) {
           const c = dig.cells[y * COLS + x];
-          let color: string | null = null;
-          if (c.rock > 0) {
-            color = dig.dark && c.rock === 3 ? '#1d1a24' : c.rock === 3 ? '#5a4634' : c.rock === 2 ? '#7a5e45' : '#a98a63';
-            if (showX && c.fossil) color = c.rock === 3 ? '#6b7a86' : c.rock === 2 ? '#8ea0ad' : '#b7c6d1';
+          if (c.rock < 0) continue;
+          const px = x * CELL, py = y * CELL;
+          const n = hash(x, y);
+          if (c.rock === 3) {
+            if (dig.dark) {
+              ctx.fillStyle = n < 0.5 ? '#2a2333' : '#231c2b';
+              ctx.fillRect(px, py, CELL, CELL);
+            } else {
+              ctx.drawImage(dig.rockCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
+              if (n < 0.12) {
+                ctx.fillStyle = 'rgba(0,0,0,.18)';
+                ctx.fillRect(px, py, CELL, CELL);
+              }
+            }
+          } else if (c.rock === 2) {
+            ctx.fillStyle = n < 0.5 ? '#b2935c' : n < 0.85 ? '#a58753' : '#8f7345';
+            ctx.fillRect(px, py, CELL, CELL);
+          } else if (c.rock === 1) {
+            ctx.fillStyle = n < 0.5 ? '#d9c08c' : n < 0.85 ? '#cdb47f' : '#bfa470';
+            ctx.fillRect(px, py, CELL, CELL);
           } else if (c.fossil) {
-            color = c.damaged ? '#7b3fa0' : fossil.kind === 'wondrous' ? '#dfe7f2' : fossil.kind === 'miraculous' ? '#f4cf5a' : fossil.redBoned ? '#e0a0a0' : '#f1e9d2';
+            ctx.drawImage(dig.boneCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
+            if (c.damaged) {
+              ctx.fillStyle = 'rgba(128, 48, 170, .78)';
+              ctx.fillRect(px, py, CELL, CELL);
+            }
           } else {
-            // Check whether this cell is inside the rock blob at all (no fossil, rock cleared): dirt.
-            color = '#3b3028';
+            ctx.fillStyle = n < 0.5 ? '#4e3d2d' : n < 0.85 ? '#45362a' : '#3b2e24';
+            ctx.fillRect(px, py, CELL, CELL);
           }
-          ctx.fillStyle = color;
-          ctx.fillRect(x * CELL, y * CELL, CELL, CELL);
-          if (c.rock > 0 && ((x * 7 + y * 13) % 11 === 0)) {
-            ctx.fillStyle = 'rgba(255,255,255,.06)';
-            ctx.fillRect(x * CELL + 2, y * CELL + 2, 3, 3);
+          if (showX && c.fossil && c.rock > 0) {
+            ctx.fillStyle = 'rgba(120, 200, 255, .55)';
+            ctx.fillRect(px, py, CELL, CELL);
           }
         }
       }
-      raf = requestAnimationFrame(draw);
     };
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
-  }, [xrayUntil, fossil.kind, fossil.redBoned]);
+  }, [xrayUntil, ready]);
 
   const cellAt = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * COLS;
-    const y = ((e.clientY - rect.top) / rect.height) * ROWS;
-    return { x, y };
+    return { x: ((e.clientX - rect.left) / rect.width) * COLS, y: ((e.clientY - rect.top) / rect.height) * ROWS };
   };
 
   const strike = useCallback((x: number, y: number, t: Tool) => {
     const dig = digRef.current;
-    const radius = t === 'hammer' ? 2.6 : 1.3;
+    if (!dig) return;
+    const radius = t === 'hammer' ? 5.5 : 2.4;
     const power = t === 'hammer' ? dig.hardness : 1;
     let changed = false;
     for (let cy = Math.floor(y - radius); cy <= Math.ceil(y + radius); cy++) {
@@ -253,29 +383,31 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
         const d = Math.hypot(cx + 0.5 - x, cy + 0.5 - y);
         if (d > radius) continue;
         const c = dig.cells[cy * COLS + cx];
+        if (c.rock < 0) continue;
         if (c.rock > 0) {
-          if (t === 'drill' && dig.dark && c.rock === 3) continue; // dark shell resists the drill
+          if (t === 'drill' && dig.dark && c.rock === 3) continue; // the dark shell resists the drill
           c.rock = Math.max(0, c.rock - power);
           changed = true;
-          // Hammer can crack bone right under the last layer on delicate rocks.
           if (c.rock === 0 && c.fossil && t === 'hammer' && dig.delicate && d < radius * 0.6) c.damaged = true;
         } else if (c.fossil && !c.damaged) {
-          // Exposed fossil hit directly.
-          if (t === 'hammer' && d < radius * 0.8) {
+          if (t === 'hammer' && d < radius * 0.75) {
             c.damaged = true;
             changed = true;
-          } else if (t === 'drill' && d < 0.6 && Math.random() < (dig.delicate ? 0.35 : 0.12)) {
+          } else if (t === 'drill' && d < 1.2 && Math.random() < (dig.delicate ? 0.3 : 0.1)) {
             c.damaged = true;
             changed = true;
           }
         }
       }
     }
-    if (changed) setStats(scoreOf(dig));
+    if (changed) {
+      dirty.current = true;
+      setStats(scoreOf(dig));
+    }
   }, []);
 
   const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (done) return;
+    if (done || !ready) return;
     const { x, y } = cellAt(e);
     if (tool === 'hammer') strike(x, y, 'hammer');
     else {
@@ -286,7 +418,7 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
   };
   const onPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (done || tool !== 'drill' || !drilling.current) return;
-    if (Date.now() - lastDrill.current < 45) return;
+    if (Date.now() - lastDrill.current < 40) return;
     const { x, y } = cellAt(e);
     strike(x, y, 'drill');
     lastDrill.current = Date.now();
@@ -302,21 +434,28 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
   const partLabel = fossil.kind === 'wondrous' ? `silver ${fossil.part} fossil` : fossil.kind === 'miraculous' ? 'gold fossil' : `${fossil.part} fossil`;
   return (
     <div className="cleaning">
-      <div>
+      <div style={{ position: 'relative' }}>
         <canvas
           ref={canvasRef}
           width={COLS * CELL}
           height={ROWS * CELL}
+          className={tool}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={stopDrill}
           onPointerLeave={stopDrill}
           onPointerCancel={stopDrill}
         />
+        {!ready && <div className="overlay" style={{ borderRadius: 12 }}><div className="panel">Preparing the rock…</div></div>}
       </div>
       <div className="panel side-panel">
-        <h3 style={{ textTransform: 'capitalize' }}>{fossil.kind} rock</h3>
-        <div className="small muted">Contains a {partLabel}{fossil.redBoned ? ' (red-boned: +25 bonus)' : ''}.</div>
+        <div className="row">
+          <img src={rockIconSrc(fossil.rockSeed)} alt="" width={48} height={48} style={{ imageRendering: 'pixelated' }} />
+          <div>
+            <h3 style={{ textTransform: 'capitalize', margin: 0 }}>{fossil.kind} rock</h3>
+            <div className="small muted">Contains a {partLabel}{fossil.redBoned ? ' (red-boned: +25 bonus)' : ''}.</div>
+          </div>
+        </div>
         <div className={`timer ${timeLeft <= 15 ? 'low' : ''}`}>{timeLeft}s</div>
         <div>
           <div className="row small" style={{ justifyContent: 'space-between' }}><span>Progress</span><b>{stats.score} pts</b></div>
@@ -333,7 +472,7 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
           <button disabled={xray <= 0} onClick={() => { setXray((n) => n - 1); setXrayUntil(Date.now() + 2500); }}>X-ray ({xray})</button>
         </div>
         <div className="row">
-          <button className="primary" disabled={done} onClick={finish}>Finish cleaning</button>
+          <button className="primary" disabled={done || !ready} onClick={finish}>Finish cleaning</button>
           <button disabled={done} onClick={onCancel}>Back (keep rock)</button>
         </div>
       </div>
