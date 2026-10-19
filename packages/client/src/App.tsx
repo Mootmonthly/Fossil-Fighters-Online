@@ -7,9 +7,10 @@ import { CollectionScreen } from './screens/Collection.js';
 import { CleaningScreen } from './screens/Cleaning.js';
 import { BattleScreen } from './screens/Battle.js';
 import { FossilaryScreen } from './screens/Fossilary.js';
+import { AdminScreen } from './screens/Admin.js';
 import { useSocket } from './socket.js';
 
-export type Screen = 'home' | 'shop' | 'collection' | 'cleaning' | 'battle' | 'fossilary';
+export type Screen = 'home' | 'shop' | 'collection' | 'cleaning' | 'battle' | 'fossilary' | 'admin';
 
 export interface Toast {
   text: string;
@@ -87,7 +88,7 @@ export function App() {
 
   const nav = (s: Screen) => (
     <button className={screen === s ? 'active' : ''} onClick={() => setScreen(s)}>
-      {s === 'home' ? 'Home' : s === 'shop' ? 'Fossil Shop' : s === 'collection' ? 'Vivosaurs & Team' : s === 'cleaning' ? 'Cleaning Room' : s === 'battle' ? 'Fossil Battle' : 'Fossilary'}
+      {s === 'home' ? 'Home' : s === 'shop' ? 'Fossil Shop' : s === 'collection' ? 'Vivosaurs & Team' : s === 'cleaning' ? 'Cleaning Room' : s === 'battle' ? 'Fossil Battle' : s === 'admin' ? 'Admin' : 'Fossilary'}
     </button>
   );
 
@@ -105,6 +106,7 @@ export function App() {
           {nav('collection')}
           {nav('battle')}
           {nav('fossilary')}
+          {snap.user.isAdmin && nav('admin')}
         </nav>
         <div className="spacer" />
         <div className="row">
@@ -120,6 +122,7 @@ export function App() {
         {screen === 'collection' && <CollectionScreen snap={snap} run={run} notify={notify} />}
         {screen === 'battle' && <BattleScreen snap={snap} socket={socket} notify={notify} refresh={refresh} />}
         {screen === 'fossilary' && <FossilaryScreen snap={snap} />}
+        {screen === 'admin' && snap.user.isAdmin && <AdminScreen notify={notify} />}
       </main>
       {toast && <div className={`toast ${toast.error ? 'error' : ''}`}>{toast.text}</div>}
     </div>

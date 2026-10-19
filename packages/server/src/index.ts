@@ -8,9 +8,10 @@ import { SHOP, STARTER_CHOICES, VIVOSAURS } from '@ffo/shared';
 import { openDatabase, type UserRow } from './db.js';
 import { createSession, hashPassword, userForToken, validUsername, verifyPassword } from './auth.js';
 import {
-  buyRock, cleanFossil, createStarterAccount, GameError, integrateSuperFossil, listFossils, listVivosaurs, publicFossil, publicUser,
+  buyFeatured, buyRock, cleanFossil, createStarterAccount, featuredView, GameError, integrateSuperFossil, listFossils, listVivosaurs, publicFossil, publicUser,
   renameVivosaur, sellFossil, setTeam, viewVivosaur,
 } from './game.js';
+import { adminGrantGold, adminGrantRock, adminListUsers, adminStats, adminUserDetail, isAdmin } from './admin.js';
 import { RoomManager } from './rooms.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -35,6 +36,13 @@ function requireAuth(req: express.Request, res: express.Response, next: express.
   next();
 }
 
+function requireAdmin(req: express.Request, res: express.Response, next: express.NextFunction) {
+  requireAuth(req, res, () => {
+    if (!isAdmin((req as AuthedRequest).user)) return res.status(403).json({ error: 'Admins only' });
+    next();
+  });
+}
+
 function handle(fn: (req: AuthedRequest, res: express.Response) => unknown) {
   return (req: express.Request, res: express.Response) => {
     try {
@@ -51,7 +59,7 @@ function handle(fn: (req: AuthedRequest, res: express.Response) => unknown) {
 function snapshot(user: UserRow) {
   const fresh = db.prepare('SELECT * FROM users WHERE id = ?').get(user.id) as unknown as UserRow;
   return {
-    user: publicUser(fresh),
+    user: publicUser(fresh, isAdmin(fresh)),
     vivosaurs: listVivosaurs(db, user.id).map(viewVivosaur),
     fossils: listFossils(db, user.id).map(publicFossil),
   };
@@ -93,6 +101,13 @@ app.post('/api/shop/buy', requireAuth, handle((req) => {
   return { fossil: publicFossil(fossil), ...snapshot(req.user) };
 }));
 
+app.get('/api/shop/featured', requireAuth, handle((req) => featuredView(db, req.user.id)));
+
+app.post('/api/shop/featured/:slot', requireAuth, handle((req) => {
+  const fossil = buyFeatured(db, req.user, Number(req.params.slot));
+  return { fossil: publicFossil(fossil), featured: featuredView(db, req.user.id), ...snapshot(req.user) };
+}));
+
 app.post('/api/fossils/:id/clean', requireAuth, handle((req) => {
   const { score, durationMs } = req.body ?? {};
   const result = cleanFossil(db, req.user, Number(req.params.id), Number(score), Number(durationMs ?? 0));
@@ -130,6 +145,19 @@ app.get('/api/matches', requireAuth, handle((req) => {
   const rows = db.prepare('SELECT * FROM matches WHERE p1_user = ? OR p2_user = ? ORDER BY id DESC LIMIT 20').all(req.user.id, req.user.id);
   return { matches: rows };
 }));
+
+// Admin panel
+app.get('/api/admin/users', requireAdmin, handle((req) => ({ users: adminListUsers(db, String(req.query.q ?? '')) })));
+app.get('/api/admin/users/:id', requireAdmin, handle((req) => adminUserDetail(db, Number(req.params.id))));
+app.post('/api/admin/users/:id/gold', requireAdmin, handle((req) => {
+  const out = adminGrantGold(db, Number(req.params.id), Number(req.body?.amount));
+  return { ...out, detail: adminUserDetail(db, Number(req.params.id)) };
+}));
+app.post('/api/admin/users/:id/rock', requireAdmin, handle((req) => {
+  const fossil = adminGrantRock(db, Number(req.params.id), req.body ?? {});
+  return { fossilId: fossil.id, detail: adminUserDetail(db, Number(req.params.id)) };
+}));
+app.get('/api/admin/stats', requireAdmin, handle((req) => adminStats(db, req.query.solo === '1')));
 
 // Static client (production build)
 if (fs.existsSync(CLIENT_DIST)) {

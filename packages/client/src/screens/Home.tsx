@@ -49,9 +49,9 @@ export function HomeScreen({ snap, go }: { snap: Snapshot; go: (s: Screen) => vo
         <div className="panel">
           <h3>How it works</h3>
           <ol className="muted" style={{ margin: 0, paddingLeft: 18, lineHeight: 1.6 }}>
-            <li>Buy fossil rocks in the shop. Each holds a head, body, arms or legs fossil of a random vivosaur.</li>
+            <li>Buy fossil rocks in the shop. Each holds a head, body, arms or legs fossil of a random vivosaur. The featured shelf shows eight identified rocks that change every three hours.</li>
             <li>Clean them in the Cleaning Room. A head fossil revives a new vivosaur; other parts raise its rank.</li>
-            <li>Build a team of three. Teams that share a compatibility group unlock their Team Skills.</li>
+            <li>Build a battle team of up to five. When a match starts you see the other team, then pick three of yours, their slots and the formation. Three that share a compatibility group unlock their Team Skills.</li>
             <li>Battle other players online. Wins pay {PRIZE_WIN.toLocaleString()} G, losses {PRIZE_LOSS} G, and every vivosaur that fought earns rank points. Solo battles against the bot pay {PRIZE_SOLO_WIN} G.</li>
             <li>Silver and gold fossils from Wondrous and Miraculous rocks boost stats, and gold fossils super-evolve certain vivosaurs.</li>
           </ol>

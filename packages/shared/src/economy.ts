@@ -23,8 +23,22 @@ export const SHOP: RockOffer[] = [
   { kind: 'miraculous', element: null, price: 60000, description: 'A miraculous fossil rock holding a gold fossil. Boosts every stat; some vivosaurs super-evolve.' },
 ];
 
-export const STARTING_GOLD = 6000;
+export const STARTING_GOLD = 10000;
 export const STARTER_CHOICES = ['dimetro', 'toba', 'aeros', 'tsintao'];
+/** New accounts also receive this many random rocks, at least STARTER_HEAD_ROCKS of them heads. */
+export const STARTER_ROCKS = 10;
+export const STARTER_HEAD_ROCKS = 4;
+
+/** Players bring a battle team of up to TEAM_SIZE vivosaurs and pick BATTLE_PICKS of them once matched. */
+export const TEAM_SIZE = 5;
+export const BATTLE_PICKS = 3;
+export const PICK_SECONDS = 30;
+
+/** Featured shop: identified rocks that everyone sees, rotating on a fixed schedule. */
+export const FEATURED_COUNT = 8;
+export const FEATURED_ROTATION_MS = 3 * 60 * 60 * 1000;
+/** The game's rock prices (4000 / 8000 / 12000 / 25000 G) are divided by this for the featured shelf. */
+export const FEATURED_PRICE_DIVISOR = 2;
 
 export const PRIZE_WIN = 2500;
 export const PRIZE_LOSS = 600;

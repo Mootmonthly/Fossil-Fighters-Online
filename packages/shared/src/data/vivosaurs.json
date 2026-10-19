@@ -218,7 +218,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "daspleto",
@@ -408,7 +410,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "gorgo",
@@ -606,7 +610,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "tarbo",
@@ -803,7 +809,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "alio",
@@ -991,7 +999,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "siamo",
@@ -1177,7 +1187,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "alectro",
@@ -1358,7 +1370,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "guan",
@@ -1565,7 +1579,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "shanshan",
@@ -1781,7 +1797,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "allo",
@@ -1994,7 +2012,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "metria",
@@ -2201,7 +2221,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "megalo",
@@ -2415,7 +2437,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "venator",
@@ -2630,7 +2654,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "s_raptor",
@@ -2846,7 +2872,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "giganto",
@@ -3045,7 +3073,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "cryo",
@@ -3245,7 +3275,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "carchar",
@@ -3456,7 +3488,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "acro",
@@ -3669,7 +3703,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "f_raptor",
@@ -3877,7 +3913,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "spinax",
@@ -4083,7 +4121,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "neo",
@@ -4307,7 +4347,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "compso",
@@ -4493,7 +4535,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "sopteryx",
@@ -4712,7 +4756,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "delta",
@@ -4949,7 +4995,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "tro",
@@ -5172,7 +5220,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "nychus",
@@ -5406,7 +5456,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "m_raptor",
@@ -5642,7 +5694,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "u_raptor",
@@ -5866,7 +5920,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "v_raptor",
@@ -6094,7 +6150,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "breme",
@@ -6308,7 +6366,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "aopteryx",
@@ -6522,7 +6582,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "coelo",
@@ -6748,7 +6810,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "dilopho",
@@ -6982,7 +7046,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "spino",
@@ -7204,7 +7270,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "angato",
@@ -7405,7 +7473,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "sucho",
@@ -7635,7 +7705,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "onyx",
@@ -7840,7 +7912,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "cerato",
@@ -8029,7 +8103,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "carno",
@@ -8218,7 +8294,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "orno",
@@ -8414,7 +8492,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "cheirus",
@@ -8607,7 +8687,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "o_raptor",
@@ -8835,7 +8917,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "zino",
@@ -9032,7 +9116,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "brachio",
@@ -9225,7 +9311,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "salto",
@@ -9439,7 +9527,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "shuno",
@@ -9652,7 +9742,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "perso",
@@ -9855,7 +9947,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "seismo",
@@ -10029,7 +10123,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "apato",
@@ -10224,7 +10320,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "amargo",
@@ -10430,7 +10528,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "stego",
@@ -10644,7 +10744,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "yango",
@@ -10862,7 +10964,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "jiango",
@@ -11054,7 +11158,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "kentro",
@@ -11269,7 +11375,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "lexo",
@@ -11504,7 +11612,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "nodo",
@@ -11719,7 +11829,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "ankylo",
@@ -11943,7 +12055,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "saichan",
@@ -12162,7 +12276,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "goyle",
@@ -12391,7 +12507,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "pelto",
@@ -12622,7 +12740,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "hypsi",
@@ -12846,7 +12966,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "nasaur",
@@ -13072,7 +13194,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "igua",
@@ -13283,7 +13407,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "ourano",
@@ -13494,7 +13620,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "lambeo",
@@ -13692,7 +13820,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "maia",
@@ -13906,7 +14036,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "anato",
@@ -14109,7 +14241,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "paraloph",
@@ -14316,7 +14450,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "pachy",
@@ -14496,7 +14632,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "stygi",
@@ -14676,7 +14814,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "goyo",
@@ -14856,7 +14996,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "proto",
@@ -15076,7 +15218,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "tricera",
@@ -15299,7 +15443,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "styraco",
@@ -15502,7 +15648,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "einio",
@@ -15718,7 +15866,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "tier"
 },
 {
 "id": "centro",
@@ -15921,7 +16071,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "penta",
@@ -16141,7 +16293,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "pachrino",
@@ -16369,7 +16523,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "mihu",
@@ -16586,7 +16742,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "ptera",
@@ -16804,7 +16962,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "coatlus",
@@ -17020,7 +17180,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "jara",
@@ -17227,7 +17389,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "dimorph",
@@ -17456,7 +17620,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "guera",
@@ -17660,7 +17826,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "krona",
@@ -17850,7 +18018,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "futabi",
@@ -18070,7 +18240,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "elasmo",
@@ -18302,7 +18474,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "plesio",
@@ -18531,7 +18705,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "shoni",
@@ -18729,7 +18905,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "arsith",
@@ -18959,7 +19137,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "brontoth",
@@ -19129,7 +19309,7 @@
 "superEvolvesInto": null,
 "baseForm": null,
 "partingBlow": null,
-"description": "A fast-growing vivosaur with low LP, Brontoth shows its true potential when teamed with Arsith and Elasmoth\u2014where it gains a team skill that poisons all enemies.",
+"description": "A fast-growing vivosaur with low LP, Brontoth shows its true potential when teamed with Arsith and Elasmoth—where it gains a team skill that poisons all enemies.",
 "groups": [
 4,
 14,
@@ -19197,7 +19377,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "elasmoth",
@@ -19431,7 +19613,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "hoplo",
@@ -19656,7 +19840,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "andrarch",
@@ -19884,7 +20070,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "paki",
@@ -20112,7 +20300,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "smilo",
@@ -20310,7 +20500,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "mammoth",
@@ -20529,7 +20721,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "tryma",
@@ -20757,7 +20951,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "megath",
@@ -20996,7 +21192,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "chelon",
@@ -21225,7 +21423,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "aeros",
@@ -21436,7 +21636,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "mapo",
@@ -21661,7 +21863,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "berto",
@@ -21865,7 +22069,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "raja",
@@ -22071,7 +22277,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "krypto",
@@ -22287,7 +22495,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "archaeo",
@@ -22501,7 +22711,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "epidex",
@@ -22746,7 +22958,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "lagia",
@@ -22978,7 +23192,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "e_raptor",
@@ -23193,7 +23409,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "toba",
@@ -23403,7 +23621,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "nigo",
@@ -23618,7 +23838,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "camara",
@@ -23821,7 +24043,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "seidon",
@@ -24027,7 +24251,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "rom"
 },
 {
 "id": "menchi",
@@ -24227,7 +24453,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "argento",
@@ -24427,7 +24655,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "dacerus",
@@ -24662,7 +24892,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "tsintao",
@@ -24873,7 +25105,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "pacro",
@@ -25094,7 +25328,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "oloro",
@@ -25313,7 +25549,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "nippono",
@@ -25532,7 +25770,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "chasmo",
@@ -25772,7 +26012,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "berta",
@@ -25986,7 +26228,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "nycto",
@@ -26204,7 +26448,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "sungari",
@@ -26409,7 +26655,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "thalasso",
@@ -26630,7 +26878,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "hopter",
@@ -26857,7 +27107,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "machai",
@@ -27088,7 +27340,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "peloro",
@@ -27312,7 +27566,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "metri",
@@ -27530,7 +27786,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25600,
+"shopPriceSource": "rom"
 },
 {
 "id": "gomp",
@@ -27746,7 +28004,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "anan",
@@ -27963,7 +28223,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "parium",
@@ -28168,7 +28430,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "ceros",
@@ -28382,7 +28646,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25600,
+"shopPriceSource": "rom"
 },
 {
 "id": "synthos",
@@ -28586,7 +28852,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "titanis",
@@ -28817,7 +29085,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "dimetro",
@@ -29026,7 +29296,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "edapho",
@@ -29247,7 +29519,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "tanstro",
@@ -29453,7 +29727,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 38400,
+"shopPriceSource": "rom"
 },
 {
 "id": "pendem",
@@ -29673,7 +29949,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "tophis",
@@ -29893,7 +30171,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 80000,
+"shopPriceSource": "rom"
 },
 {
 "id": "coelanth",
@@ -30110,7 +30390,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12800,
+"shopPriceSource": "rom"
 },
 {
 "id": "dunkle",
@@ -30324,7 +30606,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 80000,
+"shopPriceSource": "rom"
 },
 {
 "id": "parapu",
@@ -30551,7 +30835,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "rom"
 },
 {
 "id": "desmo",
@@ -30772,7 +31058,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "gaudry",
@@ -31001,7 +31289,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "radox",
@@ -31210,7 +31500,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "terata",
@@ -31420,7 +31712,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "dikelo",
@@ -31635,7 +31929,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "rom"
 },
 {
 "id": "anomalo",
@@ -31846,7 +32142,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "rom"
 },
 {
 "id": "tonzilla",
@@ -32026,7 +32324,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "b_rex",
@@ -32239,7 +32539,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "b_brachio",
@@ -32445,7 +32747,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "b_lambeo",
@@ -32625,7 +32929,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "b_ptera",
@@ -32827,7 +33133,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "b_plesio",
@@ -33048,7 +33356,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "b_tricera",
@@ -33269,7 +33579,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "b_jara",
@@ -33465,7 +33777,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "z_rex",
@@ -33681,7 +33995,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "z_tricera",
@@ -33897,7 +34213,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "z_ptera",
@@ -34101,7 +34419,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "z_elasmo",
@@ -34313,7 +34633,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "zongazonga",
@@ -34513,7 +34835,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "frigi",
@@ -34696,7 +35020,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "igno",
@@ -34891,7 +35217,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "tier"
 },
 {
 "id": "squik",
@@ -35121,7 +35449,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "squirk",
@@ -35351,7 +35681,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "squirth",
@@ -35581,7 +35913,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "squilk",
@@ -35811,7 +36145,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "squiro",
@@ -36041,7 +36377,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "salada",
@@ -36164,7 +36502,9 @@
 "groups": [
 2,
 22
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "dinomaton",
@@ -36340,7 +36680,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "duna",
@@ -36565,7 +36907,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "raptin",
@@ -36790,7 +37134,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "dynal",
@@ -37014,7 +37360,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "t_rex_lord",
@@ -37235,7 +37583,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "giga_allo",
@@ -37436,7 +37786,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "giga_spinax",
@@ -37634,7 +37986,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "v_ripper",
@@ -37852,7 +38206,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "despino",
@@ -38066,7 +38422,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "o_raptor_fiend",
@@ -38300,7 +38658,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "ryden",
@@ -38499,7 +38859,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "omias",
@@ -38705,7 +39067,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "barbaros",
@@ -38907,7 +39271,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "dydomio",
@@ -39113,7 +39479,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "galgaron",
@@ -39333,7 +39701,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "zanth",
@@ -39552,7 +39922,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "hibigon",
@@ -39767,7 +40139,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "papygon",
@@ -39970,7 +40344,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "heracles",
@@ -40177,7 +40553,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "buldor",
@@ -40389,7 +40767,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "dimorph_ace",
@@ -40610,7 +40990,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 8000,
+"shopPriceSource": "tier"
 },
 {
 "id": "momo",
@@ -40821,7 +41203,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "kaishin",
@@ -41033,7 +41417,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "marple",
@@ -41254,7 +41640,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "teffla",
@@ -41449,7 +41837,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "mapo_king",
@@ -41670,7 +42060,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "giga_raja",
@@ -41872,7 +42264,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "equinas",
@@ -42070,7 +42464,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "shenliu",
@@ -42276,7 +42672,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 },
 {
 "id": "bulgon",
@@ -42474,7 +42872,9 @@
 40,
 30,
 20
-]
+],
+"shopPrice": 4000,
+"shopPriceSource": "tier"
 },
 {
 "id": "blitzigon",
@@ -42690,7 +43090,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "nycto_ace",
@@ -42895,7 +43297,9 @@
 120,
 140,
 160
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "lugmos",
@@ -43104,7 +43508,9 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 12000,
+"shopPriceSource": "tier"
 },
 {
 "id": "geneos",
@@ -43321,6 +43727,8 @@
 80,
 60,
 40
-]
+],
+"shopPrice": 25000,
+"shopPriceSource": "tier"
 }
 ]

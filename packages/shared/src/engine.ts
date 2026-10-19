@@ -14,7 +14,7 @@ import {
   SUPER_EXCITE_ROTATE_CHANCE, TEAM_SKILL_KO_PENALTY,
 } from './constants.js';
 import { findVivosaur, getVivosaur, isTeamCompatible } from './data/index.js';
-import { isAttackZone, isSupportZone, rotateZone, START_ZONES, tileDistance } from './field.js';
+import { FORMATION_ZONES, isAttackZone, isSupportZone, rotateZone, tileDistance, type Formation } from './field.js';
 import { statsAtRank, unlockedSkillCount } from './progression.js';
 import { Rng } from './rng.js';
 import type {
@@ -32,7 +32,7 @@ export class BattleError extends Error {}
 // Setup
 // ---------------------------------------------------------------------------
 
-function makeVivosaur(member: TeamSetup['members'][number], slot: number): BattleVivosaur {
+function makeVivosaur(member: TeamSetup['members'][number], slot: number, formation: Formation): BattleVivosaur {
   const species = getVivosaur(member.speciesId);
   return {
     slot,
@@ -44,7 +44,7 @@ function makeVivosaur(member: TeamSetup['members'][number], slot: number): Battl
     lp: member.stats.lp,
     stats: { ...member.stats },
     crit: species.crit,
-    zone: START_ZONES[slot],
+    zone: FORMATION_ZONES[formation][slot],
     statuses: [],
     sealed: [],
     sleepHits: 0,
@@ -65,7 +65,7 @@ export function createBattle(teams: [TeamSetup, TeamSetup], seed: number, option
     const side: BattleSide = {
       id: t.id,
       name: t.name,
-      vivosaurs: t.members.map((m, i) => makeVivosaur(m, i)),
+      vivosaurs: t.members.map((m, i) => makeVivosaur(m, i, t.formation ?? 'cambrian')),
       fp: lv.start,
       fpGain: lv.gain,
       fpMax: lv.max,

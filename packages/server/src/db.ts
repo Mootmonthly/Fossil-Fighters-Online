@@ -11,6 +11,7 @@ export interface UserRow {
   wins: number;
   losses: number;
   team_json: string;
+  is_admin: number;
   created_at: string;
 }
 
@@ -40,6 +41,8 @@ export interface FossilRow {
   state: string; // 'rock' | 'cleaned'
   score: number | null;
   rock_seed: number;
+  /** 1 when the player knows the species inside (featured shop, admin grants). */
+  known: number;
   created_at: string;
 }
 
@@ -105,8 +108,32 @@ export function openDatabase(file: string): DatabaseSync {
       turns INTEGER NOT NULL,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+    CREATE TABLE IF NOT EXISTS match_vivosaurs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      match_id INTEGER NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+      user_id INTEGER,
+      side INTEGER NOT NULL,
+      species_id TEXT NOT NULL,
+      won INTEGER,
+      kind TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS featured_purchases (
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      bucket INTEGER NOT NULL,
+      slot INTEGER NOT NULL,
+      PRIMARY KEY (user_id, bucket, slot)
+    );
     CREATE INDEX IF NOT EXISTS idx_vivosaurs_user ON vivosaurs(user_id);
     CREATE INDEX IF NOT EXISTS idx_fossils_user ON fossils(user_id);
+    CREATE INDEX IF NOT EXISTS idx_match_vivosaurs_species ON match_vivosaurs(species_id);
   `);
+  // Columns added after the first release.
+  addColumn(db, 'users', 'is_admin', 'INTEGER NOT NULL DEFAULT 0');
+  addColumn(db, 'fossils', 'known', 'INTEGER NOT NULL DEFAULT 0');
   return db;
+}
+
+function addColumn(db: DatabaseSync, table: string, column: string, ddl: string) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[];
+  if (!cols.some((c) => c.name === column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${ddl}`);
 }

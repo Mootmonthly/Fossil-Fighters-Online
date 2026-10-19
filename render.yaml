@@ -16,6 +16,9 @@ services:
         value: 22.22.0
       - key: DB_FILE
         value: /var/data/ffo.sqlite
+      # Comma-separated usernames allowed into the admin panel (leave empty: the first account is the admin).
+      - key: ADMIN_USERS
+        sync: false
     disk:
       name: ffo-data
       mountPath: /var/data

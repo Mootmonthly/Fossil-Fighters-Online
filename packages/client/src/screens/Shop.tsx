@@ -1,5 +1,7 @@
-import { SHOP, type Element } from '@ffo/shared';
-import { api, type Snapshot } from '../api.js';
+import { useEffect, useState } from 'react';
+import { findVivosaur, SHOP, type Element } from '@ffo/shared';
+import { api, type Featured, type Snapshot } from '../api.js';
+import { ElementBadge, Medal } from '../components/Vivo.js';
 import { rockIconSrc } from './Cleaning.js';
 
 const COLORS: Record<string, string> = { fire: '#c0392b', water: '#2a6fd6', earth: '#c9a227', air: '#3aa655', neutral: '#d8d8d8' };
@@ -21,8 +23,54 @@ export function ShopScreen({ snap, run, notify, goClean }: { snap: Snapshot; run
     const out = await run(() => api.buy(kind, element));
     if (out) notify(`Bought a ${kind} fossil rock! Clean it in the Cleaning Room.`);
   };
+  const [featured, setFeatured] = useState<Featured | null>(null);
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    api.featured().then(setFeatured).catch(() => {});
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  // Reload the shelf when the rotation turns over.
+  useEffect(() => {
+    if (featured && now >= featured.resetsAt) api.featured().then(setFeatured).catch(() => {});
+  }, [now, featured]);
+  const buyFeatured = async (slot: number) => {
+    const out = await run(() => api.buyFeatured(slot));
+    if (out) {
+      setFeatured(out.featured);
+      notify(`Bought the ${findVivosaur(out.fossil.speciesId ?? '')?.name ?? ''} ${out.fossil.part} rock! Clean it in the Cleaning Room.`);
+    }
+  };
+  const left = featured ? Math.max(0, featured.resetsAt - now) : 0;
+  const hh = Math.floor(left / 3600000), mm = Math.floor((left % 3600000) / 60000), ss = Math.floor((left % 60000) / 1000);
   return (
     <div className="grid">
+      <div className="panel themed bg-plate">
+        <div className="row" style={{ justifyContent: 'space-between' }}>
+          <h2>Featured rocks</h2>
+          <span className="badge">Restocks in {hh}h {String(mm).padStart(2, '0')}m {String(ss).padStart(2, '0')}s</span>
+        </div>
+        <p className="small muted" style={{ marginTop: 0 }}>Eight identified rocks, the same for every fighter, priced like the game's own fossil shop. Each can be bought once per rotation.</p>
+        <div className="grid cards">
+          {(featured?.rocks ?? []).map((r) => (
+            <div key={r.slot} className={`card ${r.bought ? 'dim' : ''}`}>
+              <div className="row">
+                <Medal speciesId={r.speciesId} />
+                <div>
+                  <b>{r.name}</b>
+                  <div className="small muted" style={{ textTransform: 'capitalize' }}>{r.part} fossil</div>
+                </div>
+              </div>
+              <div className="row" style={{ gap: 6 }}>
+                <ElementBadge element={r.element as Element} />
+                <span className="gold">{r.price.toLocaleString()} G</span>
+              </div>
+              <button className="primary" disabled={r.bought || snap.user.gold < r.price} onClick={() => buyFeatured(r.slot)}>{r.bought ? 'Bought' : 'Buy'}</button>
+            </div>
+          ))}
+          {!featured && <div className="muted">Loading the shelf…</div>}
+        </div>
+      </div>
       <div className="panel">
         <h2>Fossil Guild Shop</h2>
         <p className="muted">
@@ -53,7 +101,7 @@ export function ShopScreen({ snap, run, notify, goClean }: { snap: Snapshot; run
                 <img src={rockIconSrc(f.rockSeed)} alt="" width={48} height={48} style={{ imageRendering: 'pixelated', filter: f.kind === 'dark' ? 'brightness(.35) saturate(.3)' : f.kind === 'wondrous' ? 'saturate(.2) brightness(1.2)' : f.kind === 'miraculous' ? 'hue-rotate(-10deg) saturate(1.8)' : undefined }} />
                 <div>
                   <b style={{ textTransform: 'capitalize' }}>{f.kind} rock</b>
-                  <div className="small muted">{f.element ? `${f.element} type` : f.kind === 'wondrous' ? `silver ${f.part} fossil` : f.kind === 'miraculous' ? 'gold fossil' : 'unknown type'}</div>
+                  <div className="small muted">{f.known && f.speciesId ? `${findVivosaur(f.speciesId)?.name ?? ''} ${f.part}` : f.element ? `${f.element} type` : f.kind === 'wondrous' ? `silver ${f.part} fossil` : f.kind === 'miraculous' ? 'gold fossil' : 'unknown type'}</div>
                 </div>
               </div>
               <button onClick={() => goClean(f.id)}>Clean</button>

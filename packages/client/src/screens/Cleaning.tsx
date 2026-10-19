@@ -455,23 +455,49 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
     let changed = false;
     let hurt = false; // a hammer blow broke bone
     const chips: number[] = []; // cell centres chipped by the drill
-    for (let cy = Math.floor(y - radius); cy <= Math.ceil(y + radius); cy++) {
-      for (let cx = Math.floor(x - radius); cx <= Math.ceil(x + radius); cx++) {
+    // A hammer blow does not punch a neat disc: its reach varies around the circle, the centre is crushed
+    // deeper, and a few cracks radiate further out taking one layer with them.
+    const LOBES = 14;
+    const lobe = Array.from({ length: LOBES }, () => 0.55 + Math.random() * 0.6);
+    const cracks = t === 'hammer' ? Array.from({ length: 3 + Math.floor(Math.random() * 3) }, () => ({ a: Math.random() * Math.PI * 2, len: radius * (1.3 + Math.random() * 0.8), w: 1.1 + Math.random() * 0.6 })) : [];
+    const reachAt = (ang: number) => {
+      const f = (((ang / (Math.PI * 2)) * LOBES) % LOBES + LOBES) % LOBES;
+      const i = Math.floor(f), tt = f - i;
+      return radius * (lobe[i] * (1 - tt) + lobe[(i + 1) % LOBES] * tt);
+    };
+    const inCrack = (dx: number, dy: number) => cracks.some((k) => {
+      const along = dx * Math.cos(k.a) + dy * Math.sin(k.a);
+      if (along < 0 || along > k.len) return false;
+      const across = Math.abs(-dx * Math.sin(k.a) + dy * Math.cos(k.a));
+      return across < k.w * (1 - (along / k.len) * 0.6); // cracks taper
+    });
+    const scan = t === 'hammer' ? radius * 2.2 : radius;
+    for (let cy = Math.floor(y - scan); cy <= Math.ceil(y + scan); cy++) {
+      for (let cx = Math.floor(x - scan); cx <= Math.ceil(x + scan); cx++) {
         if (cx < 0 || cy < 0 || cx >= COLS || cy >= ROWS) continue;
-        const d = Math.hypot(cx + 0.5 - x, cy + 0.5 - y);
-        if (d > radius) continue;
+        const dx = cx + 0.5 - x, dy = cy + 0.5 - y;
+        const d = Math.hypot(dx, dy);
+        let p = power;
+        let r = radius; // effective reach of the blow in this direction
+        if (t === 'hammer') {
+          r = reachAt(Math.atan2(dy, dx));
+          if (d <= r * 0.45) p = power + 1; // crushed centre
+          else if (d <= r) p = power;
+          else if (inCrack(dx, dy)) p = 1; // a crack
+          else continue;
+        } else if (d > radius) continue;
         const c = dig.cells[cy * COLS + cx];
         if (c.rock < 0) continue;
         if (c.rock > 0) {
           if (t === 'drill' && dig.dark && c.rock === 3) continue; // the dark shell resists the drill
-          c.rock = Math.max(0, c.rock - power);
+          c.rock = Math.max(0, c.rock - p);
           changed = true;
-          if (c.rock === 0 && c.fossil && t === 'hammer' && dig.delicate && d < radius * 0.6) {
+          if (c.rock === 0 && c.fossil && t === 'hammer' && dig.delicate && d < r * 0.6) {
             c.damaged = true;
             hurt = true;
           }
         } else if (c.fossil && !c.damaged) {
-          if (t === 'hammer' && d < radius * 0.75) {
+          if (t === 'hammer' && d < r * 0.75) {
             c.damaged = true;
             changed = true;
             hurt = true;
@@ -515,7 +541,7 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
     if (changed) {
       // Slivers left between hits crumble away: any isolated fragment of rock smaller than CRUMB cells is cleared.
       const CRUMB = 12;
-      const r2 = Math.ceil(radius + 2);
+      const r2 = Math.ceil(scan + 2);
       const seen = new Set<number>();
       for (let cy = Math.floor(y - r2); cy <= Math.ceil(y + r2); cy++) {
         for (let cx = Math.floor(x - r2); cx <= Math.ceil(x + r2); cx++) {

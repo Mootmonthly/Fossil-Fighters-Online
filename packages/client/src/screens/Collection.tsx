@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { findVivosaur, isTeamCompatible, MAX_RANK, pointsToNextRank, unlockedSkillCount } from '@ffo/shared';
+import { findVivosaur, MAX_RANK, pointsToNextRank, TEAM_SIZE, unlockedSkillCount } from '@ffo/shared';
 import { api, type Snapshot, type VivosaurView } from '../api.js';
 import { ElementBadge, Medal, StatBars, VivoCard, spriteSrc } from '../components/Vivo.js';
 import { SkillTable, SupportLine } from './Fossilary.js';
@@ -13,12 +13,10 @@ export function CollectionScreen({ snap, run, notify }: { snap: Snapshot; run: R
   const superFossils = snap.fossils.filter((f) => f.state === 'cleaned' && (f.kind === 'wondrous' || f.kind === 'miraculous'));
   const storedParts = snap.fossils.filter((f) => f.state === 'cleaned' && (f.kind === 'normal' || f.kind === 'dark'));
 
-  const teamSpecies = team.map((id) => snap.vivosaurs.find((v) => v.id === id)?.displaySpeciesId).filter((x): x is string => !!x);
-  const compatible = teamSpecies.length === 3 && isTeamCompatible(teamSpecies);
   const dirty = JSON.stringify(team) !== JSON.stringify(snap.user.team);
 
   const toggle = (id: number) => {
-    setTeam((t) => (t.includes(id) ? t.filter((x) => x !== id) : t.length < 3 ? [...t, id] : t));
+    setTeam((t) => (t.includes(id) ? t.filter((x) => x !== id) : t.length < TEAM_SIZE ? [...t, id] : t));
   };
   const save = async () => {
     const out = await run(() => api.setTeam(team));
@@ -33,12 +31,12 @@ export function CollectionScreen({ snap, run, notify }: { snap: Snapshot; run: R
           <div className="row" style={{ justifyContent: 'space-between' }}>
             <h2>Battle team</h2>
             <div className="row">
-              {compatible ? <span className="badge" style={{ color: 'var(--good)' }}>Team Skills ready ✓</span> : team.length === 3 ? <span className="badge muted">Not compatible: no Team Skills</span> : <span className="badge muted">{team.length}/3 chosen</span>}
+              <span className="badge muted">{team.length}/{TEAM_SIZE} chosen</span>
               <button className="primary" disabled={!dirty || team.length === 0} onClick={save}>Save team</button>
             </div>
           </div>
           <div className="row">
-            {[0, 1, 2].map((i) => {
+            {Array.from({ length: TEAM_SIZE }, (_, i) => i).map((i) => {
               const v = snap.vivosaurs.find((x) => x.id === team[i]);
               return (
                 <div key={i} className="card" style={{ minWidth: 160, minHeight: 70, justifyContent: 'center' }}>
@@ -47,7 +45,7 @@ export function CollectionScreen({ snap, run, notify }: { snap: Snapshot; run: R
                       <Medal speciesId={v.displaySpeciesId} />
                       <div>
                         <b>{v.nickname ?? findVivosaur(v.displaySpeciesId)?.name}</b>
-                        <div className="small muted">Rank {v.rank}{i === 0 ? ' · starts in AZ+' : ' · starts in SZ'}</div>
+                        <div className="small muted">Rank {v.rank}</div>
                       </div>
                     </div>
                   ) : (
@@ -57,7 +55,7 @@ export function CollectionScreen({ snap, run, notify }: { snap: Snapshot; run: R
               );
             })}
           </div>
-          <p className="small muted" style={{ marginBottom: 0 }}>Click vivosaurs below to add or remove them. The first slot starts in the front Attack Zone; the other two start in the Support Zones (Cambrian formation).</p>
+          <p className="small muted" style={{ marginBottom: 0 }}>Click vivosaurs below to add or remove them. Ranked and private battles need all {TEAM_SIZE}; solo battles need at least 3. Once a match is made you see the other team and have 30 seconds to pick three of these, their slots and the formation.</p>
         </div>
 
         {(superFossils.length > 0 || storedParts.length > 0) && (

@@ -93,6 +93,9 @@ export interface VivosaurData {
   /** Damage percentage by tile distance 0..7 from the game data (80 = the community wiki's 1.0). */
   rangeTable?: number[];
   romId?: number;
+  /** Price of this species' rocks in the featured shop (from the game's rock table, or its price tier). */
+  shopPrice?: number;
+  shopPriceSource?: 'rom' | 'tier';
   /** Critical hit rate percentage. */
   crit: number;
   skills: SkillData[];
@@ -250,6 +253,9 @@ export interface TeamMember {
 export interface TeamSetup {
   id: string;
   name: string;
+  /** The vivosaurs in slot order (slot 0 is the front of the formation). */
   members: TeamMember[];
   heroLevel?: number;
+  /** Starting formation; Cambrian when omitted. */
+  formation?: 'cambrian' | 'jurassic';
 }

@@ -20,5 +20,9 @@ export function rotateZone(zone: Zone, steps: number): Zone {
   return ((((zone + steps) % 6) + 6) % 6) as Zone;
 }
 
-/** Cambrian formation (one AZ, two SZ) starting zones for team slots 0..2. */
-export const START_ZONES: Zone[] = [0, 2, 4];
+export type Formation = 'cambrian' | 'jurassic';
+
+/** Starting zones for team slots 0..2: Cambrian = one AZ+ and two SZ, Jurassic = two AZ and one SZ+. */
+export const FORMATION_ZONES: Record<Formation, Zone[]> = { cambrian: [0, 2, 4], jurassic: [1, 3, 5] };
+/** Cambrian formation starting zones (the default). */
+export const START_ZONES: Zone[] = FORMATION_ZONES.cambrian;

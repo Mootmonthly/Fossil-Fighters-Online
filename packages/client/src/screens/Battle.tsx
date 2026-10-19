@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Socket } from 'socket.io-client';
 import {
-  canRotate, findVivosaur, getVivosaur, previewDamage, rotationCost, skillAvailability, supportPercent, tileDistance, ZONE_DEPTH, ZONE_NAMES,
+  canRotate, findVivosaur, getVivosaur, previewDamage, rotationCost, skillAvailability, supportPercent, tileDistance, TEAM_SIZE, BATTLE_PICKS, ZONE_DEPTH, ZONE_NAMES,
   type BattleAction, type BattleEvent, type BattleState, type BattleVivosaur, type Zone,
 } from '@ffo/shared';
 import type { Snapshot } from '../api.js';
 import { Medal, spriteSrc } from '../components/Vivo.js';
+import { PickScreen, type PickPayload } from './Pick.js';
 
 type SideIndex = 0 | 1;
 
@@ -46,6 +47,8 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
   const [shake, setShake] = useState<string | null>(null);
   const floatId = useRef(0);
   const [disconnected, setDisconnected] = useState<string | null>(null);
+  const [pick, setPick] = useState<PickPayload | null>(null);
+  const [pickReady, setPickReady] = useState<boolean[]>([false, false]);
 
   const pushFloats = useCallback((events: BattleEvent[]) => {
     const add: Float[] = [];
@@ -64,7 +67,19 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
 
   useEffect(() => {
     if (!socket) return;
+    const onPick = (p: PickPayload) => {
+      setPick(p);
+      setPickReady([false, false]);
+      setBattle(null);
+      setState(null);
+      setEnd(null);
+      setQueued(false);
+      setRoomCode(null);
+      setDisconnected(null);
+    };
+    const onPickStatus = (p: { ready: boolean[] }) => setPickReady(p.ready);
     const onStart = (p: StartPayload) => {
+      setPick(null);
       setBattle(p);
       setState(p.state);
       setEnd(null);
@@ -89,6 +104,8 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
     const onRoom = (p: { code: string }) => setRoomCode(p.code);
     const onError = (p: { message: string }) => notify(p.message, true);
     const onDisc = (p: { side: SideIndex; graceSeconds: number }) => setDisconnected(`Opponent disconnected. They have ${p.graceSeconds}s to return or they forfeit.`);
+    socket.on('battle:pick', onPick);
+    socket.on('battle:pickStatus', onPickStatus);
     socket.on('battle:start', onStart);
     socket.on('battle:update', onUpdate);
     socket.on('battle:end', onEnd);
@@ -99,6 +116,8 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
     socket.on('error', onError);
     socket.on('battle:opponentDisconnected', onDisc);
     return () => {
+      socket.off('battle:pick', onPick);
+      socket.off('battle:pickStatus', onPickStatus);
       socket.off('battle:start', onStart);
       socket.off('battle:update', onUpdate);
       socket.off('battle:end', onEnd);
@@ -115,6 +134,8 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
 
   if (!socket) return <div className="panel">Connecting…</div>;
 
+  if (pick && !battle) return <PickScreen pick={pick} ready={pickReady} socket={socket} />;
+
   if (battle && state) {
     return (
       <Arena
@@ -130,6 +151,7 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
           setBattle(null);
           setState(null);
           setEnd(null);
+          setPick(null);
         }}
       />
     );
@@ -147,28 +169,28 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
         <div className="grid">
           <div className="card">
             <b>Solo battle</b>
-            <div className="small muted">Fight a bot team matched to your ranks. Good for testing teams and earning a little G.</div>
-            <button className="primary" disabled={team.length === 0} onClick={() => socket.emit('solo:start')}>Start solo battle</button>
+            <div className="small muted">Fight a bot team matched to your ranks. Needs at least {BATTLE_PICKS} vivosaurs in your team. Good for testing teams and earning a little G.</div>
+            <button className="primary" disabled={team.length < BATTLE_PICKS} onClick={() => socket.emit('solo:start')}>Start solo battle</button>
           </div>
           <div className="card">
             <b>Ranked match</b>
-            <div className="small muted">Queue up against another online fighter. Needs a full team of three. Winner takes the prize money.</div>
+            <div className="small muted">Queue up against another online fighter. Needs a full team of {TEAM_SIZE}; you pick three once matched. Winner takes the prize money.</div>
             {queued ? (
               <button onClick={() => socket.emit('queue:leave')}>Searching for an opponent… (cancel)</button>
             ) : (
-              <button className="primary" disabled={team.length < 3} onClick={() => socket.emit('queue:join')}>Find a match</button>
+              <button className="primary" disabled={team.length < TEAM_SIZE} onClick={() => socket.emit('queue:join')}>Find a match</button>
             )}
           </div>
           <div className="card">
             <b>Private room</b>
-            <div className="small muted">Battle a friend with a room code.</div>
+            <div className="small muted">Battle a friend with a room code. Needs a full team of {TEAM_SIZE}.</div>
             <div className="row">
-              <button onClick={() => socket.emit('room:create')}>Create room</button>
+              <button disabled={team.length < TEAM_SIZE} onClick={() => socket.emit('room:create')}>Create room</button>
               {roomCode && <span className="badge" style={{ fontSize: 16 }}>Code: {roomCode}</span>}
             </div>
             <div className="row">
               <input placeholder="Enter code" value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} style={{ width: 130 }} />
-              <button disabled={joinCode.length < 4} onClick={() => socket.emit('room:join', joinCode)}>Join</button>
+              <button disabled={joinCode.length < 4 || team.length < TEAM_SIZE} onClick={() => socket.emit('room:join', joinCode)}>Join</button>
             </div>
           </div>
         </div>
@@ -180,6 +202,7 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
           <li>Each vivosaur may use one skill per turn. Rotating the formation costs 5 FP per step, up to 15, until a skill is used.</li>
           <li>Front tiles are the Attack Zone (AZ); rear tiles are the Support Zone (SZ). SZ vivosaurs apply their support effects to AZ vivosaurs, halved when two share the AZ.</li>
           <li>Range matters: Close-Range hits hardest at 1 tile, Mid-Range at 3, Long-Range at 7. Water beats Fire beats Earth beats Air beats Water for 1.5× damage.</li>
+          <li>Teams hold up to {TEAM_SIZE} vivosaurs. Once matched you see the other team and have 30 seconds to pick {BATTLE_PICKS}, their slots and the formation (Cambrian: one attacker, two supporters; Jurassic: two attackers, one supporter with halved support effects).</li>
           <li>Team Skills need a compatible trio and cannot score critical hits.</li>
           <li>Turns are limited to 75 seconds. Leaving a match counts as a forfeit.</li>
         </ul>

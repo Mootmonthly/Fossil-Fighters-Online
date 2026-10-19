@@ -47,6 +47,7 @@ Environment variables for the server:
 | `PORT`        | `3000`                          | HTTP/WebSocket port                   |
 | `DB_FILE`     | `packages/server/data/ffo.sqlite` | SQLite database path                |
 | `CLIENT_DIST` | `packages/client/dist`          | Built client to serve statically      |
+| `ADMIN_USERS` | *(unset: account #1 is admin)*  | Comma-separated usernames allowed into the admin panel |
 
 Deploying is a single Node process (Render, Fly.io, Railway, a VPS, etc.): run `npm install && npm run build`
 as the build step and `npm start` as the start command. Give `DB_FILE` a path on a persistent disk.
@@ -65,7 +66,10 @@ Tests: `npm test` runs the engine unit tests (vitest).
 
 1. **Shop** – buy fossil rocks. Tan rocks can hold any part of any of the 150 regular vivosaurs; coloured rocks
    fix the element; dark rocks are always red-boned heads (+25 points); wondrous and miraculous rocks hold
-   silver and gold fossils.
+   silver and gold fossils. The **featured shelf** shows eight identified rocks (species and part), the same for
+   every player, rotating every three hours; each can be bought once per rotation at half the game's own rock
+   price (2,000 / 4,000 / 6,000 / 12,500 G tiers). New accounts start with 10,000 G, a starter vivosaur and ten
+   rocks, at least four of them heads.
 2. **Cleaning Room** – hammer and drill the rock away within 90 seconds on the game's cleaning tray. Rocks use the
    18 official rock shapes and hide the game's own fossil picture for that species and part (normal, red-boned and
    damaged variants). Only Tonzilla has no picture in the game and falls back to procedural bones. Uncovered bone fills
@@ -74,8 +78,14 @@ Tests: `npm test` runs the engine unit tests (vitest).
    rank points (50 points per rank, max rank 20, skills unlock at ranks 1/3/5/7). Battles also grant rank points.
 4. **Super revival** – silver fossils add LP and one or two stats and change the vivosaur's colours; gold
    fossils boost everything and super-evolve the 30 eligible vivosaurs.
-5. **Battle** – solo matches against a bot, ranked matchmaking, or private rooms with a code. Winner
-   takes 2,500 G, loser 600 G; every vivosaur that fought gains rank points.
+5. **Battle** – solo matches against a bot, ranked matchmaking, or private rooms with a code. Teams hold up to
+   five vivosaurs; once matched, both players see each other's team and have 30 seconds to pick three, assign
+   their slots and choose Cambrian or Jurassic formation (the bot picks at random, and anyone who runs out of
+   time gets their first three in Cambrian). Winner takes 2,500 G, loser 600 G; the three that fought gain rank
+   points.
+6. **Admin panel** – accounts named in `ADMIN_USERS` (or the first account when it is unset) get an Admin tab:
+   look up any player's gold, record, vivosaurs and fossil case, grant gold or a specific rock, and see every
+   vivosaur's usage and win rate across recorded battles.
 
 ## Battle rules implemented
 
@@ -119,6 +129,9 @@ committed). From the game's own tables:
   effects and crit rates, all of which confirmed the wiki.
 - **Hero-level FP table**, including FP at the start of a battle (460 at level 20, which the wiki did not list).
 - **Super-revival bonuses** and the 50-point rank-up interval.
+- **Rock prices**: the game's rock table prices 87 species at 4,000 / 8,000 / 12,000 / 25,000 G (`shopPrice`, source
+  `rom`); the rest are never sold in the game and get the tier whose average stat total is nearest (`tier`). The
+  featured shelf charges half.
 
 Special vivosaurs (super evolvers, boneysaurs, zombiesaurs, legendaries) use their base stats; the wiki lists them
 with a 100-point gold fossil included, and the game applies that bonus through the fossil system instead.

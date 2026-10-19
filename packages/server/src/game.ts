@@ -2,7 +2,8 @@
 import type { DatabaseSync } from 'node:sqlite';
 import {
   getVivosaur, obtainableVivosaurs, rankFromPoints, toTeamMember, computeStats, effectiveSpecies, MIN_CLEAN_SCORE, SHOP, PARTS, fossilImageSet,
-  STARTER_CHOICES, STARTING_GOLD, type FossilPart, type OwnedVivosaur, type TeamMember, type Element,
+  STARTER_CHOICES, STARTING_GOLD, STARTER_ROCKS, STARTER_HEAD_ROCKS, TEAM_SIZE, FEATURED_COUNT, FEATURED_ROTATION_MS, FEATURED_PRICE_DIVISOR, Rng,
+  type FossilPart, type OwnedVivosaur, type TeamMember, type Element,
 } from '@ffo/shared';
 import type { FossilRow, UserRow, VivosaurRow } from './db.js';
 
@@ -35,8 +36,8 @@ export function viewVivosaur(row: VivosaurRow): VivosaurView {
   return { ...owned, rank: rankFromPoints(owned.rankPoints), displaySpeciesId: effectiveSpecies(owned).id, stats: computeStats(owned) };
 }
 
-export function publicUser(u: UserRow) {
-  return { id: u.id, username: u.username, gold: u.gold, heroLevel: u.hero_level, wins: u.wins, losses: u.losses, team: JSON.parse(u.team_json) as number[] };
+export function publicUser(u: UserRow, isAdmin = false) {
+  return { id: u.id, username: u.username, gold: u.gold, heroLevel: u.hero_level, wins: u.wins, losses: u.losses, team: JSON.parse(u.team_json) as number[], isAdmin };
 }
 
 export function listVivosaurs(db: DatabaseSync, userId: number): VivosaurRow[] {
@@ -58,7 +59,8 @@ export function publicFossil(f: FossilRow) {
     redBoned: !!f.red_boned,
     state: f.state,
     score: f.score,
-    speciesId: cleaned ? f.species_id : null,
+    speciesId: cleaned || f.known ? f.species_id : null,
+    known: !!f.known,
     // the picture shown while cleaning reveals the fossil's shape, as in the game, but not the species name
     fossilImage: f.species_id && f.part ? fossilImageSet(f.species_id, f.part) : null,
     rockSeed: f.rock_seed,
@@ -72,8 +74,8 @@ export function createStarterAccount(db: DatabaseSync, username: string, passHas
   // Starter arrives fully integrated at a modest rank, like the story's first Dino Medal.
   const starterPoints = 4 * 80;
   const v = db.prepare('INSERT INTO vivosaurs (user_id, species_id, rank_points, head, body, arms, legs) VALUES (?, ?, ?, 80, 80, 80, 80)').run(userId, starter, starterPoints);
-  // Two tan rocks to get cleaning started.
-  for (let i = 0; i < 2; i++) grantRock(db, userId, 'normal', null);
+  // A case of rocks to get cleaning started; the first few are guaranteed heads so new vivosaurs come quickly.
+  for (let i = 0; i < STARTER_ROCKS; i++) grantRock(db, userId, 'normal', null, i < STARTER_HEAD_ROCKS ? { part: 'head' } : {});
   db.prepare('UPDATE users SET team_json = ? WHERE id = ?').run(JSON.stringify([Number(v.lastInsertRowid)]), userId);
   return db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as unknown as UserRow;
 }
@@ -82,11 +84,18 @@ function randomInt(n: number): number {
   return Math.floor(Math.random() * n);
 }
 
-/** Creates a fossil rock for a user. Species/part are rolled now but hidden until cleaning. */
-export function grantRock(db: DatabaseSync, userId: number, kind: string, element: Element | null): FossilRow {
+export interface RockOptions {
+  part?: FossilPart;
+  speciesId?: string;
+  /** The player is told what the rock holds (featured shop, admin grants). */
+  known?: boolean;
+}
+
+/** Creates a fossil rock for a user. Species/part are rolled now but hidden until cleaning unless `known`. */
+export function grantRock(db: DatabaseSync, userId: number, kind: string, element: Element | null, opts: RockOptions = {}): FossilRow {
   const seed = randomInt(2 ** 31);
   if (kind === 'wondrous') {
-    const part = PARTS[randomInt(4)];
+    const part = opts.part ?? PARTS[randomInt(4)];
     const info = db.prepare('INSERT INTO fossils (user_id, kind, element, species_id, part, red_boned, rock_seed) VALUES (?, ?, NULL, NULL, ?, 0, ?)').run(userId, kind, part, seed);
     return db.prepare('SELECT * FROM fossils WHERE id = ?').get(Number(info.lastInsertRowid)) as unknown as FossilRow;
   }
@@ -95,10 +104,10 @@ export function grantRock(db: DatabaseSync, userId: number, kind: string, elemen
     return db.prepare('SELECT * FROM fossils WHERE id = ?').get(Number(info.lastInsertRowid)) as unknown as FossilRow;
   }
   const pool = obtainableVivosaurs().filter((v) => !element || v.element === element);
-  const species = pool[randomInt(pool.length)];
-  const part = kind === 'dark' ? 'head' : PARTS[randomInt(4)];
+  const species = opts.speciesId ? getVivosaur(opts.speciesId) : pool[randomInt(pool.length)];
+  const part = opts.part ?? (kind === 'dark' ? 'head' : PARTS[randomInt(4)]);
   const redBoned = kind === 'dark' ? 1 : Math.random() < 0.08 ? 1 : 0;
-  const info = db.prepare('INSERT INTO fossils (user_id, kind, element, species_id, part, red_boned, rock_seed) VALUES (?, ?, ?, ?, ?, ?, ?)').run(userId, kind, species.element, species.id, part, redBoned, seed);
+  const info = db.prepare('INSERT INTO fossils (user_id, kind, element, species_id, part, red_boned, rock_seed, known) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(userId, kind, species.element, species.id, part, redBoned, seed, opts.known ? 1 : 0);
   return db.prepare('SELECT * FROM fossils WHERE id = ?').get(Number(info.lastInsertRowid)) as unknown as FossilRow;
 }
 
@@ -212,7 +221,7 @@ export function integrateSuperFossil(db: DatabaseSync, user: UserRow, fossilId: 
 }
 
 export function setTeam(db: DatabaseSync, user: UserRow, ids: number[]): number[] {
-  if (!Array.isArray(ids) || ids.length < 1 || ids.length > 3) throw new GameError('A team has 1 to 3 vivosaurs');
+  if (!Array.isArray(ids) || ids.length < 1 || ids.length > TEAM_SIZE) throw new GameError(`A team has 1 to ${TEAM_SIZE} vivosaurs`);
   const unique = new Set(ids);
   if (unique.size !== ids.length) throw new GameError('Duplicate vivosaur in team');
   for (const id of ids) {
@@ -258,4 +267,62 @@ export function sellFossil(db: DatabaseSync, user: UserRow, fossilId: number): n
   db.prepare('DELETE FROM fossils WHERE id = ?').run(f.id);
   db.prepare('UPDATE users SET gold = gold + ? WHERE id = ?').run(value, user.id);
   return value;
+}
+
+// ---------------------------------------------------------------------------
+// Featured shop: FEATURED_COUNT identified rocks, the same for everyone, rotating every FEATURED_ROTATION_MS.
+// ---------------------------------------------------------------------------
+
+export interface FeaturedRock {
+  slot: number;
+  speciesId: string;
+  name: string;
+  element: Element;
+  part: FossilPart;
+  price: number;
+}
+
+export function featuredBucket(now = Date.now()): number {
+  return Math.floor(now / FEATURED_ROTATION_MS);
+}
+
+/** The rotation's rocks are derived from the rotation number, so every server and player agrees on them. */
+export function featuredRocks(bucket: number): FeaturedRock[] {
+  const rng = new Rng(((bucket * 2654435761) ^ 0x9e3779b9) >>> 0);
+  const pool = obtainableVivosaurs();
+  const rocks: FeaturedRock[] = [];
+  const seen = new Set<string>();
+  while (rocks.length < FEATURED_COUNT) {
+    const species = pool[rng.int(pool.length)];
+    const part = PARTS[rng.int(4)];
+    const key = `${species.id}:${part}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    rocks.push({ slot: rocks.length, speciesId: species.id, name: species.name, element: species.element, part, price: Math.round((species.shopPrice ?? 8000) / FEATURED_PRICE_DIVISOR) });
+  }
+  return rocks;
+}
+
+export function featuredView(db: DatabaseSync, userId: number, now = Date.now()) {
+  const bucket = featuredBucket(now);
+  const bought = new Set((db.prepare('SELECT slot FROM featured_purchases WHERE user_id = ? AND bucket = ?').all(userId, bucket) as { slot: number }[]).map((r) => r.slot));
+  return {
+    bucket,
+    resetsAt: (bucket + 1) * FEATURED_ROTATION_MS,
+    rocks: featuredRocks(bucket).map((r) => ({ ...r, bought: bought.has(r.slot) })),
+  };
+}
+
+export function buyFeatured(db: DatabaseSync, user: UserRow, slot: number, now = Date.now()): FossilRow {
+  const bucket = featuredBucket(now);
+  const rock = featuredRocks(bucket)[slot];
+  if (!rock) throw new GameError('No such featured rock');
+  const already = db.prepare('SELECT 1 FROM featured_purchases WHERE user_id = ? AND bucket = ? AND slot = ?').get(user.id, bucket, slot);
+  if (already) throw new GameError('You already bought that rock. The shop restocks on the next rotation.');
+  if (user.gold < rock.price) throw new GameError('Not enough G');
+  const rocks = db.prepare("SELECT COUNT(*) AS n FROM fossils WHERE user_id = ? AND state = 'rock'").get(user.id) as { n: number };
+  if (rocks.n >= 30) throw new GameError('Your fossil case is full (30 uncleaned rocks). Clean some first.');
+  db.prepare('UPDATE users SET gold = gold - ? WHERE id = ?').run(rock.price, user.id);
+  db.prepare('INSERT INTO featured_purchases (user_id, bucket, slot) VALUES (?, ?, ?)').run(user.id, bucket, slot);
+  return grantRock(db, user.id, 'normal', rock.element, { speciesId: rock.speciesId, part: rock.part, known: true });
 }
