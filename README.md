@@ -59,7 +59,8 @@ Tests: `npm test` runs the engine unit tests (vitest).
    fix the element; dark rocks are always red-boned heads (+25 points); wondrous and miraculous rocks hold
    silver and gold fossils.
 2. **Cleaning Room** – hammer and drill the rock away within 90 seconds on the game's cleaning tray. Rocks use the
-   18 official rock shapes; the skull, ribcage, arm or leg bones inside are drawn procedurally per rock. Uncovered bone fills
+   18 official rock shapes and hide the game's own fossil picture for that species and part (normal, red-boned and
+   damaged variants). Only Tonzilla has no picture in the game and falls back to procedural bones. Uncovered bone fills
    the meter, damaged bone drains it. 50 points are needed to integrate the fossil.
 3. **Revival and ranks** – a head fossil revives the vivosaur; body, arms and legs add their cleaning score as
    rank points (50 points per rank, max rank 20, skills unlock at ranks 1/3/5/7). Battles also grant rank points.
@@ -131,5 +132,8 @@ The backgrounds are the game's own 2D screens, rendered from the owner's ROM wit
 `img/arena/` holds the 26 lower-screen battle arenas (the hex flowers the vivosaurs stand on are part of the art, and
 the client places sprites on them using geometry measured from the pixels), `img/bg/` the cleaning tray, the FP
 gauge, the menu pattern and the window plates used behind the panels. A battle picks its arena from the match seed.
+`img/fossils/` holds the fossil pictures from the cleaning room (`tools/rom/export_images.py` and
+`build_fossil_images.py`), and `data/fossilImages.json` maps each species and part to its picture set the way the
+game's rock table does. Fish and other whole-body fossils use one picture for every part, as in the game.
 
 Fossil Fighters is © Nintendo / Red Entertainment; this is an unofficial fan project.

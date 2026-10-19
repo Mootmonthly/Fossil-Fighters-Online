@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { CLEANING_TIME_SECONDS, findVivosaur, MIN_CLEAN_SCORE, nextRandom } from '@ffo/shared';
+import { CLEANING_TIME_SECONDS, findVivosaur, fossilImageInfo, MIN_CLEAN_SCORE, nextRandom } from '@ffo/shared';
 import { api, type CleanResult, type FossilView, type Snapshot } from '../api.js';
 import { Medal } from '../components/Vivo.js';
 import { drawFossil, type BoneStyle } from './fossilArt.js';
@@ -25,7 +25,8 @@ interface Dig {
   dark: boolean;
   hardness: number; // layers the hammer removes per hit (soft rock = 2)
   rockCanvas: HTMLCanvasElement; // official rock icon scaled up: the surface layer
-  boneCanvas: HTMLCanvasElement; // procedural fossil artwork
+  boneCanvas: HTMLCanvasElement; // the game's fossil picture (or procedural bones when the game has none)
+  damagedCanvas: HTMLCanvasElement | null; // the game's damaged-fossil picture, drawn under damaged cells
   tray: HTMLImageElement | null; // the game's cleaning tray backdrop
 }
 
@@ -153,7 +154,35 @@ async function generateDig(fossil: FossilView): Promise<Dig> {
   const bctx = boneCanvas.getContext('2d')!;
   const bw = (maxX - minX + 1) * CELL, bh = (maxY - minY + 1) * CELL;
   const box = { x: minX * CELL + bw * 0.14, y: minY * CELL + bh * 0.16, w: bw * 0.72, h: bh * 0.68 };
-  drawFossil(bctx, part, style, fossil.rockSeed, box);
+  // The game's own fossil picture for this species and part, when it has one.
+  const picInfo = fossil.fossilImage ? fossilImageInfo(fossil.fossilImage) : undefined;
+  const useRed = fossil.redBoned && !!picInfo?.red;
+  const [pic, damagedPic] = picInfo
+    ? await Promise.all([loadImage(`/img/fossils/${fossil.fossilImage}${useRed ? '_red' : ''}.png`), picInfo.damaged ? loadImage(`/img/fossils/${fossil.fossilImage}_damaged.png`) : Promise.resolve(null)])
+    : [null, null];
+  let damagedCanvas: HTMLCanvasElement | null = null;
+  if (pic) {
+    const scale = Math.min(box.w / pic.width, box.h / pic.height);
+    const dw = pic.width * scale, dh = pic.height * scale;
+    const dx = box.x + (box.w - dw) / 2, dy = box.y + (box.h - dh) / 2;
+    bctx.drawImage(pic, dx, dy, dw, dh);
+    // silver and gold fossils, and red-boned fossils without a red picture, are tinted
+    const tint = style === 'silver' ? 'rgba(205,215,235,.6)' : style === 'gold' ? 'rgba(255,196,40,.55)' : style === 'red' && !useRed ? 'rgba(215,25,25,.6)' : null;
+    if (tint) {
+      bctx.globalCompositeOperation = 'source-atop';
+      bctx.fillStyle = tint;
+      bctx.fillRect(dx, dy, dw, dh);
+      bctx.globalCompositeOperation = 'source-over';
+    }
+    if (damagedPic) {
+      damagedCanvas = document.createElement('canvas');
+      damagedCanvas.width = W;
+      damagedCanvas.height = H;
+      damagedCanvas.getContext('2d')!.drawImage(damagedPic, dx, dy, dw, dh);
+    }
+  } else {
+    drawFossil(bctx, part, style, fossil.rockSeed, box);
+  }
   const bonePixels = bctx.getImageData(0, 0, W, H).data;
   let fossilCells = 0;
   for (let y = 0; y < ROWS; y++) {
@@ -170,7 +199,7 @@ async function generateDig(fossil: FossilView): Promise<Dig> {
     }
   }
   const delicate = fossil.kind === 'wondrous' || fossil.kind === 'miraculous';
-  return { cells, fossilCells: Math.max(1, fossilCells), delicate, dark: fossil.kind === 'dark', hardness: rnd() < 0.3 ? 2 : 1, rockCanvas, boneCanvas, tray };
+  return { cells, fossilCells: Math.max(1, fossilCells), delicate, dark: fossil.kind === 'dark', hardness: rnd() < 0.3 ? 2 : 1, rockCanvas, boneCanvas, damagedCanvas, tray };
 }
 
 function scoreOf(dig: Dig): { exposed: number; damage: number; score: number } {
@@ -348,10 +377,14 @@ function CleaningGame({ fossil, onFinish, onCancel }: { fossil: FossilView; onFi
             ctx.fillStyle = n < 0.5 ? '#d9c08c' : n < 0.85 ? '#cdb47f' : '#bfa470';
             ctx.fillRect(px, py, CELL, CELL);
           } else if (c.fossil) {
-            ctx.drawImage(dig.boneCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
-            if (c.damaged) {
-              ctx.fillStyle = 'rgba(128, 48, 170, .78)';
-              ctx.fillRect(px, py, CELL, CELL);
+            if (c.damaged && dig.damagedCanvas) {
+              ctx.drawImage(dig.damagedCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
+            } else {
+              ctx.drawImage(dig.boneCanvas, px, py, CELL, CELL, px, py, CELL, CELL);
+              if (c.damaged) {
+                ctx.fillStyle = 'rgba(128, 48, 170, .78)';
+                ctx.fillRect(px, py, CELL, CELL);
+              }
             }
           } else {
             ctx.fillStyle = n < 0.5 ? '#4e3d2d' : n < 0.85 ? '#45362a' : '#3b2e24';

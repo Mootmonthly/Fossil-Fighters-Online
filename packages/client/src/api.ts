@@ -25,6 +25,7 @@ export interface FossilView {
   state: 'rock' | 'cleaned';
   score: number | null;
   speciesId: string | null;
+  fossilImage: string | null;
   rockSeed: number;
 }
 

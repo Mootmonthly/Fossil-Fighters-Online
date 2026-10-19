@@ -1,0 +1,1644 @@
+{
+ "sets": {
+  "001": {
+   "damaged": true,
+   "h": 123,
+   "red": true,
+   "w": 179
+  },
+  "002": {
+   "damaged": true,
+   "h": 107,
+   "red": true,
+   "w": 187
+  },
+  "003": {
+   "damaged": true,
+   "h": 114,
+   "red": true,
+   "w": 194
+  },
+  "004": {
+   "damaged": true,
+   "h": 87,
+   "red": true,
+   "w": 175
+  },
+  "005": {
+   "damaged": true,
+   "h": 95,
+   "red": true,
+   "w": 166
+  },
+  "006": {
+   "damaged": true,
+   "h": 83,
+   "red": true,
+   "w": 186
+  },
+  "007": {
+   "damaged": true,
+   "h": 109,
+   "red": true,
+   "w": 172
+  },
+  "008": {
+   "damaged": true,
+   "h": 108,
+   "red": true,
+   "w": 156
+  },
+  "009": {
+   "damaged": true,
+   "h": 80,
+   "red": true,
+   "w": 171
+  },
+  "010": {
+   "damaged": true,
+   "h": 111,
+   "red": true,
+   "w": 137
+  },
+  "011": {
+   "damaged": true,
+   "h": 81,
+   "red": true,
+   "w": 173
+  },
+  "012": {
+   "damaged": true,
+   "h": 134,
+   "red": true,
+   "w": 174
+  },
+  "013": {
+   "damaged": true,
+   "h": 104,
+   "red": true,
+   "w": 136
+  },
+  "014": {
+   "damaged": true,
+   "h": 107,
+   "red": true,
+   "w": 158
+  },
+  "015": {
+   "damaged": true,
+   "h": 120,
+   "red": true,
+   "w": 206
+  },
+  "016": {
+   "damaged": true,
+   "h": 98,
+   "red": true,
+   "w": 146
+  },
+  "017": {
+   "damaged": true,
+   "h": 98,
+   "red": true,
+   "w": 159
+  },
+  "018": {
+   "damaged": true,
+   "h": 111,
+   "red": true,
+   "w": 163
+  },
+  "019": {
+   "damaged": true,
+   "h": 107,
+   "red": true,
+   "w": 174
+  },
+  "020": {
+   "damaged": true,
+   "h": 88,
+   "red": true,
+   "w": 170
+  },
+  "021": {
+   "damaged": true,
+   "h": 131,
+   "red": true,
+   "w": 194
+  },
+  "022": {
+   "damaged": true,
+   "h": 115,
+   "red": true,
+   "w": 142
+  },
+  "023": {
+   "damaged": true,
+   "h": 126,
+   "red": true,
+   "w": 172
+  },
+  "024": {
+   "damaged": true,
+   "h": 126,
+   "red": true,
+   "w": 164
+  },
+  "025": {
+   "damaged": true,
+   "h": 81,
+   "red": true,
+   "w": 192
+  },
+  "026": {
+   "damaged": true,
+   "h": 68,
+   "red": true,
+   "w": 193
+  },
+  "027": {
+   "damaged": true,
+   "h": 68,
+   "red": true,
+   "w": 180
+  },
+  "028": {
+   "damaged": true,
+   "h": 126,
+   "red": true,
+   "w": 185
+  },
+  "029": {
+   "damaged": true,
+   "h": 115,
+   "red": true,
+   "w": 137
+  },
+  "030": {
+   "damaged": true,
+   "h": 98,
+   "red": true,
+   "w": 199
+  },
+  "031": {
+   "damaged": true,
+   "h": 72,
+   "red": true,
+   "w": 183
+  },
+  "032": {
+   "damaged": true,
+   "h": 134,
+   "red": true,
+   "w": 193
+  },
+  "033": {
+   "damaged": true,
+   "h": 103,
+   "red": true,
+   "w": 151
+  },
+  "034": {
+   "damaged": true,
+   "h": 105,
+   "red": true,
+   "w": 185
+  },
+  "035": {
+   "damaged": true,
+   "h": 122,
+   "red": true,
+   "w": 162
+  },
+  "036": {
+   "damaged": false,
+   "h": 43,
+   "red": true,
+   "w": 244
+  },
+  "040": {
+   "damaged": false,
+   "h": 126,
+   "red": true,
+   "w": 199
+  },
+  "041": {
+   "damaged": false,
+   "h": 171,
+   "red": true,
+   "w": 188
+  },
+  "042": {
+   "damaged": false,
+   "h": 151,
+   "red": true,
+   "w": 218
+  },
+  "043": {
+   "damaged": false,
+   "h": 93,
+   "red": true,
+   "w": 235
+  },
+  "044": {
+   "damaged": false,
+   "h": 81,
+   "red": true,
+   "w": 235
+  },
+  "045": {
+   "damaged": true,
+   "h": 133,
+   "red": true,
+   "w": 142
+  },
+  "046": {
+   "damaged": false,
+   "h": 44,
+   "red": true,
+   "w": 240
+  },
+  "047": {
+   "damaged": true,
+   "h": 107,
+   "red": true,
+   "w": 207
+  },
+  "048": {
+   "damaged": true,
+   "h": 111,
+   "red": true,
+   "w": 186
+  },
+  "049": {
+   "damaged": false,
+   "h": 140,
+   "red": true,
+   "w": 202
+  },
+  "050": {
+   "damaged": false,
+   "h": 148,
+   "red": true,
+   "w": 226
+  },
+  "101": {
+   "damaged": true,
+   "h": 121,
+   "red": true,
+   "w": 163
+  },
+  "102": {
+   "damaged": true,
+   "h": 124,
+   "red": true,
+   "w": 181
+  },
+  "103": {
+   "damaged": true,
+   "h": 120,
+   "red": true,
+   "w": 155
+  },
+  "104": {
+   "damaged": true,
+   "h": 119,
+   "red": true,
+   "w": 115
+  },
+  "105": {
+   "damaged": true,
+   "h": 113,
+   "red": true,
+   "w": 168
+  },
+  "106": {
+   "damaged": true,
+   "h": 121,
+   "red": true,
+   "w": 176
+  },
+  "107": {
+   "damaged": true,
+   "h": 118,
+   "red": true,
+   "w": 151
+  },
+  "108": {
+   "damaged": true,
+   "h": 120,
+   "red": true,
+   "w": 125
+  },
+  "109": {
+   "damaged": true,
+   "h": 122,
+   "red": true,
+   "w": 106
+  },
+  "110": {
+   "damaged": true,
+   "h": 121,
+   "red": true,
+   "w": 123
+  },
+  "111": {
+   "damaged": true,
+   "h": 120,
+   "red": true,
+   "w": 166
+  },
+  "112": {
+   "damaged": true,
+   "h": 119,
+   "red": true,
+   "w": 164
+  },
+  "113": {
+   "damaged": true,
+   "h": 113,
+   "red": true,
+   "w": 197
+  },
+  "114": {
+   "damaged": true,
+   "h": 121,
+   "red": true,
+   "w": 197
+  },
+  "115": {
+   "damaged": true,
+   "h": 105,
+   "red": true,
+   "w": 189
+  },
+  "116": {
+   "damaged": true,
+   "h": 103,
+   "red": true,
+   "w": 167
+  },
+  "117": {
+   "damaged": true,
+   "h": 115,
+   "red": true,
+   "w": 149
+  },
+  "118": {
+   "damaged": true,
+   "h": 119,
+   "red": true,
+   "w": 148
+  },
+  "119": {
+   "damaged": true,
+   "h": 96,
+   "red": true,
+   "w": 180
+  },
+  "120": {
+   "damaged": true,
+   "h": 91,
+   "red": true,
+   "w": 172
+  },
+  "121": {
+   "damaged": true,
+   "h": 115,
+   "red": true,
+   "w": 159
+  },
+  "122": {
+   "damaged": true,
+   "h": 117,
+   "red": true,
+   "w": 146
+  },
+  "123": {
+   "damaged": true,
+   "h": 123,
+   "red": true,
+   "w": 154
+  },
+  "124": {
+   "damaged": true,
+   "h": 132,
+   "red": true,
+   "w": 119
+  },
+  "201": {
+   "damaged": true,
+   "h": 91,
+   "red": true,
+   "w": 146
+  },
+  "202": {
+   "damaged": true,
+   "h": 117,
+   "red": true,
+   "w": 152
+  },
+  "203": {
+   "damaged": true,
+   "h": 110,
+   "red": true,
+   "w": 163
+  },
+  "204": {
+   "damaged": true,
+   "h": 122,
+   "red": true,
+   "w": 185
+  },
+  "205": {
+   "damaged": true,
+   "h": 130,
+   "red": true,
+   "w": 131
+  },
+  "206": {
+   "damaged": true,
+   "h": 119,
+   "red": true,
+   "w": 135
+  },
+  "207": {
+   "damaged": true,
+   "h": 130,
+   "red": true,
+   "w": 159
+  },
+  "208": {
+   "damaged": true,
+   "h": 104,
+   "red": true,
+   "w": 152
+  },
+  "209": {
+   "damaged": true,
+   "h": 123,
+   "red": true,
+   "w": 141
+  },
+  "210": {
+   "damaged": true,
+   "h": 114,
+   "red": true,
+   "w": 162
+  },
+  "211": {
+   "damaged": true,
+   "h": 115,
+   "red": true,
+   "w": 120
+  },
+  "212": {
+   "damaged": true,
+   "h": 113,
+   "red": true,
+   "w": 155
+  },
+  "213": {
+   "damaged": true,
+   "h": 107,
+   "red": true,
+   "w": 74
+  },
+  "214": {
+   "damaged": true,
+   "h": 117,
+   "red": true,
+   "w": 137
+  },
+  "215": {
+   "damaged": true,
+   "h": 116,
+   "red": true,
+   "w": 197
+  },
+  "216": {
+   "damaged": true,
+   "h": 42,
+   "red": true,
+   "w": 182
+  },
+  "217": {
+   "damaged": true,
+   "h": 109,
+   "red": true,
+   "w": 135
+  },
+  "218": {
+   "damaged": true,
+   "h": 123,
+   "red": true,
+   "w": 76
+  },
+  "219": {
+   "damaged": true,
+   "h": 116,
+   "red": true,
+   "w": 182
+  },
+  "220": {
+   "damaged": true,
+   "h": 125,
+   "red": true,
+   "w": 147
+  },
+  "221": {
+   "damaged": true,
+   "h": 124,
+   "red": true,
+   "w": 187
+  },
+  "222": {
+   "damaged": true,
+   "h": 122,
+   "red": true,
+   "w": 170
+  },
+  "223": {
+   "damaged": true,
+   "h": 115,
+   "red": true,
+   "w": 160
+  },
+  "224": {
+   "damaged": true,
+   "h": 122,
+   "red": true,
+   "w": 159
+  },
+  "301": {
+   "damaged": true,
+   "h": 115,
+   "red": true,
+   "w": 117
+  },
+  "302": {
+   "damaged": true,
+   "h": 122,
+   "red": true,
+   "w": 130
+  },
+  "303": {
+   "damaged": true,
+   "h": 128,
+   "red": true,
+   "w": 130
+  },
+  "304": {
+   "damaged": true,
+   "h": 123,
+   "red": true,
+   "w": 158
+  },
+  "305": {
+   "damaged": true,
+   "h": 124,
+   "red": true,
+   "w": 189
+  },
+  "306": {
+   "damaged": true,
+   "h": 108,
+   "red": true,
+   "w": 180
+  },
+  "307": {
+   "damaged": true,
+   "h": 118,
+   "red": true,
+   "w": 176
+  },
+  "308": {
+   "damaged": true,
+   "h": 120,
+   "red": true,
+   "w": 184
+  },
+  "309": {
+   "damaged": true,
+   "h": 89,
+   "red": true,
+   "w": 184
+  },
+  "310": {
+   "damaged": true,
+   "h": 119,
+   "red": true,
+   "w": 107
+  },
+  "311": {
+   "damaged": true,
+   "h": 121,
+   "red": true,
+   "w": 174
+  },
+  "312": {
+   "damaged": true,
+   "h": 118,
+   "red": true,
+   "w": 157
+  },
+  "313": {
+   "damaged": true,
+   "h": 118,
+   "red": true,
+   "w": 164
+  },
+  "314": {
+   "damaged": true,
+   "h": 123,
+   "red": true,
+   "w": 157
+  },
+  "315": {
+   "damaged": true,
+   "h": 115,
+   "red": true,
+   "w": 192
+  },
+  "316": {
+   "damaged": true,
+   "h": 57,
+   "red": true,
+   "w": 185
+  },
+  "317": {
+   "damaged": true,
+   "h": 107,
+   "red": true,
+   "w": 165
+  },
+  "318": {
+   "damaged": true,
+   "h": 124,
+   "red": true,
+   "w": 122
+  },
+  "319": {
+   "damaged": true,
+   "h": 115,
+   "red": true,
+   "w": 164
+  },
+  "320": {
+   "damaged": true,
+   "h": 122,
+   "red": true,
+   "w": 167
+  },
+  "321": {
+   "damaged": true,
+   "h": 118,
+   "red": true,
+   "w": 121
+  },
+  "322": {
+   "damaged": true,
+   "h": 120,
+   "red": true,
+   "w": 166
+  },
+  "323": {
+   "damaged": true,
+   "h": 102,
+   "red": true,
+   "w": 192
+  },
+  "401": {
+   "damaged": true,
+   "h": 106,
+   "red": false,
+   "w": 118
+  }
+ },
+ "species": {
+  "acro": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "aeros": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "alectro": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "alio": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "allo": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "amargo": {
+   "arms": "209",
+   "body": "107",
+   "head": "014",
+   "legs": "308"
+  },
+  "anan": {
+   "arms": "221",
+   "body": "121",
+   "head": "032",
+   "legs": "320"
+  },
+  "anato": {
+   "arms": "213",
+   "body": "110",
+   "head": "020",
+   "legs": "312"
+  },
+  "andrarch": {
+   "arms": "220",
+   "body": "119",
+   "head": "030",
+   "legs": "319"
+  },
+  "angato": {
+   "arms": "205",
+   "body": "104",
+   "head": "007",
+   "legs": "305"
+  },
+  "ankylo": {
+   "arms": "211",
+   "body": "109",
+   "head": "017",
+   "legs": "310"
+  },
+  "anomalo": {
+   "arms": "047",
+   "body": "047",
+   "head": "047",
+   "legs": "047"
+  },
+  "aopteryx": {
+   "arms": "204",
+   "body": "103",
+   "head": "005",
+   "legs": "303"
+  },
+  "apato": {
+   "arms": "209",
+   "body": "107",
+   "head": "014",
+   "legs": "308"
+  },
+  "archaeo": {
+   "arms": "212",
+   "body": "105",
+   "head": "018",
+   "legs": "311"
+  },
+  "argento": {
+   "arms": "209",
+   "body": "106",
+   "head": "013",
+   "legs": "308"
+  },
+  "arsith": {
+   "arms": "218",
+   "body": "117",
+   "head": "028",
+   "legs": "317"
+  },
+  "berta": {
+   "arms": "214",
+   "body": "112",
+   "head": "023",
+   "legs": "313"
+  },
+  "berto": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "brachio": {
+   "arms": "209",
+   "body": "106",
+   "head": "012",
+   "legs": "308"
+  },
+  "breme": {
+   "arms": "203",
+   "body": "103",
+   "head": "004",
+   "legs": "304"
+  },
+  "brontoth": {
+   "arms": "218",
+   "body": "117",
+   "head": "028",
+   "legs": "317"
+  },
+  "camara": {
+   "arms": "209",
+   "body": "106",
+   "head": "013",
+   "legs": "308"
+  },
+  "carchar": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "carno": {
+   "arms": "206",
+   "body": "101",
+   "head": "008",
+   "legs": "305"
+  },
+  "centro": {
+   "arms": "214",
+   "body": "112",
+   "head": "023",
+   "legs": "313"
+  },
+  "cerato": {
+   "arms": "206",
+   "body": "101",
+   "head": "008",
+   "legs": "305"
+  },
+  "ceros": {
+   "arms": "041",
+   "body": "041",
+   "head": "041",
+   "legs": "041"
+  },
+  "chasmo": {
+   "arms": "214",
+   "body": "112",
+   "head": "023",
+   "legs": "313"
+  },
+  "cheirus": {
+   "arms": "207",
+   "body": "105",
+   "head": "009",
+   "legs": "306"
+  },
+  "chelon": {
+   "arms": "223",
+   "body": "123",
+   "head": "034",
+   "legs": "322"
+  },
+  "coatlus": {
+   "arms": "215",
+   "body": "113",
+   "head": "024",
+   "legs": "314"
+  },
+  "coelanth": {
+   "arms": "043",
+   "body": "043",
+   "head": "043",
+   "legs": "043"
+  },
+  "coelo": {
+   "arms": "203",
+   "body": "103",
+   "head": "006",
+   "legs": "303"
+  },
+  "compso": {
+   "arms": "203",
+   "body": "103",
+   "head": "003",
+   "legs": "303"
+  },
+  "cryo": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "dacerus": {
+   "arms": "210",
+   "body": "108",
+   "head": "015",
+   "legs": "309"
+  },
+  "daspleto": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "delta": {
+   "arms": "203",
+   "body": "103",
+   "head": "003",
+   "legs": "303"
+  },
+  "desmo": {
+   "arms": "045",
+   "body": "045",
+   "head": "045",
+   "legs": "045"
+  },
+  "dikelo": {
+   "arms": "048",
+   "body": "048",
+   "head": "048",
+   "legs": "048"
+  },
+  "dilopho": {
+   "arms": "203",
+   "body": "103",
+   "head": "006",
+   "legs": "303"
+  },
+  "dimetro": {
+   "arms": "224",
+   "body": "124",
+   "head": "035",
+   "legs": "323"
+  },
+  "dimorph": {
+   "arms": "215",
+   "body": "113",
+   "head": "024",
+   "legs": "314"
+  },
+  "dunkle": {
+   "arms": "044",
+   "body": "044",
+   "head": "044",
+   "legs": "044"
+  },
+  "e_raptor": {
+   "arms": "203",
+   "body": "103",
+   "head": "004",
+   "legs": "304"
+  },
+  "edapho": {
+   "arms": "224",
+   "body": "124",
+   "head": "035",
+   "legs": "323"
+  },
+  "einio": {
+   "arms": "214",
+   "body": "112",
+   "head": "023",
+   "legs": "313"
+  },
+  "elasmo": {
+   "arms": "216",
+   "body": "115",
+   "head": "026",
+   "legs": "315"
+  },
+  "elasmoth": {
+   "arms": "218",
+   "body": "117",
+   "head": "028",
+   "legs": "317"
+  },
+  "epidex": {
+   "arms": "207",
+   "body": "105",
+   "head": "010",
+   "legs": "303"
+  },
+  "f_raptor": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "futabi": {
+   "arms": "216",
+   "body": "115",
+   "head": "026",
+   "legs": "315"
+  },
+  "gaudry": {
+   "arms": "045",
+   "body": "045",
+   "head": "045",
+   "legs": "045"
+  },
+  "giganto": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "gomp": {
+   "arms": "221",
+   "body": "121",
+   "head": "032",
+   "legs": "320"
+  },
+  "gorgo": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "goyle": {
+   "arms": "211",
+   "body": "109",
+   "head": "017",
+   "legs": "310"
+  },
+  "goyo": {
+   "arms": "212",
+   "body": "105",
+   "head": "021",
+   "legs": "311"
+  },
+  "guan": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "guera": {
+   "arms": "215",
+   "body": "113",
+   "head": "024",
+   "legs": "314"
+  },
+  "hoplo": {
+   "arms": "219",
+   "body": "118",
+   "head": "029",
+   "legs": "318"
+  },
+  "hopter": {
+   "arms": "215",
+   "body": "113",
+   "head": "024",
+   "legs": "314"
+  },
+  "hypsi": {
+   "arms": "212",
+   "body": "105",
+   "head": "018",
+   "legs": "311"
+  },
+  "igua": {
+   "arms": "213",
+   "body": "110",
+   "head": "019",
+   "legs": "312"
+  },
+  "jara": {
+   "arms": "215",
+   "body": "113",
+   "head": "024",
+   "legs": "314"
+  },
+  "jiango": {
+   "arms": "210",
+   "body": "108",
+   "head": "015",
+   "legs": "309"
+  },
+  "kentro": {
+   "arms": "210",
+   "body": "108",
+   "head": "015",
+   "legs": "309"
+  },
+  "krona": {
+   "arms": "216",
+   "body": "114",
+   "head": "025",
+   "legs": "315"
+  },
+  "krypto": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "lagia": {
+   "arms": "203",
+   "body": "103",
+   "head": "004",
+   "legs": "304"
+  },
+  "lambeo": {
+   "arms": "213",
+   "body": "110",
+   "head": "020",
+   "legs": "312"
+  },
+  "lexo": {
+   "arms": "210",
+   "body": "108",
+   "head": "015",
+   "legs": "309"
+  },
+  "m_raptor": {
+   "arms": "203",
+   "body": "103",
+   "head": "004",
+   "legs": "304"
+  },
+  "machai": {
+   "arms": "219",
+   "body": "118",
+   "head": "029",
+   "legs": "318"
+  },
+  "maia": {
+   "arms": "213",
+   "body": "110",
+   "head": "020",
+   "legs": "312"
+  },
+  "mammoth": {
+   "arms": "221",
+   "body": "121",
+   "head": "032",
+   "legs": "320"
+  },
+  "mapo": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "megalo": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "megath": {
+   "arms": "222",
+   "body": "122",
+   "head": "033",
+   "legs": "321"
+  },
+  "menchi": {
+   "arms": "209",
+   "body": "107",
+   "head": "014",
+   "legs": "308"
+  },
+  "metri": {
+   "arms": "050",
+   "body": "050",
+   "head": "050",
+   "legs": "050"
+  },
+  "metria": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "mihu": {
+   "arms": "214",
+   "body": "112",
+   "head": "023",
+   "legs": "313"
+  },
+  "nasaur": {
+   "arms": "212",
+   "body": "105",
+   "head": "018",
+   "legs": "311"
+  },
+  "neo": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "nigo": {
+   "arms": "209",
+   "body": "107",
+   "head": "014",
+   "legs": "308"
+  },
+  "nippono": {
+   "arms": "213",
+   "body": "110",
+   "head": "020",
+   "legs": "312"
+  },
+  "nodo": {
+   "arms": "211",
+   "body": "109",
+   "head": "016",
+   "legs": "310"
+  },
+  "nychus": {
+   "arms": "203",
+   "body": "103",
+   "head": "004",
+   "legs": "304"
+  },
+  "nycto": {
+   "arms": "215",
+   "body": "113",
+   "head": "024",
+   "legs": "314"
+  },
+  "o_raptor": {
+   "arms": "207",
+   "body": "105",
+   "head": "010",
+   "legs": "303"
+  },
+  "oloro": {
+   "arms": "213",
+   "body": "110",
+   "head": "020",
+   "legs": "312"
+  },
+  "onyx": {
+   "arms": "205",
+   "body": "104",
+   "head": "007",
+   "legs": "305"
+  },
+  "orno": {
+   "arms": "207",
+   "body": "105",
+   "head": "009",
+   "legs": "306"
+  },
+  "ourano": {
+   "arms": "213",
+   "body": "111",
+   "head": "019",
+   "legs": "312"
+  },
+  "pachrino": {
+   "arms": "214",
+   "body": "112",
+   "head": "023",
+   "legs": "313"
+  },
+  "pachy": {
+   "arms": "212",
+   "body": "105",
+   "head": "021",
+   "legs": "311"
+  },
+  "pacro": {
+   "arms": "213",
+   "body": "110",
+   "head": "020",
+   "legs": "312"
+  },
+  "paki": {
+   "arms": "219",
+   "body": "120",
+   "head": "031",
+   "legs": "318"
+  },
+  "paraloph": {
+   "arms": "213",
+   "body": "110",
+   "head": "020",
+   "legs": "312"
+  },
+  "parapu": {
+   "arms": "045",
+   "body": "045",
+   "head": "045",
+   "legs": "045"
+  },
+  "parium": {
+   "arms": "040",
+   "body": "040",
+   "head": "040",
+   "legs": "040"
+  },
+  "peloro": {
+   "arms": "050",
+   "body": "050",
+   "head": "050",
+   "legs": "050"
+  },
+  "pelto": {
+   "arms": "211",
+   "body": "109",
+   "head": "017",
+   "legs": "310"
+  },
+  "pendem": {
+   "arms": "049",
+   "body": "049",
+   "head": "049",
+   "legs": "049"
+  },
+  "penta": {
+   "arms": "214",
+   "body": "112",
+   "head": "023",
+   "legs": "313"
+  },
+  "perso": {
+   "arms": "209",
+   "body": "107",
+   "head": "014",
+   "legs": "308"
+  },
+  "plesio": {
+   "arms": "216",
+   "body": "115",
+   "head": "026",
+   "legs": "315"
+  },
+  "proto": {
+   "arms": "214",
+   "body": "112",
+   "head": "022",
+   "legs": "313"
+  },
+  "ptera": {
+   "arms": "215",
+   "body": "113",
+   "head": "024",
+   "legs": "314"
+  },
+  "radox": {
+   "arms": "048",
+   "body": "048",
+   "head": "048",
+   "legs": "048"
+  },
+  "raja": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "s_raptor": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "saichan": {
+   "arms": "211",
+   "body": "109",
+   "head": "017",
+   "legs": "310"
+  },
+  "salto": {
+   "arms": "209",
+   "body": "106",
+   "head": "013",
+   "legs": "308"
+  },
+  "seidon": {
+   "arms": "209",
+   "body": "107",
+   "head": "014",
+   "legs": "308"
+  },
+  "seismo": {
+   "arms": "209",
+   "body": "107",
+   "head": "014",
+   "legs": "308"
+  },
+  "shanshan": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "shoni": {
+   "arms": "217",
+   "body": "116",
+   "head": "027",
+   "legs": "316"
+  },
+  "shuno": {
+   "arms": "209",
+   "body": "107",
+   "head": "014",
+   "legs": "308"
+  },
+  "siamo": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "smilo": {
+   "arms": "219",
+   "body": "118",
+   "head": "029",
+   "legs": "318"
+  },
+  "sopteryx": {
+   "arms": "203",
+   "body": "103",
+   "head": "003",
+   "legs": "303"
+  },
+  "spinax": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "spino": {
+   "arms": "205",
+   "body": "104",
+   "head": "007",
+   "legs": "305"
+  },
+  "squik": {
+   "arms": "401",
+   "body": "401",
+   "head": "401",
+   "legs": "401"
+  },
+  "squilk": {
+   "arms": "401",
+   "body": "401",
+   "head": "401",
+   "legs": "401"
+  },
+  "squirk": {
+   "arms": "401",
+   "body": "401",
+   "head": "401",
+   "legs": "401"
+  },
+  "squiro": {
+   "arms": "401",
+   "body": "401",
+   "head": "401",
+   "legs": "401"
+  },
+  "squirth": {
+   "arms": "401",
+   "body": "401",
+   "head": "401",
+   "legs": "401"
+  },
+  "stego": {
+   "arms": "210",
+   "body": "108",
+   "head": "015",
+   "legs": "309"
+  },
+  "stygi": {
+   "arms": "212",
+   "body": "105",
+   "head": "021",
+   "legs": "311"
+  },
+  "styraco": {
+   "arms": "214",
+   "body": "112",
+   "head": "023",
+   "legs": "313"
+  },
+  "sucho": {
+   "arms": "205",
+   "body": "104",
+   "head": "007",
+   "legs": "305"
+  },
+  "sungari": {
+   "arms": "215",
+   "body": "113",
+   "head": "024",
+   "legs": "314"
+  },
+  "synthos": {
+   "arms": "042",
+   "body": "042",
+   "head": "042",
+   "legs": "042"
+  },
+  "t_rex": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "tanstro": {
+   "arms": "036",
+   "body": "036",
+   "head": "036",
+   "legs": "036"
+  },
+  "tarbo": {
+   "arms": "201",
+   "body": "101",
+   "head": "001",
+   "legs": "301"
+  },
+  "terata": {
+   "arms": "048",
+   "body": "048",
+   "head": "048",
+   "legs": "048"
+  },
+  "thalasso": {
+   "arms": "215",
+   "body": "113",
+   "head": "024",
+   "legs": "314"
+  },
+  "titanis": {
+   "arms": "207",
+   "body": "105",
+   "head": "010",
+   "legs": "303"
+  },
+  "toba": {
+   "arms": "209",
+   "body": "106",
+   "head": "013",
+   "legs": "308"
+  },
+  "tophis": {
+   "arms": "046",
+   "body": "046",
+   "head": "046",
+   "legs": "046"
+  },
+  "tricera": {
+   "arms": "214",
+   "body": "112",
+   "head": "023",
+   "legs": "313"
+  },
+  "tro": {
+   "arms": "203",
+   "body": "103",
+   "head": "004",
+   "legs": "304"
+  },
+  "tryma": {
+   "arms": "204",
+   "body": "105",
+   "head": "018",
+   "legs": "311"
+  },
+  "tsintao": {
+   "arms": "213",
+   "body": "110",
+   "head": "020",
+   "legs": "312"
+  },
+  "u_raptor": {
+   "arms": "203",
+   "body": "103",
+   "head": "004",
+   "legs": "304"
+  },
+  "v_raptor": {
+   "arms": "203",
+   "body": "103",
+   "head": "004",
+   "legs": "304"
+  },
+  "venator": {
+   "arms": "202",
+   "body": "102",
+   "head": "002",
+   "legs": "302"
+  },
+  "yango": {
+   "arms": "210",
+   "body": "108",
+   "head": "015",
+   "legs": "309"
+  },
+  "zino": {
+   "arms": "208",
+   "body": "105",
+   "head": "011",
+   "legs": "307"
+  }
+ }
+}

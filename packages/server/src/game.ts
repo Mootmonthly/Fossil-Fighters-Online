@@ -1,7 +1,7 @@
 /** Account-side game logic: shop, cleaning, integration, teams, rewards. */
 import type { DatabaseSync } from 'node:sqlite';
 import {
-  getVivosaur, obtainableVivosaurs, rankFromPoints, toTeamMember, computeStats, effectiveSpecies, MIN_CLEAN_SCORE, SHOP, PARTS,
+  getVivosaur, obtainableVivosaurs, rankFromPoints, toTeamMember, computeStats, effectiveSpecies, MIN_CLEAN_SCORE, SHOP, PARTS, fossilImageSet,
   STARTER_CHOICES, STARTING_GOLD, type FossilPart, type OwnedVivosaur, type TeamMember, type Element,
 } from '@ffo/shared';
 import type { FossilRow, UserRow, VivosaurRow } from './db.js';
@@ -59,6 +59,8 @@ export function publicFossil(f: FossilRow) {
     state: f.state,
     score: f.score,
     speciesId: cleaned ? f.species_id : null,
+    // the picture shown while cleaning reveals the fossil's shape, as in the game, but not the species name
+    fossilImage: f.species_id && f.part ? fossilImageSet(f.species_id, f.part) : null,
     rockSeed: f.rock_seed,
   };
 }
