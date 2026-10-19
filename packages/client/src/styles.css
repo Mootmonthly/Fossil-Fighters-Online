@@ -139,7 +139,7 @@ table th { color: var(--muted); font-weight: 800; }
 .battle { display: grid; grid-template-columns: 1fr 330px; gap: 14px; align-items: start; }
 @media (max-width: 960px) { .battle { grid-template-columns: 1fr; } }
 .arena { position: relative; background: #0b1322; border-radius: var(--radius); border: 3px solid #3b3b3b; box-shadow: inset 0 0 0 2px #8d8d8d, 0 3px 0 rgba(0,0,0,.3); overflow: hidden; }
-.arena svg { width: 100%; height: auto; display: block; }
+.arena > svg { width: 100%; height: auto; display: block; }
 .hex { fill: rgba(255,255,255,0); stroke: rgba(255,255,255,0); stroke-width: 4; transition: fill .2s, stroke .2s; }
 .hex.mine { stroke: rgba(255,120,90,.35); }
 .hex.theirs { stroke: rgba(120,170,255,.35); }
@@ -247,3 +247,46 @@ table th { color: var(--muted); font-weight: 800; }
 .sound { display: flex; align-items: center; gap: 4px; }
 .sound button { padding: 3px 8px 4px; font-size: 15px; line-height: 1; }
 .sound input[type=range] { width: 80px; accent-color: #e8901a; }
+
+/* ---- phones and small tablets ---- */
+html { -webkit-text-size-adjust: 100%; }
+@media (max-width: 760px) {
+  .content { padding: 10px; }
+  .grid { grid-template-columns: 1fr !important; }
+  .grid.cards { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; }
+  .topbar { position: static; flex-wrap: wrap; padding: 6px 10px; gap: 6px 8px; }
+  .topbar .brand { font-size: 17px; flex: 1; }
+  .topbar .brand img { width: 22px; height: 22px; }
+  .topbar .spacer { display: none; }
+  .topbar .userbar { gap: 6px; }
+  .topbar .userbar .muted { display: none; }
+  .topbar nav { order: 3; width: 100%; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 2px 0 4px; scrollbar-width: none; }
+  .topbar nav::-webkit-scrollbar { display: none; }
+  .topbar nav button { flex: 0 0 auto; white-space: nowrap; }
+  .sound input[type=range] { width: 56px; }
+  .panel { padding: 12px; border-width: 2px; }
+  .title-pill, .panel h2, .panel > h3, .overlay h2 { font-size: 16px; padding: 2px 14px 3px; }
+  .cleaning, .battle, .pick, .pick-columns { grid-template-columns: 1fr; }
+  .cleaning canvas { max-width: none; }
+  .starters { grid-template-columns: 1fr; }
+  table { display: block; overflow-x: auto; max-width: 100%; }
+  .toast { bottom: 10px; max-width: 94vw; padding: 10px 14px; font-size: 14px; }
+  .auth { margin: 20px auto; }
+  .pick-timer { font-size: 24px; }
+  .log { height: 160px; }
+  .arena svg text { font-weight: 800; }
+  .vs { font-size: 20px; }
+}
+
+.pick-bar { display: none; }
+@media (max-width: 760px) {
+  .pick-bar { display: flex; gap: 6px; align-items: center; position: sticky; top: 0; z-index: 6; background: var(--panel); border: 2px solid var(--line); border-radius: 10px; padding: 6px 8px; box-shadow: 0 3px 0 rgba(0,0,0,.25); }
+  .pick-bar button { padding: 5px 9px 6px; font-size: 13px; }
+  .pick-bar .pick-timer { font-size: 20px; min-width: 40px; text-align: left; }
+  .pick .grid { grid-template-columns: 1fr 1fr !important; gap: 8px; }
+  .pick-card { padding: 8px; }
+  .pick-card .small { font-size: 11px; }
+  .pick-side .slots, .pick-side svg, .pick-side > .small { display: none; }
+  .turn-banner { font-size: 11px; padding: 3px 10px 4px; top: 6px; white-space: nowrap; }
+  .arena .overlay .panel { padding: 10px; font-size: 13px; }
+}

@@ -105,6 +105,13 @@ export function PickScreen({ pick, ready, socket }: { pick: PickPayload; ready: 
   const me = pick.side, them = (1 - pick.side) as 0 | 1;
   return (
     <div className="pick">
+      {/* compact controls for phones: shown by CSS only on small screens, sticky at the top */}
+      <div className="pick-bar">
+        <span className={`pick-timer ${secondsLeft <= 10 ? 'low' : ''}`}>{secondsLeft}s</span>
+        <button className={formation === 'cambrian' ? 'primary' : ''} disabled={locked} onClick={() => setFormation('cambrian')}>Cambrian</button>
+        <button className={formation === 'jurassic' ? 'primary' : ''} disabled={locked} onClick={() => setFormation('jurassic')}>Jurassic</button>
+        {locked ? <span className="small muted">Locked · waiting…</span> : <button className="primary" disabled={chosen.length !== need} onClick={lockIn}>Lock in {chosen.length}/{need}</button>}
+      </div>
       <div className="panel">
         <div className="row" style={{ justifyContent: 'space-between' }}>
           <h2>Choose your fighters</h2>

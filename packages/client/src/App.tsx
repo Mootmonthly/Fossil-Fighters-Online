@@ -115,7 +115,7 @@ export function App() {
           {snap.user.isAdmin && nav('admin')}
         </nav>
         <div className="spacer" />
-        <div className="row">
+        <div className="row userbar">
           <span className="muted">{snap.user.username}</span>
           <span className="gold">{snap.user.gold.toLocaleString()} G</span>
           <SoundControl />

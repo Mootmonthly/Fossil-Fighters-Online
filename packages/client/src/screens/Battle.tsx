@@ -242,6 +242,9 @@ const FP_BAR_H = 190; // the game's FP gauge (256x87) stretched across the botto
 const ANGLE_LEFT: Record<Zone, number> = { 0: 0, 1: -60, 2: -120, 3: 180, 4: 120, 5: 60 };
 const ANGLE_RIGHT: Record<Zone, number> = { 0: 180, 1: -120, 2: -60, 3: 0, 4: 60, 5: 120 };
 const HEX_RX = 20.5 * S, HEX_RY = 20 * S; // the painted hexes are 36 wide and 40 tall
+/** The game's life bar sprites (64x32 frames: empty, 32 red levels, 32 green levels) by frame colour; drawn at this scale. */
+const LIFEBAR_SCALE = 2.6;
+const LIFEBAR_COLOR: Record<string, string> = { fire: 'red', water: 'blue', earth: 'yellow', air: 'green', neutral: 'white', legendary: 'black' };
 
 function zonePos(zone: Zone, mine: boolean): { x: number; y: number } {
   const c = mine ? FLOWER.left : FLOWER.right;
@@ -347,18 +350,27 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
           {/* name plate above the sprite */}
           <rect x={x - 62} y={y - spriteSize + 2} width={124} height={20} rx={10} fill="rgba(0,0,0,.6)" />
           <text x={x} y={y - spriteSize + 16} textAnchor="middle" fontSize={12.5} fontWeight={900} fill="#fff">{v.name}{v.rank < 20 ? ` · R${v.rank}` : ''}</text>
-          {/* LP bar on the lower half of the tile, under the sprite's feet */}
-          <rect x={x - 52} y={below} width={104} height={12} rx={6} fill="rgba(0,0,0,.65)" />
-          <rect x={x - 50} y={below + 2} width={100 * hp} height={8} rx={4} className={`hpbar-fill ${hp < 0.25 ? 'low' : hp < 0.5 ? 'mid' : ''}`} />
-          <text x={x} y={below + 25} textAnchor="middle" fontSize={12} fontWeight={800} fill="#fff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 3 }}>{v.lp} / {v.maxLp}</text>
-          <text x={x} y={below + 39} textAnchor="middle" fontSize={10.5} fill="#ffe9c4" fontWeight={800} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>{ZONE_NAMES[v.zone]}{dist !== null ? ` · ${dist} tiles` : ''}</text>
+          {/* LP bar: the game's own life bar graphic, shaped and framed by element, green for you and red for the enemy */}
+          {(() => {
+            const k = LIFEBAR_SCALE;
+            const level = v.lp <= 0 ? 0 : Math.max(1, Math.min(32, Math.round(32 * hp)));
+            const frame = level === 0 ? 0 : (mine ? 32 : 0) + level;
+            const col = LIFEBAR_COLOR[species.element] ?? 'white';
+            return (
+              <svg x={x - 32 * k} y={below + 8 - 16 * k} width={64 * k} height={32 * k} viewBox={`0 ${frame * 32} 64 32`}>
+                <image href={`/img/ui/lifebar_${col}.png`} x={0} y={0} width={64} height={32 * 65} preserveAspectRatio="none" style={{ imageRendering: 'pixelated' }} />
+              </svg>
+            );
+          })()}
+          <text x={x} y={below + 33} textAnchor="middle" fontSize={12} fontWeight={800} fill="#fff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 3 }}>{v.lp} / {v.maxLp}</text>
+          <text x={x} y={below + 47} textAnchor="middle" fontSize={10.5} fill="#ffe9c4" fontWeight={800} style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>{ZONE_NAMES[v.zone]}{dist !== null ? ` · ${dist} tiles` : ''}</text>
           {arrows.length > 0 && (
-            <text x={x} y={below + 52} textAnchor="middle" fontSize={10.5} fontWeight={800} fill="#ffe08a" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>
+            <text x={x} y={below + 60} textAnchor="middle" fontSize={10.5} fontWeight={800} fill="#ffe08a" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>
               {arrows.map((a) => `${a.label}${a.value > 0 ? '↑' : '↓'}${Math.abs(a.value)}%`).join('  ')}
             </text>
           )}
           {v.statuses.length > 0 && (
-            <text x={x} y={below + (arrows.length ? 65 : 52)} textAnchor="middle" fontSize={10.5} fontWeight={800} fill="#9ad7ff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>
+            <text x={x} y={below + (arrows.length ? 73 : 60)} textAnchor="middle" fontSize={10.5} fontWeight={800} fill="#9ad7ff" style={{ paintOrder: 'stroke', stroke: '#000', strokeWidth: 2.5 }}>
               {v.statuses.map((st) => `${STATUS_SHORT[st.kind] ?? st.kind}${st.tier >= 2 ? '+' : ''}`).join(' ')}
             </text>
           )}
