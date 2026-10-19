@@ -51,10 +51,10 @@ describe('field', () => {
 
 describe('battle', () => {
   it('starts with the faster team and recharges FP', () => {
-    const st = createBattle([team('a', ['t_rex', 'guan', 'gorgo']), team('b', ['compso', 'tricera', 'pelto'])], 1);
+    const st = createBattle([team('a', ['t_rex', 'guan', 'gorgo']), team('b', ['compso', 'tricera', 'pelto'])], 1, { heroLevel: 20 });
     expect(st.log[0].type).toBe('battleStart');
     // Compso's team is faster (speed 25+21+18 vs 12+20+15) and Compso has FP Plus 30%.
-    // Level 20 starts a battle with 460 FP and gains 230 per turn (ROM btl_kp_defs).
+    // Level 20 starts a battle with 460 FP and gains 230 per turn (ROM btl_kp_defs); the default level is lower.
     expect(st.active).toBe(1);
     expect(st.sides[1].fp).toBe(460 + Math.floor(230 * 1.3));
     expect(st.sides[1].fpMax).toBe(900);

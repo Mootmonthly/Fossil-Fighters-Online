@@ -92,8 +92,9 @@ Tests: `npm test` runs the engine unit tests (vitest).
 
 - Six zones per side: AZ+ / AZ / AZ in front, SZ / SZ / SZ+ behind. Teams start in the Cambrian formation
   (one AZ, two SZ). Rotating one step costs 5 FP, cumulative up to 15 FP until the next skill is used.
-- Turn order by total team Speed. FP recharges at the start of each turn per hero level (both sides use
-  level 20: +230 FP, max 900). FP Plus adds 10/20/30 %.
+- Turn order by total team Speed. FP recharges at the start of each turn per the game's hero-level table. Both
+  sides use hero level 8 (`BATTLE_HERO_LEVEL`): 280 FP to start, +140 per turn, 400 max. Level 20, the story's
+  maximum (460 / +230 / 900), let teams use every skill every turn. FP Plus adds 10/20/30 %.
 - Damage = `{[(Attack + BasePower + status) × atkSupport] − (Defense × defSupport ± status)} × rand(0.75–0.85) ×
   element × range × crit(1.5) × Parting Blow × Charge(2.5)`, truncated. Base power is the listed skill power
   minus the species' max-rank Attack.

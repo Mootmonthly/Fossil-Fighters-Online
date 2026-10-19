@@ -72,4 +72,10 @@ export const TEAM_SKILL_KO_PENALTY = 0.25;
 /** Support effects are halved when two vivosaurs share the AZ (Jurassic formation). */
 export const JURASSIC_SUPPORT_FACTOR = 0.5;
 
-export const DEFAULT_BATTLE_OPTIONS = { heroLevel: 20, maxTurns: 120 };
+/**
+ * Hero level used for every battle. It sets FP from the game's own table (data/growth.json): level 8 gives
+ * 280 FP at the start, +140 per turn, 400 max, which suits ranked-up-but-not-maxed teams; level 20 (460 / +230 / 900)
+ * is the story's end-game maximum and lets a team fire every skill every turn.
+ */
+export const BATTLE_HERO_LEVEL = 8;
+export const DEFAULT_BATTLE_OPTIONS = { heroLevel: BATTLE_HERO_LEVEL, maxTurns: 120 };

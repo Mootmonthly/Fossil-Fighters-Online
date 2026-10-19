@@ -4,7 +4,7 @@ import type { DatabaseSync } from 'node:sqlite';
 import {
   applyAction, BattleError, createBattle, playAiTurn, obtainableVivosaurs, memberAtRank, findVivosaur, isTeamCompatible,
   PRIZE_DRAW, PRIZE_LOSS, PRIZE_SOLO_LOSS, PRIZE_SOLO_WIN, PRIZE_WIN, RANK_POINTS_LOSS, RANK_POINTS_SOLO, RANK_POINTS_WIN,
-  TEAM_SIZE, BATTLE_PICKS, PICK_SECONDS,
+  TEAM_SIZE, BATTLE_PICKS, PICK_SECONDS, BATTLE_HERO_LEVEL,
   type BattleAction, type BattleState, type TeamMember, type TeamSetup, type Formation,
 } from '@ffo/shared';
 import type { UserRow, VivosaurRow } from './db.js';
@@ -274,7 +274,7 @@ export class RoomManager {
         p.chosen = { ids: p.team.ids.slice(0, n), members: p.team.members.slice(0, n), formation: 'cambrian' };
       }
     }
-    const setups = room.sides.map((p) => ({ id: String(p.userId ?? 'ai'), name: p.username, members: p.chosen!.members, heroLevel: 20, formation: p.chosen!.formation } satisfies TeamSetup)) as [TeamSetup, TeamSetup];
+    const setups = room.sides.map((p) => ({ id: String(p.userId ?? 'ai'), name: p.username, members: p.chosen!.members, heroLevel: BATTLE_HERO_LEVEL, formation: p.chosen!.formation } satisfies TeamSetup)) as [TeamSetup, TeamSetup];
     const seed = Math.floor(Math.random() * 2 ** 31);
     room.state = createBattle(setups, seed);
     room.phase = 'battle';
