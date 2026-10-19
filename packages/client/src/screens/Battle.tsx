@@ -116,6 +116,8 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
     socket.on('room:created', onRoom);
     socket.on('error', onError);
     socket.on('battle:opponentDisconnected', onDisc);
+    // Pick up an ongoing pick phase or battle (the server re-sends it; needed after a reload or tab switch).
+    socket.emit('battle:sync');
     return () => {
       socket.off('battle:pick', onPick);
       socket.off('battle:pickStatus', onPickStatus);

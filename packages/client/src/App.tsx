@@ -30,6 +30,17 @@ export function App() {
   useEffect(() => {
     if (snap) music.play('menu');
   }, [screen, snap]);
+  // An ongoing battle (or pick phase) always brings the player back to the battle screen, e.g. after a reload.
+  useEffect(() => {
+    if (!socket) return;
+    const toBattle = () => setScreen('battle');
+    socket.on('battle:pick', toBattle);
+    socket.on('battle:start', toBattle);
+    return () => {
+      socket.off('battle:pick', toBattle);
+      socket.off('battle:start', toBattle);
+    };
+  }, [socket]);
 
   const notify = useCallback((text: string, error = false) => {
     setToast({ text, error });

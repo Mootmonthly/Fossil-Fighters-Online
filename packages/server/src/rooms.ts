@@ -67,26 +67,12 @@ export class RoomManager {
   attach(socket: Socket) {
     const user = (socket.data as SocketData).user;
     // Reconnect to an ongoing pick phase or battle.
-    const existingRoomId = this.byUser.get(user.id);
-    if (existingRoomId) {
-      const room = this.rooms.get(existingRoomId);
-      if (room && !room.finished) {
-        const sideIdx = room.sides.findIndex((p) => p.userId === user.id) as 0 | 1;
-        const p = room.sides[sideIdx];
-        p.socketId = socket.id;
-        if (p.disconnectTimer) clearTimeout(p.disconnectTimer);
-        p.disconnectTimer = undefined;
-        this.bySocket.set(socket.id, room.id);
-        socket.join(room.id);
-        if (room.phase === 'pick') {
-          socket.emit('battle:pick', this.pickPayload(room, sideIdx));
-          socket.emit('battle:pickStatus', { ready: room.sides.map((s) => !!s.chosen) });
-        } else {
-          socket.emit('battle:start', this.startPayload(room, sideIdx));
-        }
-      }
-    }
+    this.resume(socket, user);
 
+    // The battle screen asks for the current room when it mounts (after a reload the app opens elsewhere).
+    socket.on('battle:sync', () => {
+      if (!this.resume(socket, user)) socket.emit('battle:none');
+    });
     socket.on('queue:join', () => this.joinQueue(socket, user));
     socket.on('queue:leave', () => this.leaveQueue(socket));
     socket.on('room:create', () => this.createPrivate(socket, user));
@@ -96,6 +82,33 @@ export class RoomManager {
     socket.on('battle:action', (action: BattleAction) => this.handleAction(socket, action));
     socket.on('battle:leave', () => this.handleAction(socket, { type: 'forfeit' }));
     socket.on('disconnect', () => this.onDisconnect(socket));
+  }
+
+  /** Re-attaches the socket to the user's ongoing pick phase or battle, if any, and re-sends it. */
+  private resume(socket: Socket, user: UserRow): boolean {
+    const roomId = this.byUser.get(user.id);
+    const room = roomId ? this.rooms.get(roomId) : undefined;
+    if (!room || room.finished) return false;
+    const sideIdx = room.sides.findIndex((p) => p.userId === user.id) as 0 | 1;
+    if (sideIdx < 0) return false;
+    const p = room.sides[sideIdx];
+    if (p.socketId && p.socketId !== socket.id) {
+      // an older tab is still attached; the newest one takes over
+      this.bySocket.delete(p.socketId);
+      this.io.sockets.sockets.get(p.socketId)?.leave(room.id);
+    }
+    p.socketId = socket.id;
+    if (p.disconnectTimer) clearTimeout(p.disconnectTimer);
+    p.disconnectTimer = undefined;
+    this.bySocket.set(socket.id, room.id);
+    socket.join(room.id);
+    if (room.phase === 'pick') {
+      socket.emit('battle:pick', this.pickPayload(room, sideIdx));
+      socket.emit('battle:pickStatus', { ready: room.sides.map((s) => !!s.chosen) });
+    } else {
+      socket.emit('battle:start', this.startPayload(room, sideIdx));
+    }
+    return true;
   }
 
   private freshUser(id: number): UserRow {
