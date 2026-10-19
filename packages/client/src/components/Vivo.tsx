@@ -68,7 +68,7 @@ export function VivoCard({ v, selected, onClick, extra }: { v: VivosaurView; sel
         <span className="badge">{species.range === 'close' ? 'Close' : species.range === 'mid' ? 'Mid' : 'Long'}-Range</span>
         <span className="badge" title="Integrated fossil parts">{parts}/4 parts</span>
         {v.silver && <span className="badge" title={`Silver ${v.silver.part} (${v.silver.score})`}>Silver</span>}
-        {v.gold !== null && <span className="badge" style={{ color: 'var(--accent)' }}>Gold</span>}
+        {v.gold !== null && <span className="badge" style={{ color: 'var(--gold-dark)' }}>Gold</span>}
       </div>
       <StatBars stats={v.stats} />
       {extra}

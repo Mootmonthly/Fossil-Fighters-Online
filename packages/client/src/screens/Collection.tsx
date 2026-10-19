@@ -68,7 +68,7 @@ export function CollectionScreen({ snap, run, notify }: { snap: Snapshot; run: R
             )}
             {superFossils.map((f) => (
               <div key={f.id} className="row" style={{ marginBottom: 6 }}>
-                <span className="badge" style={{ color: f.kind === 'miraculous' ? 'var(--accent)' : '#cfd8e6' }}>{f.kind === 'miraculous' ? 'Gold fossil' : `Silver ${f.part}`} · {f.score} pts</span>
+                <span className="badge" style={{ color: f.kind === 'miraculous' ? 'var(--gold-dark)' : 'var(--muted)' }}>{f.kind === 'miraculous' ? 'Gold fossil' : `Silver ${f.part}`} · {f.score} pts</span>
                 <span className="small muted">Select a vivosaur, then</span>
                 <button disabled={!sel} onClick={async () => { if (!sel) return; const out = await run(() => api.integrate(f.id, sel.id)); if (out) { notify(`Integrated into ${findVivosaur(out.vivosaur.displaySpeciesId)?.name}!`); setSel(out.vivosaur); } }}>Integrate into {sel ? sel.nickname ?? findVivosaur(sel.displaySpeciesId)?.name : '…'}</button>
                 <button onClick={async () => { const out = await run(() => api.sell(f.id)); if (out) notify(`Sold for ${out.value} G`); }}>Sell</button>
@@ -97,7 +97,7 @@ export function CollectionScreen({ snap, run, notify }: { snap: Snapshot; run: R
         const species = findVivosaur(sel.displaySpeciesId)!;
         const base = findVivosaur(sel.speciesId)!;
         return (
-          <div className="panel themed bg-status" style={{ alignSelf: 'start', position: 'sticky', top: 70 }}>
+          <div className="panel themed bg-plate" style={{ alignSelf: 'start', position: 'sticky', top: 70 }}>
             <div className="row" style={{ justifyContent: 'space-between' }}>
               <h3>{sel.nickname ?? species.name}</h3>
               <button onClick={() => setSel(null)}>✕</button>

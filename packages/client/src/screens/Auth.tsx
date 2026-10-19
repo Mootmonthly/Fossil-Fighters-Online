@@ -28,7 +28,7 @@ export function AuthScreen({ onAuth }: { onAuth: (s: Snapshot & { token: string 
   return (
     <div className="content">
       <div className="panel auth">
-        <h1 style={{ color: 'var(--accent)' }}>Fossil Fighters Online</h1>
+        <h1>Fossil Fighters Online</h1>
         <p className="muted">Dig, clean, revive, and battle. A Fossil Fighters: Champions battle simulator.</p>
         <div className="tabs">
           <button type="button" className={mode === 'login' ? 'active' : ''} onClick={() => setMode('login')}>Log in</button>

@@ -138,7 +138,7 @@ export function BattleScreen({ snap, socket, notify, refresh }: { snap: Snapshot
   const team = snap.user.team.map((id) => snap.vivosaurs.find((v) => v.id === id)).filter(Boolean);
   return (
     <div className="grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
-      <div className="panel themed bg-multiplayer">
+      <div className="panel themed bg-plate">
         <h2>Fossil Battle</h2>
         <div className="row" style={{ marginBottom: 10 }}>
           <span className="muted small">Your team:</span>
@@ -419,7 +419,7 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
           {selected ? (
             <>
               <div className="small muted" style={{ marginBottom: 4 }}>
-                <b style={{ color: 'var(--text)' }}>{selected.name}</b> · {getVivosaur(selected.speciesId).range}-range · {ZONE_NAMES[selected.zone]} {selected.acted ? '· acted' : ''}
+                <b style={{ color: '#fff' }}>{selected.name}</b> · {getVivosaur(selected.speciesId).range}-range · {ZONE_NAMES[selected.zone]} {selected.acted ? '· acted' : ''}
               </div>
               <div className="skill-list">
                 {skills.map((a) => (

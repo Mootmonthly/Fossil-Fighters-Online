@@ -11,7 +11,7 @@ export function SkillTable({ v }: { v: VivosaurData }) {
       </thead>
       <tbody>
         {v.skills.map((s) => (
-          <tr key={s.id} style={{ borderTop: '1px solid var(--line)', color: s.kind === 'team' ? '#ffb3b3' : s.kind === 'support' ? '#b6f3c0' : undefined }}>
+          <tr key={s.id} style={{ borderTop: '1px solid var(--line-soft)', color: s.kind === 'team' ? '#a3321f' : s.kind === 'support' ? '#2e7d32' : undefined }}>
             <td><b>{s.name}</b>{s.kind === 'team' ? ' (Team)' : ''}</td>
             <td align="center">{s.power ?? '—'}</td>
             <td align="center">{s.fp}</td>
@@ -37,7 +37,7 @@ export function FossilaryScreen({ snap }: { snap: Snapshot }) {
   const list = useMemo(() => VIVOSAURS.filter((v) => v.name.toLowerCase().includes(q.toLowerCase())), [q]);
   return (
     <div className="grid" style={{ gridTemplateColumns: sel ? '1fr 1fr' : '1fr' }}>
-      <div className="panel themed bg-fossilary">
+      <div className="panel themed bg-plate">
         <div className="row" style={{ justifyContent: 'space-between' }}>
           <h2>Fossilary</h2>
           <input placeholder="Search…" value={q} onChange={(e) => setQ(e.target.value)} />
@@ -58,7 +58,7 @@ export function FossilaryScreen({ snap }: { snap: Snapshot }) {
         </div>
       </div>
       {sel && (
-        <div className="panel themed bg-status">
+        <div className="panel themed bg-plate">
           <div className="row">
             <img className="sprite" src={spriteSrc(sel.id)} alt="" style={{ width: 120, height: 120 }} onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')} />
             <div>
