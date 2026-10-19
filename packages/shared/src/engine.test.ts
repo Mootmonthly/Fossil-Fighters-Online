@@ -26,6 +26,15 @@ describe('data', () => {
     expect(t.skills.find((s) => s.name === 'Scare Tactics')?.power).toBe(166);
     expect(t.support).toEqual({ target: 'own', attack: -30, defense: -30, accuracy: -30, speed: -30 });
   });
+  it('uses the game\'s per-rank tables', () => {
+    const t = getVivosaur('t_rex');
+    expect(t.lpByRank?.[0]).toBe(90);
+    expect(t.lpByRank?.[19]).toBe(600);
+    expect(memberAtRank('t_rex', 1).stats).toEqual({ lp: 90, attack: 55, defense: 25, accuracy: 39, speed: 10 });
+    expect(memberAtRank('t_rex', 20).stats).toEqual({ lp: 600, attack: 99, defense: 50, accuracy: 43, speed: 12 });
+    expect(t.rangeTable).toEqual([150, 150, 100, 80, 50, 40, 30, 20]);
+    expect(t.skills[1].basePower).toBe(67);
+  });
   it('team compatibility follows the group lists', () => {
     expect(isTeamCompatible(['t_rex', 'guan', 'gorgo'])).toBe(true); // all Fire
     expect(isTeamCompatible(['t_rex', 'compso', 'tricera'])).toBe(false);
@@ -45,9 +54,11 @@ describe('battle', () => {
     const st = createBattle([team('a', ['t_rex', 'guan', 'gorgo']), team('b', ['compso', 'tricera', 'pelto'])], 1);
     expect(st.log[0].type).toBe('battleStart');
     // Compso's team is faster (speed 25+21+18 vs 12+20+15) and Compso has FP Plus 30%.
+    // Level 20 starts a battle with 460 FP and gains 230 per turn (ROM btl_kp_defs).
     expect(st.active).toBe(1);
-    expect(st.sides[1].fp).toBe(Math.floor(230 * 1.3));
+    expect(st.sides[1].fp).toBe(460 + Math.floor(230 * 1.3));
     expect(st.sides[1].fpMax).toBe(900);
+    expect(st.sides[0].fp).toBe(460);
   });
 
   it('applies support effects to the AZ vivosaur', () => {

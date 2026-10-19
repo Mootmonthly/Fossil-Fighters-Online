@@ -94,11 +94,32 @@ Tests: `npm test` runs the engine unit tests (vitest).
 - Team Skills need a compatible trio (the wiki's 31 compatibility groups), cannot crit, and lose power for
   each KO'd teammate.
 
-### Documented assumptions
+### Data taken from the game itself
 
-Numbers the wiki does not give are set in `packages/shared/src/constants.ts` and marked as assumptions:
-Super Excite's spin chance, the chance a confused vivosaur skips its action, Resurrect's LP, the team-skill power penalty per KO, and the rank-based stat curve
-(the wiki lists max-rank stats only). Transformations restore the new form's full LP.
+The owner's ROM was data-mined to fill the gaps the wiki leaves (tools live outside the repo; no game files are
+committed). From the game's own tables:
+
+- **LP at every rank** for every vivosaur (`lpByRank`), and for Attack, Defense, Accuracy and Speed the rank-1 value,
+  max value and growth-pattern index (`statCurves`) together with the game's six 20-step growth patterns
+  (`data/growth.json`). Rank-20 values match the wiki exactly.
+- **Skill FP costs and base powers** for all 800 skills: 801 of 803 wiki entries agreed, and the two wiki typos
+  (Onyx's Whiplash, Hibigon's Hibi Hustle) were corrected. The game also stores weaker lower-rank versions of
+  many skills (`tiers`), kept in the data but not yet used, because the rank thresholds that switch them are not
+  known.
+- **Per-vivosaur range tables** (damage percentage at each tile distance), status chances and tiers, support
+  effects and crit rates, all of which confirmed the wiki.
+- **Hero-level FP table**, including FP at the start of a battle (460 at level 20, which the wiki did not list).
+- **Super-revival bonuses** and the 50-point rank-up interval.
+
+Special vivosaurs (super evolvers, boneysaurs, zombiesaurs, legendaries) use their base stats; the wiki lists them
+with a 100-point gold fossil included, and the game applies that bonus through the fossil system instead.
+
+### Remaining assumptions
+
+Set in `packages/shared/src/constants.ts` and marked as assumptions: Super Excite's spin chance, the chance a
+confused vivosaur skips its action, Resurrect's LP, and the team-skill power penalty per KO. The stat growth
+formula interpolates between the rank-1 and max values along the growth pattern; the game's exact rounding may
+differ by a point. Transformations restore the new form's full LP.
 
 ## Data
 

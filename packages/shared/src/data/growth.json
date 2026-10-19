@@ -1,0 +1,610 @@
+{
+"patterns": {
+"1": [
+410,
+602,
+795,
+987,
+1180,
+1372,
+1565,
+1757,
+1950,
+2142,
+2335,
+2527,
+2720,
+2912,
+3105,
+3297,
+3490,
+3682,
+3875,
+4096
+],
+"2": [
+410,
+860,
+1270,
+1679,
+2048,
+2376,
+2662,
+2908,
+3113,
+3277,
+3379,
+3461,
+3543,
+3625,
+3707,
+3789,
+3850,
+3932,
+4014,
+4096
+],
+"3": [
+410,
+492,
+532,
+614,
+655,
+717,
+819,
+922,
+1044,
+1229,
+1434,
+1638,
+1884,
+2171,
+2519,
+2826,
+3133,
+3441,
+3768,
+4096
+],
+"4": [
+410,
+492,
+532,
+573,
+1434,
+1454,
+1475,
+1495,
+2253,
+2294,
+2314,
+2335,
+2990,
+3011,
+3031,
+3052,
+3686,
+3707,
+3768,
+4096
+],
+"5": [
+1229,
+1843,
+2376,
+2744,
+2990,
+3154,
+3277,
+3359,
+3441,
+3523,
+3604,
+3686,
+3748,
+3830,
+3871,
+3932,
+3994,
+4035,
+4055,
+4096
+],
+"6": [
+410,
+410,
+410,
+410,
+410,
+410,
+410,
+410,
+410,
+410,
+410,
+819,
+1229,
+1638,
+2048,
+2458,
+2867,
+3277,
+3686,
+4096
+]
+},
+"fpLevels": [
+{
+"level": 1,
+"max": 180,
+"gain": 70,
+"start": 140,
+"exp": 0
+},
+{
+"level": 2,
+"max": 220,
+"gain": 80,
+"start": 160,
+"exp": 70
+},
+{
+"level": 3,
+"max": 250,
+"gain": 90,
+"start": 180,
+"exp": 200
+},
+{
+"level": 4,
+"max": 280,
+"gain": 100,
+"start": 200,
+"exp": 300
+},
+{
+"level": 5,
+"max": 300,
+"gain": 110,
+"start": 220,
+"exp": 400
+},
+{
+"level": 6,
+"max": 330,
+"gain": 120,
+"start": 240,
+"exp": 520
+},
+{
+"level": 7,
+"max": 360,
+"gain": 130,
+"start": 260,
+"exp": 640
+},
+{
+"level": 8,
+"max": 400,
+"gain": 140,
+"start": 280,
+"exp": 760
+},
+{
+"level": 9,
+"max": 450,
+"gain": 160,
+"start": 320,
+"exp": 880
+},
+{
+"level": 10,
+"max": 500,
+"gain": 180,
+"start": 360,
+"exp": 1000
+},
+{
+"level": 11,
+"max": 550,
+"gain": 185,
+"start": 370,
+"exp": 1140
+},
+{
+"level": 12,
+"max": 600,
+"gain": 190,
+"start": 380,
+"exp": 1280
+},
+{
+"level": 13,
+"max": 630,
+"gain": 195,
+"start": 390,
+"exp": 1420
+},
+{
+"level": 14,
+"max": 670,
+"gain": 200,
+"start": 400,
+"exp": 1500
+},
+{
+"level": 15,
+"max": 700,
+"gain": 205,
+"start": 410,
+"exp": 1700
+},
+{
+"level": 16,
+"max": 730,
+"gain": 210,
+"start": 420,
+"exp": 1860
+},
+{
+"level": 17,
+"max": 750,
+"gain": 215,
+"start": 430,
+"exp": 2020
+},
+{
+"level": 18,
+"max": 770,
+"gain": 220,
+"start": 440,
+"exp": 2180
+},
+{
+"level": 19,
+"max": 800,
+"gain": 225,
+"start": 450,
+"exp": 2340
+},
+{
+"level": 20,
+"max": 900,
+"gain": 230,
+"start": 460,
+"exp": 2500
+}
+],
+"statuses": [
+{
+"id": 1,
+"kind": 1,
+"tier": 1,
+"f3": 0,
+"id2": 1,
+"value1": 0,
+"value2": 0,
+"turnsA": 1,
+"turnsB": 1,
+"flag": 0
+},
+{
+"id": 2,
+"kind": 2,
+"tier": 2,
+"f3": 1,
+"id2": 2,
+"value1": 15,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 3,
+"kind": 2,
+"tier": 3,
+"f3": 1,
+"id2": 3,
+"value1": 30,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 4,
+"kind": 2,
+"tier": 4,
+"f3": 1,
+"id2": 4,
+"value1": 50,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 0
+},
+{
+"id": 5,
+"kind": 3,
+"tier": 2,
+"f3": 1,
+"id2": 5,
+"value1": 0,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 6,
+"kind": 3,
+"tier": 3,
+"f3": 1,
+"id2": 6,
+"value1": 0,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 7,
+"kind": 4,
+"tier": 2,
+"f3": 2,
+"id2": 7,
+"value1": 2,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 8,
+"kind": 4,
+"tier": 3,
+"f3": 2,
+"id2": 8,
+"value1": 3,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 9,
+"kind": 5,
+"tier": 2,
+"f3": 2,
+"id2": 9,
+"value1": 10,
+"value2": 30,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 10,
+"kind": 5,
+"tier": 3,
+"f3": 2,
+"id2": 10,
+"value1": 20,
+"value2": 35,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 11,
+"kind": 6,
+"tier": 2,
+"f3": 2,
+"id2": 11,
+"value1": 0,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 12,
+"kind": 6,
+"tier": 3,
+"f3": 2,
+"id2": 12,
+"value1": 0,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 13,
+"kind": 7,
+"tier": 2,
+"f3": 2,
+"id2": 13,
+"value1": 0,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 14,
+"kind": 7,
+"tier": 3,
+"f3": 2,
+"id2": 14,
+"value1": 0,
+"value2": 0,
+"turnsA": 3,
+"turnsB": 2,
+"flag": 1
+},
+{
+"id": 15,
+"kind": 8,
+"tier": 2,
+"f3": 2,
+"id2": 15,
+"value1": 70,
+"value2": 0,
+"turnsA": 2,
+"turnsB": 3,
+"flag": 0
+},
+{
+"id": 16,
+"kind": 8,
+"tier": 3,
+"f3": 2,
+"id2": 16,
+"value1": 100,
+"value2": 0,
+"turnsA": 2,
+"turnsB": 3,
+"flag": 0
+},
+{
+"id": 17,
+"kind": 9,
+"tier": 2,
+"f3": 1,
+"id2": 17,
+"value1": 20,
+"value2": 5,
+"turnsA": 2,
+"turnsB": 4,
+"flag": 0
+},
+{
+"id": 18,
+"kind": 9,
+"tier": 3,
+"f3": 1,
+"id2": 18,
+"value1": 40,
+"value2": 10,
+"turnsA": 2,
+"turnsB": 4,
+"flag": 0
+},
+{
+"id": 19,
+"kind": 10,
+"tier": 2,
+"f3": 1,
+"id2": 19,
+"value1": 30,
+"value2": 0,
+"turnsA": 2,
+"turnsB": 4,
+"flag": 0
+},
+{
+"id": 20,
+"kind": 10,
+"tier": 3,
+"f3": 1,
+"id2": 20,
+"value1": 50,
+"value2": 0,
+"turnsA": 2,
+"turnsB": 4,
+"flag": 0
+},
+{
+"id": 21,
+"kind": 11,
+"tier": 2,
+"f3": 1,
+"id2": 21,
+"value1": 30,
+"value2": 0,
+"turnsA": 2,
+"turnsB": 4,
+"flag": 0
+},
+{
+"id": 22,
+"kind": 11,
+"tier": 3,
+"f3": 1,
+"id2": 22,
+"value1": 70,
+"value2": 0,
+"turnsA": 2,
+"turnsB": 4,
+"flag": 0
+},
+{
+"id": 23,
+"kind": 12,
+"tier": 2,
+"f3": 1,
+"id2": 23,
+"value1": 25,
+"value2": 0,
+"turnsA": 2,
+"turnsB": 3,
+"flag": 0
+},
+{
+"id": 24,
+"kind": 12,
+"tier": 3,
+"f3": 1,
+"id2": 24,
+"value1": 50,
+"value2": 0,
+"turnsA": 2,
+"turnsB": 3,
+"flag": 0
+}
+],
+"superRevivalBonuses": [
+{
+"kind": 1,
+"lp": 100,
+"attack": 5,
+"defense": 5,
+"accuracy": 5,
+"speed": 5
+},
+{
+"kind": 2,
+"lp": 20,
+"attack": 5,
+"defense": 0,
+"accuracy": 5,
+"speed": 0
+},
+{
+"kind": 3,
+"lp": 20,
+"attack": 0,
+"defense": 10,
+"accuracy": 0,
+"speed": 0
+},
+{
+"kind": 4,
+"lp": 20,
+"attack": 10,
+"defense": 0,
+"accuracy": 0,
+"speed": 0
+},
+{
+"kind": 5,
+"lp": 20,
+"attack": 0,
+"defense": 5,
+"accuracy": 0,
+"speed": 5
+}
+]
+}

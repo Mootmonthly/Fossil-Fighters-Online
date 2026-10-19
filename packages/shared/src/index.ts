@@ -3,6 +3,7 @@ export * from './constants.js';
 export * from './field.js';
 export * from './rng.js';
 export * from './data/index.js';
+export * from './data/growth.js';
 export * from './progression.js';
 export * from './engine.js';
 export * from './ai.js';

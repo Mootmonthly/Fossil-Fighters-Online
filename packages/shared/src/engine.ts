@@ -15,7 +15,7 @@ import {
 } from './constants.js';
 import { findVivosaur, getVivosaur, isTeamCompatible } from './data/index.js';
 import { isAttackZone, isSupportZone, rotateZone, START_ZONES, tileDistance } from './field.js';
-import { statAtRank, unlockedSkillCount } from './progression.js';
+import { statsAtRank, unlockedSkillCount } from './progression.js';
 import { Rng } from './rng.js';
 import type {
   AbilityType, BattleAction, BattleEvent, BattleOptions, BattleSide, BattleState, BattleVivosaur, SkillData, StatKey,
@@ -66,7 +66,7 @@ export function createBattle(teams: [TeamSetup, TeamSetup], seed: number, option
       id: t.id,
       name: t.name,
       vivosaurs: t.members.map((m, i) => makeVivosaur(m, i)),
-      fp: 0,
+      fp: lv.start,
       fpGain: lv.gain,
       fpMax: lv.max,
       rotationSpent: 0,
@@ -219,9 +219,12 @@ export function elementMultiplier(state: BattleState, attacker: VivosaurData, de
   return 1;
 }
 
+/** Range multiplier by tile distance. Uses the vivosaur's own table from the game data when present (80 = 1.0). */
 export function rangeMultiplier(attacker: BattleVivosaur, target: BattleVivosaur): number {
   const d = tileDistance(attacker.zone, target.zone);
-  return RANGE_MULTIPLIERS[speciesOf(attacker).range][d];
+  const species = speciesOf(attacker);
+  if (species.rangeTable && species.rangeTable.length >= 8) return species.rangeTable[d] / 80;
+  return RANGE_MULTIPLIERS[species.range][d];
 }
 
 export interface DamagePreview {
@@ -242,7 +245,7 @@ function computeDamage(
 ): { damage: number; elementMult: number; rangeMult: number } {
   const aSpecies = speciesOf(attacker);
   const dSpecies = speciesOf(defender);
-  let basePower = (skill.power ?? 0) - aSpecies.stats.attack + (opts.extraPower ?? 0);
+  let basePower = (skill.basePower ?? (skill.power ?? 0) - aSpecies.stats.attack) + (opts.extraPower ?? 0);
   if (opts.team) {
     const kos = state.sides[as].vivosaurs.filter((v) => v.ko).length;
     basePower = basePower * (1 - TEAM_SKILL_KO_PENALTY * kos);
@@ -564,7 +567,7 @@ function performSkill(state: BattleState, rng: Rng, s: SideIndex, user: BattleVi
   const multi = skill.effects.find((e) => e.type === 'multiHit');
   if (damaging && multi && multi.type === 'multiHit') {
     // Several weaker hits against random living enemies; each hit carries 1/hits of the base power.
-    const perHit = -((skill.power ?? 0) - speciesOf(user).stats.attack) * (1 - 1 / multi.hits);
+    const perHit = -(skill.basePower ?? (skill.power ?? 0) - speciesOf(user).stats.attack) * (1 - 1 / multi.hits);
     for (let i = 0; i < multi.hits; i++) {
       const pool = alive(state.sides[enemySide]);
       if (!pool.length || state.phase !== 'active') break;
@@ -706,13 +709,7 @@ function transform(state: BattleState, s: SideIndex, v: BattleVivosaur, into: st
   v.speciesId = species.id;
   v.name = species.name;
   v.crit = species.crit;
-  v.stats = {
-    lp: statAtRank(species.stats.lp, v.rank, true),
-    attack: statAtRank(species.stats.attack, v.rank),
-    defense: statAtRank(species.stats.defense, v.rank),
-    accuracy: statAtRank(species.stats.accuracy, v.rank),
-    speed: statAtRank(species.stats.speed, v.rank),
-  };
+  v.stats = statsAtRank(species, v.rank);
   v.maxLp = v.stats.lp;
   v.lp = v.maxLp; // Transformation restores the new form's full LP.
   v.sealed = [];

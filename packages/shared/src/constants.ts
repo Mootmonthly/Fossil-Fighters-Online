@@ -1,12 +1,11 @@
 import type { Element, RangeClass, StatusKind } from './types.js';
+import { FP_LEVELS } from './data/growth.js';
 
-/** Hero level table (FP gained per turn / FP cap). Source: Fossil Fighters wiki, Hero Level (Champions). */
-export const HERO_LEVELS: { gain: number; max: number }[] = [
-  { gain: 70, max: 180 }, { gain: 80, max: 220 }, { gain: 90, max: 250 }, { gain: 100, max: 280 }, { gain: 110, max: 300 },
-  { gain: 120, max: 330 }, { gain: 130, max: 360 }, { gain: 140, max: 400 }, { gain: 160, max: 450 }, { gain: 180, max: 500 },
-  { gain: 185, max: 550 }, { gain: 190, max: 600 }, { gain: 195, max: 630 }, { gain: 200, max: 670 }, { gain: 205, max: 700 },
-  { gain: 210, max: 730 }, { gain: 215, max: 750 }, { gain: 220, max: 770 }, { gain: 225, max: 800 }, { gain: 230, max: 900 },
-];
+/**
+ * Hero level table: FP gained per turn, FP cap, and FP at the start of a battle.
+ * Source: the game's etc/btl_kp_defs table (gain and max agree with the wiki's Hero Level page).
+ */
+export const HERO_LEVELS: { gain: number; max: number; start: number }[] = FP_LEVELS.map((l) => ({ gain: l.gain, max: l.max, start: l.start }));
 
 export const MAX_RANK = 20;
 export const POINTS_PER_RANK = 50;

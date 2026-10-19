@@ -45,6 +45,11 @@ export interface SkillData {
   name: string;
   /** Total move power listed in game (vivosaur Attack + hidden base power) at max rank, or null for non-damaging skills. */
   power: number | null;
+  /** Hidden base power from the game data (power = Attack + basePower). */
+  basePower?: number;
+  /** Lower-rank versions of the skill stored in the game data (FP cost and base power), weakest first. */
+  tiers?: { fp: number; basePower: number }[];
+  romId?: number;
   fp: number;
   kind: 'attack' | 'support' | 'team';
   target: SkillTarget;
@@ -81,6 +86,13 @@ export interface VivosaurData {
   size: string | null;
   /** Stats at max rank (20). */
   stats: Stats;
+  /** LP at ranks 1..20 from the game data. */
+  lpByRank?: number[];
+  /** Rank-1 value, minimum, max-rank value and growth pattern index for each stat, from the game data. */
+  statCurves?: Record<StatKey, { rank1: number; min: number; max: number; pattern: number }>;
+  /** Damage percentage by tile distance 0..7 from the game data (80 = the community wiki's 1.0). */
+  rangeTable?: number[];
+  romId?: number;
   /** Critical hit rate percentage. */
   crit: number;
   skills: SkillData[];
