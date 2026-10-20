@@ -19,7 +19,7 @@ export function isAdmin(user: UserRow): boolean {
 export function adminListUsers(db: DatabaseSync, query: string) {
   const q = `%${query.trim()}%`;
   const rows = db.prepare(`
-    SELECT u.id, u.username, u.gold, u.wins, u.losses, u.created_at, u.is_admin,
+    SELECT u.id, u.username, u.gold, u.wins, u.losses, u.elo, u.created_at, u.is_admin,
       (SELECT COUNT(*) FROM vivosaurs v WHERE v.user_id = u.id) AS vivosaurs,
       (SELECT COUNT(*) FROM fossils f WHERE f.user_id = u.id AND f.state = 'rock') AS rocks
     FROM users u WHERE u.username LIKE ? ORDER BY u.id DESC LIMIT 100`).all(q) as Record<string, unknown>[];
@@ -36,7 +36,7 @@ export function adminUserDetail(db: DatabaseSync, userId: number) {
     part: f.part, redBoned: !!f.red_boned, state: f.state, score: f.score, known: !!f.known, createdAt: f.created_at,
   }));
   const matches = db.prepare('SELECT * FROM matches WHERE p1_user = ? OR p2_user = ? ORDER BY id DESC LIMIT 30').all(userId, userId);
-  return { user: { ...publicUser(user, isAdmin(user)), createdAt: user.created_at }, vivosaurs, fossils, matches };
+  return { user: { ...publicUser(user, isAdmin(user)), createdAt: user.created_at, muted: !!user.muted }, vivosaurs, fossils, matches };
 }
 
 export function adminGrantGold(db: DatabaseSync, userId: number, amount: number) {

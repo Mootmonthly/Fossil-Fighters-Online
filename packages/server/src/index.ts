@@ -13,6 +13,7 @@ import {
 } from './game.js';
 import { adminGrantGold, adminGrantRock, adminListUsers, adminStats, adminUserDetail, isAdmin } from './admin.js';
 import { RoomManager } from './rooms.js';
+import { attachChat, chatAdmin } from './chat.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT ?? 3000);
@@ -137,7 +138,7 @@ app.post('/api/vivosaurs/:id/nickname', requireAuth, handle((req) => {
 }));
 
 app.get('/api/leaderboard', (_req, res) => {
-  const rows = db.prepare('SELECT username, wins, losses, gold FROM users ORDER BY wins DESC, losses ASC LIMIT 20').all();
+  const rows = db.prepare('SELECT username, elo, wins, losses FROM users WHERE wins + losses > 0 ORDER BY elo DESC, wins DESC LIMIT 20').all();
   res.json({ players: rows });
 });
 
@@ -156,6 +157,10 @@ app.post('/api/admin/users/:id/gold', requireAdmin, handle((req) => {
 app.post('/api/admin/users/:id/rock', requireAdmin, handle((req) => {
   const fossil = adminGrantRock(db, Number(req.params.id), req.body ?? {});
   return { fossilId: fossil.id, detail: adminUserDetail(db, Number(req.params.id)) };
+}));
+app.post('/api/admin/users/:id/mute', requireAdmin, handle((req) => {
+  chatAdmin.setMuted(db, Number(req.params.id), !!req.body?.muted);
+  return { detail: adminUserDetail(db, Number(req.params.id)) };
 }));
 app.get('/api/admin/stats', requireAdmin, handle((req) => adminStats(db, req.query.solo === '1')));
 
@@ -176,7 +181,10 @@ io.use((socket, next) => {
   socket.data = { user };
   next();
 });
-io.on('connection', (socket) => rooms.attach(socket));
+io.on('connection', (socket) => {
+  rooms.attach(socket);
+  attachChat(io, db, socket, isAdmin);
+});
 
 server.listen(PORT, () => {
   console.log(`Fossil Fighters Online server listening on http://localhost:${PORT} (${VIVOSAURS.length} vivosaurs loaded)`);

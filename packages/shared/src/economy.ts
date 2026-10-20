@@ -40,6 +40,15 @@ export const FEATURED_ROTATION_MS = 3 * 60 * 60 * 1000;
 /** The game's rock prices (4000 / 8000 / 12000 / 25000 G) are divided by this for the featured shelf. */
 export const FEATURED_PRICE_DIVISOR = 2;
 
+/** Elo rating: every account starts here; ranked battles move it by up to ELO_K points. */
+export const ELO_START = 1000;
+export const ELO_K = 32;
+
+/** Server-wide chat limits. */
+export const CHAT_MAX_LENGTH = 200;
+export const CHAT_HISTORY = 60;
+export const CHAT_COOLDOWN_MS = 1500;
+
 export const PRIZE_WIN = 2500;
 export const PRIZE_LOSS = 600;
 export const PRIZE_DRAW = 1200;

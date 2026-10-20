@@ -2,7 +2,7 @@
 import type { DatabaseSync } from 'node:sqlite';
 import {
   getVivosaur, obtainableVivosaurs, rankFromPoints, toTeamMember, computeStats, effectiveSpecies, MIN_CLEAN_SCORE, SHOP, PARTS, fossilImageSet,
-  STARTER_CHOICES, STARTING_GOLD, STARTER_ROCKS, STARTER_HEAD_ROCKS, TEAM_SIZE, FEATURED_COUNT, FEATURED_ROTATION_MS, FEATURED_PRICE_DIVISOR, Rng,
+  STARTER_CHOICES, STARTING_GOLD, ELO_K, STARTER_ROCKS, STARTER_HEAD_ROCKS, TEAM_SIZE, FEATURED_COUNT, FEATURED_ROTATION_MS, FEATURED_PRICE_DIVISOR, Rng,
   type FossilPart, type OwnedVivosaur, type TeamMember, type Element,
 } from '@ffo/shared';
 import type { FossilRow, UserRow, VivosaurRow } from './db.js';
@@ -37,7 +37,7 @@ export function viewVivosaur(row: VivosaurRow): VivosaurView {
 }
 
 export function publicUser(u: UserRow, isAdmin = false) {
-  return { id: u.id, username: u.username, gold: u.gold, heroLevel: u.hero_level, wins: u.wins, losses: u.losses, team: JSON.parse(u.team_json) as number[], isAdmin };
+  return { id: u.id, username: u.username, gold: u.gold, heroLevel: u.hero_level, wins: u.wins, losses: u.losses, elo: u.elo, team: JSON.parse(u.team_json) as number[], isAdmin };
 }
 
 export function listVivosaurs(db: DatabaseSync, userId: number): VivosaurRow[] {
@@ -325,4 +325,19 @@ export function buyFeatured(db: DatabaseSync, user: UserRow, slot: number, now =
   db.prepare('UPDATE users SET gold = gold - ? WHERE id = ?').run(rock.price, user.id);
   db.prepare('INSERT INTO featured_purchases (user_id, bucket, slot) VALUES (?, ?, ?)').run(user.id, bucket, slot);
   return grantRock(db, user.id, 'normal', rock.element, { speciesId: rock.speciesId, part: rock.part, known: true });
+}
+
+/**
+ * Standard Elo update for a decided or drawn ranked battle. Returns the change for player A
+ * (player B's change is its negative).
+ */
+export function applyElo(db: DatabaseSync, userA: number, userB: number, result: 1 | 0 | 0.5): number {
+  const a = db.prepare('SELECT elo FROM users WHERE id = ?').get(userA) as { elo: number } | undefined;
+  const b = db.prepare('SELECT elo FROM users WHERE id = ?').get(userB) as { elo: number } | undefined;
+  if (!a || !b) return 0;
+  const expected = 1 / (1 + 10 ** ((b.elo - a.elo) / 400));
+  const delta = Math.round(ELO_K * (result - expected));
+  db.prepare('UPDATE users SET elo = MAX(100, elo + ?) WHERE id = ?').run(delta, userA);
+  db.prepare('UPDATE users SET elo = MAX(100, elo - ?) WHERE id = ?').run(delta, userB);
+  return delta;
 }

@@ -5,10 +5,10 @@ import type { Screen } from '../App.js';
 import { Medal } from '../components/Vivo.js';
 
 export function HomeScreen({ snap, go }: { snap: Snapshot; go: (s: Screen) => void }) {
-  const [board, setBoard] = useState<{ username: string; wins: number; losses: number; gold: number }[]>([]);
+  const [board, setBoard] = useState<{ username: string; elo: number; wins: number; losses: number }[]>([]);
   useEffect(() => {
     api.leaderboard().then((b) => setBoard(b.players)).catch(() => {});
-  }, [snap.user.wins]);
+  }, [snap.user.elo, snap.user.wins, snap.user.losses]);
   const team = snap.user.team.map((id) => snap.vivosaurs.find((v) => v.id === id)).filter(Boolean);
   const rocks = snap.fossils.filter((f) => f.state === 'rock').length;
   return (
@@ -17,7 +17,7 @@ export function HomeScreen({ snap, go }: { snap: Snapshot; go: (s: Screen) => vo
         <div className="panel">
           <h2>Welcome back, {snap.user.username}!</h2>
           <div className="row" style={{ gap: 24 }}>
-            <div><div className="muted small">Record</div><b>{snap.user.wins} W / {snap.user.losses} L</b></div>
+            <div><div className="muted small">Rating</div><b>{snap.user.elo} Elo</b></div>
             <div><div className="muted small">Vivosaurs</div><b>{snap.vivosaurs.length}</b></div>
             <div><div className="muted small">Uncleaned rocks</div><b>{rocks}</b></div>
             <div><div className="muted small">Gold</div><b className="gold">{snap.user.gold.toLocaleString()} G</b></div>
@@ -52,20 +52,21 @@ export function HomeScreen({ snap, go }: { snap: Snapshot; go: (s: Screen) => vo
             <li>Buy fossil rocks in the shop. Each holds a head, body, arms or legs fossil of a random vivosaur. The featured shelf shows eight identified rocks that change every three hours.</li>
             <li>Clean them in the Cleaning Room. A head fossil revives a new vivosaur; other parts raise its rank.</li>
             <li>Build a battle team of up to five. When a match starts you see the other team, then pick three of yours, their slots and the formation. Three that share a compatibility group unlock their Team Skills.</li>
-            <li>Battle other players online. Wins pay {PRIZE_WIN.toLocaleString()} G, losses {PRIZE_LOSS} G, and every vivosaur that fought earns rank points. Solo battles against the bot pay {PRIZE_SOLO_WIN} G.</li>
+            <li>Battle other players online. Ranked wins and losses move your Elo rating (everyone starts at 1000); private rooms and bot battles are unrated. Wins pay {PRIZE_WIN.toLocaleString()} G, losses {PRIZE_LOSS} G, and every vivosaur that fought earns rank points. Solo battles against the bot pay {PRIZE_SOLO_WIN} G.</li>
             <li>Silver and gold fossils from Wondrous and Miraculous rocks boost stats, and gold fossils super-evolve certain vivosaurs.</li>
           </ol>
         </div>
       </div>
       <div className="panel themed bg-plate">
-        <h3>Leaderboard</h3>
+        <h3>Ranked leaderboard</h3>
         <table style={{ width: '100%', fontSize: 14 }}>
           <tbody>
+            {board.length === 0 && <tr><td className="muted small">No ranked battles yet.</td></tr>}
             {board.map((p, i) => (
               <tr key={p.username}>
                 <td className="muted">{i + 1}</td>
                 <td><b>{p.username}</b></td>
-                <td style={{ textAlign: 'right' }}>{p.wins}W {p.losses}L</td>
+                <td style={{ textAlign: 'right' }}><b>{p.elo}</b></td>
               </tr>
             ))}
           </tbody>

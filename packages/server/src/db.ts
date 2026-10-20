@@ -12,6 +12,8 @@ export interface UserRow {
   losses: number;
   team_json: string;
   is_admin: number;
+  elo: number;
+  muted: number;
   created_at: string;
 }
 
@@ -125,11 +127,21 @@ export function openDatabase(file: string): DatabaseSync {
     );
     CREATE INDEX IF NOT EXISTS idx_vivosaurs_user ON vivosaurs(user_id);
     CREATE INDEX IF NOT EXISTS idx_fossils_user ON fossils(user_id);
+    CREATE TABLE IF NOT EXISTS chat_messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      username TEXT NOT NULL,
+      text TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
     CREATE INDEX IF NOT EXISTS idx_match_vivosaurs_species ON match_vivosaurs(species_id);
   `);
   // Columns added after the first release.
   addColumn(db, 'users', 'is_admin', 'INTEGER NOT NULL DEFAULT 0');
   addColumn(db, 'fossils', 'known', 'INTEGER NOT NULL DEFAULT 0');
+  addColumn(db, 'users', 'elo', 'INTEGER NOT NULL DEFAULT 1000');
+  addColumn(db, 'users', 'muted', 'INTEGER NOT NULL DEFAULT 0');
+  addColumn(db, 'matches', 'elo_change', 'INTEGER');
   return db;
 }
 

@@ -84,7 +84,11 @@ Tests: `npm test` runs the engine unit tests (vitest).
    their slots and choose Cambrian or Jurassic formation (the bot picks at random, and anyone who runs out of
    time gets their first three in Cambrian). Winner takes 2,500 G, loser 600 G; the three that fought gain rank
    points.
-6. **Admin panel** – accounts named in `ADMIN_USERS` (or the first account when it is unset) get an Admin tab:
+6. **Rating and chat** – ranked battles use Elo (everyone starts at 1000, K = 32); the home leaderboard ranks by
+   it. Private rooms and bot battles are unrated. A server-wide **Chat** tab keeps the last 60 messages, limits
+   messages to 200 characters and one per 1.5 s, and lets admins delete messages and mute players. A Discord
+   button in the top bar links to the community server.
+7. **Admin panel** – accounts named in `ADMIN_USERS` (or the first account when it is unset) get an Admin tab:
    look up any player's gold, record, vivosaurs and fossil case, grant gold or a specific rock, and see every
    vivosaur's usage and win rate across recorded battles.
 

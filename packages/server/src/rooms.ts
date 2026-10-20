@@ -8,7 +8,7 @@ import {
   type BattleAction, type BattleState, type TeamMember, type TeamSetup, type Formation,
 } from '@ffo/shared';
 import type { UserRow, VivosaurRow } from './db.js';
-import { awardBattle, toOwned, viewVivosaur } from './game.js';
+import { applyElo, awardBattle, toOwned, viewVivosaur } from './game.js';
 import { toTeamMember } from '@ffo/shared';
 
 const TURN_SECONDS = 75;
@@ -391,10 +391,24 @@ export class RoomManager {
         points = won ? RANK_POINTS_WIN : RANK_POINTS_LOSS;
       }
       awardBattle(this.db, p.userId, p.chosen?.ids.filter((id) => id > 0) ?? [], gold, points, room.kind === 'solo' ? null : won);
-      return { gold, rankPoints: points, won };
+      return { gold, rankPoints: points, won, elo: null as number | null, eloChange: null as number | null };
     });
-    const info = this.db.prepare('INSERT INTO matches (kind, p1_user, p2_user, p1_name, p2_name, winner, seed, turns) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
-      room.kind, room.sides[0].userId, room.sides[1].userId, room.sides[0].username, room.sides[1].username, winner, state.seed, state.turn,
+    // Ranked battles move both players' Elo; private rooms and solo battles are unrated.
+    let eloChange: number | null = null;
+    const [pa, pb] = room.sides;
+    if (room.kind === 'ranked' && pa.userId !== null && pb.userId !== null) {
+      eloChange = applyElo(this.db, pa.userId, pb.userId, winner === null ? 0.5 : winner === 0 ? 1 : 0);
+      for (let i = 0; i < 2; i++) {
+        const r = rewards[i];
+        const uid = room.sides[i].userId!;
+        if (r) {
+          r.eloChange = i === 0 ? eloChange : -eloChange;
+          r.elo = (this.db.prepare('SELECT elo FROM users WHERE id = ?').get(uid) as { elo: number }).elo;
+        }
+      }
+    }
+    const info = this.db.prepare('INSERT INTO matches (kind, p1_user, p2_user, p1_name, p2_name, winner, seed, turns, elo_change) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+      room.kind, room.sides[0].userId, room.sides[1].userId, room.sides[0].username, room.sides[1].username, winner, state.seed, state.turn, eloChange,
     );
     // Usage and win-rate statistics per vivosaur (the species that actually fought, in both teams).
     const matchId = Number(info.lastInsertRowid);

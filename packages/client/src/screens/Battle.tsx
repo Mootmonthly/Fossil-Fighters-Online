@@ -24,7 +24,7 @@ interface StartPayload {
 interface EndPayload {
   winner: SideIndex | null;
   reason: string | null;
-  reward: { gold: number; rankPoints: number; won: boolean | null } | null;
+  reward: { gold: number; rankPoints: number; won: boolean | null; elo: number | null; eloChange: number | null } | null;
   state: BattleState;
 }
 
@@ -436,6 +436,9 @@ function Arena({ battle, state, end, deadline, floats, shake, disconnected, act,
               {end.reward && (
                 <div style={{ marginTop: 10 }}>
                   <div className="gold">+{end.reward.gold.toLocaleString()} G</div>
+                  {end.reward.eloChange !== null && end.reward.elo !== null && (
+                    <div><b style={{ color: end.reward.eloChange >= 0 ? 'var(--good)' : 'var(--bad)' }}>{end.reward.eloChange >= 0 ? '+' : ''}{end.reward.eloChange} Elo</b> <span className="small muted">→ {end.reward.elo}</span></div>
+                  )}
                   <div className="small muted">Every vivosaur that fought gained {end.reward.rankPoints} rank points.</div>
                 </div>
               )}

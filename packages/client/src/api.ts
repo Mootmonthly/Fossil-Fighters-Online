@@ -7,6 +7,7 @@ export interface User {
   heroLevel: number;
   wins: number;
   losses: number;
+  elo: number;
   team: number[];
   isAdmin: boolean;
 }
@@ -103,7 +104,7 @@ export const api = {
   sell: (id: number) => request<Snapshot & { value: number }>('POST', `/api/fossils/${id}/sell`),
   setTeam: (ids: number[]) => request<Snapshot>('POST', '/api/team', { ids }),
   nickname: (id: number, nickname: string | null) => request<Snapshot>('POST', `/api/vivosaurs/${id}/nickname`, { nickname }),
-  leaderboard: () => request<{ players: { username: string; wins: number; losses: number; gold: number }[] }>('GET', '/api/leaderboard'),
+  leaderboard: () => request<{ players: { username: string; elo: number; wins: number; losses: number }[] }>('GET', '/api/leaderboard'),
   featured: () => request<Featured>('GET', '/api/shop/featured'),
   buyFeatured: (slot: number) => request<Snapshot & { fossil: FossilView; featured: Featured }>('POST', `/api/shop/featured/${slot}`),
   admin: {
@@ -111,6 +112,7 @@ export const api = {
     user: (id: number) => request<AdminUserDetail>('GET', `/api/admin/users/${id}`),
     grantGold: (id: number, amount: number) => request<{ gold: number; detail: AdminUserDetail }>('POST', `/api/admin/users/${id}/gold`, { amount }),
     grantRock: (id: number, body: { kind: string; element?: string | null; speciesId?: string | null; part?: string | null }) => request<{ fossilId: number; detail: AdminUserDetail }>('POST', `/api/admin/users/${id}/rock`, body),
+    mute: (id: number, muted: boolean) => request<{ detail: AdminUserDetail }>('POST', `/api/admin/users/${id}/mute`, { muted }),
     stats: (includeSolo: boolean) => request<AdminStats>('GET', `/api/admin/stats${includeSolo ? '?solo=1' : ''}`),
   },
 };
@@ -121,6 +123,7 @@ export interface AdminUserRow {
   gold: number;
   wins: number;
   losses: number;
+  elo: number;
   created_at: string;
   is_admin: number;
   vivosaurs: number;
@@ -128,7 +131,7 @@ export interface AdminUserRow {
 }
 
 export interface AdminUserDetail {
-  user: User & { createdAt: string };
+  user: User & { createdAt: string; muted: boolean };
   vivosaurs: VivosaurView[];
   fossils: { id: number; kind: string; element: string | null; speciesId: string | null; speciesName: string | null; part: string | null; redBoned: boolean; state: string; score: number | null; known: boolean; createdAt: string }[];
   matches: { id: number; kind: string; p1_name: string; p2_name: string; winner: number | null; turns: number; created_at: string; p1_user: number | null; p2_user: number | null }[];

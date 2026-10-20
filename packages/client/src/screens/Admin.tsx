@@ -65,11 +65,11 @@ function Players({ notify }: { notify: (t: string, e?: boolean) => void }) {
           <button type="submit">Search</button>
         </form>
         <table className="admin-table">
-          <thead><tr><th>#</th><th>Player</th><th>Gold</th><th>W / L</th><th>Vivos</th><th>Rocks</th><th>Joined</th></tr></thead>
+          <thead><tr><th>#</th><th>Player</th><th>Gold</th><th>Elo · W/L</th><th>Vivos</th><th>Rocks</th><th>Joined</th></tr></thead>
           <tbody>
             {users.map((u) => (
               <tr key={u.id} className={detail?.user.id === u.id ? 'active' : ''} onClick={() => open(u.id)}>
-                <td>{u.id}</td><td><b>{u.username}</b>{u.is_admin ? ' ★' : ''}</td><td>{u.gold.toLocaleString()}</td><td>{u.wins} / {u.losses}</td><td>{u.vivosaurs}</td><td>{u.rocks}</td><td className="small muted">{u.created_at.slice(0, 10)}</td>
+                <td>{u.id}</td><td><b>{u.username}</b>{u.is_admin ? ' ★' : ''}</td><td>{u.gold.toLocaleString()}</td><td>{u.elo} · {u.wins}/{u.losses}</td><td>{u.vivosaurs}</td><td>{u.rocks}</td><td className="small muted">{u.created_at.slice(0, 10)}</td>
               </tr>
             ))}
           </tbody>
@@ -84,10 +84,15 @@ function Players({ notify }: { notify: (t: string, e?: boolean) => void }) {
             </div>
             <div className="row" style={{ gap: 24 }}>
               <div><div className="muted small">Gold</div><b className="gold">{detail.user.gold.toLocaleString()} G</b></div>
-              <div><div className="muted small">Record</div><b>{detail.user.wins} W / {detail.user.losses} L</b></div>
+              <div><div className="muted small">Elo</div><b>{detail.user.elo}</b></div>
+              <div><div className="muted small">Ranked record</div><b>{detail.user.wins} W / {detail.user.losses} L</b></div>
               <div><div className="muted small">Vivosaurs</div><b>{detail.vivosaurs.length}</b></div>
               <div><div className="muted small">Rocks</div><b>{detail.fossils.filter((f) => f.state === 'rock').length}</b></div>
               <div><div className="muted small">Joined</div><b>{detail.user.createdAt.slice(0, 10)}</b></div>
+            </div>
+            <div className="row" style={{ marginTop: 10 }}>
+              <span className="small muted">Chat: {detail.user.muted ? 'muted' : 'allowed'}</span>
+              <button className={detail.user.muted ? '' : 'danger'} onClick={async () => { try { const out = await api.admin.mute(detail.user.id, !detail.user.muted); setDetail(out.detail); notify(out.detail.user.muted ? `${detail.user.username} muted` : `${detail.user.username} unmuted`); } catch (e) { notify((e as Error).message, true); } }}>{detail.user.muted ? 'Unmute in chat' : 'Mute in chat'}</button>
             </div>
             <h3 style={{ marginTop: 14 }}>Grant gold</h3>
             <div className="row">
